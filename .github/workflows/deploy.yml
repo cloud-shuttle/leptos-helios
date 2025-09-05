@@ -1,0 +1,222 @@
+name: Deploy
+
+on:
+  release:
+    types: [published]
+  push:
+    branches: [ main ]
+    paths:
+      - 'dist/**'
+      - 'pkg/**'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+        targets: wasm32-unknown-unknown
+
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install wasm-pack
+      run: |
+        curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+    - name: Install trunk
+      run: cargo install trunk
+
+    - name: Install binaryen
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y binaryen
+
+    - name: Build WASM
+      run: |
+        wasm-pack build --target web --out-dir pkg --release --no-typescript --no-pack
+
+    - name: Optimize WASM
+      run: |
+        wasm-opt -O4 --enable-simd --enable-threads --enable-bulk-memory \
+          --enable-mutable-globals --enable-nontrapping-float-to-int \
+          --enable-sign-ext --enable-saturating-float-to-int \
+          --enable-tail-call --strip-debug --strip-producers \
+          pkg/helios_bg.wasm -o pkg/helios_optimized.wasm
+        mv pkg/helios_optimized.wasm pkg/helios_bg.wasm
+
+    - name: Build with Trunk
+      run: |
+        trunk build --release
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        cname: helios.leptos.dev
+
+  deploy-release:
+    name: Deploy Release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+        targets: wasm32-unknown-unknown
+
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install wasm-pack
+      run: |
+        curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+    - name: Install trunk
+      run: cargo install trunk
+
+    - name: Install binaryen
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y binaryen
+
+    - name: Build WASM
+      run: |
+        wasm-pack build --target web --out-dir pkg --release --no-typescript --no-pack
+
+    - name: Optimize WASM
+      run: |
+        wasm-opt -O4 --enable-simd --enable-threads --enable-bulk-memory \
+          --enable-mutable-globals --enable-nontrapping-float-to-int \
+          --enable-sign-ext --enable-saturating-float-to-int \
+          --enable-tail-call --strip-debug --strip-producers \
+          pkg/helios_bg.wasm -o pkg/helios_optimized.wasm
+        mv pkg/helios_optimized.wasm pkg/helios_bg.wasm
+
+    - name: Build with Trunk
+      run: |
+        trunk build --release
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-artifacts
+        path: |
+          dist/
+          pkg/
+        retention-days: 90
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/*
+          pkg/*
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-npm:
+    name: Deploy to NPM
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+        targets: wasm32-unknown-unknown
+
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install wasm-pack
+      run: |
+        curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+    - name: Build WASM for NPM
+      run: |
+        wasm-pack build --target nodejs --out-dir pkg-npm --release --scope @helios-rs
+
+    - name: Publish to NPM
+      run: |
+        cd pkg-npm
+        npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  deploy-crates:
+    name: Deploy to Crates.io
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-stable-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Publish to Crates.io
+      run: |
+        cargo publish --workspace --all-features
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
