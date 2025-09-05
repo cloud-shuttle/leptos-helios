@@ -1,0 +1,22 @@
+[package]
+name = "helios-benchmarks"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Performance benchmarks for Helios"
+keywords.workspace = true
+categories.workspace = true
+
+# Benchmarks will be added later
+
+[dependencies]
+# Core dependencies
+helios-core = { path = "../helios-core" }
+
+# Benchmarking
+criterion = { workspace = true }
+
+# Utilities
+rand = { workspace = true }

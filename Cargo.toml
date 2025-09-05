@@ -1,0 +1,67 @@
+[workspace]
+members = [
+    "helios-core",
+    "helios-leptos", 
+    "helios-macros",
+    "helios-wasm",
+    "helios-examples",
+    "helios-benchmarks"
+]
+
+resolver = "2"
+
+[workspace.dependencies]
+# Core dependencies
+leptos = { version = "0.8", features = ["csr", "ssr", "hydrate"] }
+wgpu = { version = "25", features = ["webgl"] }
+polars = { version = "0.50", features = ["lazy"] }
+datafusion = { version = "43" }
+candle-core = { version = "0.8" }
+
+# Web and WASM
+wasm-bindgen = "0.2"
+web-sys = "0.3"
+js-sys = "0.3"
+console_error_panic_hook = "0.1"
+
+# Async and networking
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+axum = { version = "0.7", features = ["ws"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Utilities
+uuid = { version = "1.0", features = ["v4"] }
+chrono = { version = "0.4", features = ["wasm-bindgen"] }
+rand = "0.8"
+
+# Development
+criterion = "0.5"
+wasm-bindgen-test = "0.3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["CloudShuttle <contact@cloudshuttle.com>"]
+license = "MIT"
+repository = "https://github.com/cloudshuttle/helios"
+description = "High-performance Rust visualization library for Leptos v0.8"
+keywords = ["visualization", "charts", "rust", "leptos", "webgpu"]
+categories = ["visualization", "web-programming"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.release.package."*"]
+opt-level = "z"

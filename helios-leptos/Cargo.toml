@@ -1,0 +1,33 @@
+[package]
+name = "helios-leptos"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Leptos integration for Helios"
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Core dependencies
+helios-core = { path = "../helios-core" }
+leptos = { workspace = true }
+
+# Web and WASM
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+[features]
+default = ["csr"]
+csr = []
+ssr = []
+hydrate = []
