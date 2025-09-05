@@ -28,11 +28,11 @@ var text_sampler: sampler;
 @vertex
 fn vs_main(vertex: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    
+
     let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
     out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
     out.uv = vertex.uv;
-    
+
     return out;
 }
 
@@ -40,6 +40,6 @@ fn vs_main(vertex: VertexInput) -> VertexOutput {
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let distance = textureSample(text_texture, text_sampler, in.uv).r;
     let alpha = smoothstep(0.5 - 0.1, 0.5 + 0.1, distance);
-    
+
     return vec4<f32>(uniforms.text_color.rgb, uniforms.text_color.a * alpha);
 }

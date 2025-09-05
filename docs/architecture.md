@@ -33,7 +33,7 @@ let chart = helios::chart! {
 };
 ```
 
-#### 🧠 Intelligence Layer  
+#### 🧠 Intelligence Layer
 The middle layer provides advanced data processing and ML capabilities:
 
 - **DataFusion Integration**: SQL-2016 query engine for data preparation
@@ -45,7 +45,7 @@ The middle layer provides advanced data processing and ML capabilities:
 The bottom layer delivers high-performance, cross-platform rendering:
 
 - **wgpu Backend**: WebGPU primary with WebGL2/Canvas fallbacks
-- **Immediate-Mode Rendering**: egui-inspired architecture for 1-2ms frame times  
+- **Immediate-Mode Rendering**: egui-inspired architecture for 1-2ms frame times
 - **Streaming Pipeline**: Real-time data ingestion with backpressure handling
 - **Multi-Threading**: Rayon parallelization for data processing
 
@@ -75,7 +75,7 @@ Helios leverages Leptos's fine-grained reactivity for efficient visualization up
 pub fn VisualizationDashboard() -> impl IntoView {
     let (dataset, set_dataset) = create_signal(DataFrame::empty());
     let (chart_config, set_chart_config) = create_signal(ChartConfig::default());
-    
+
     // Derived signal - only recomputes when dataset changes
     let processed_data = create_memo(move |_| {
         dataset.with(|df| {
@@ -87,7 +87,7 @@ pub fn VisualizationDashboard() -> impl IntoView {
                 .unwrap()
         })
     });
-    
+
     let chart_spec = create_memo(move |_| {
         chart_config.with(|config| {
             helios::chart! {
@@ -100,13 +100,13 @@ pub fn VisualizationDashboard() -> impl IntoView {
             }
         })
     });
-    
+
     view! {
         <div class="dashboard">
             <HeliosChart spec=chart_spec />
-            <DataControls 
+            <DataControls
                 on_dataset_change=set_dataset
-                on_config_change=set_chart_config 
+                on_config_change=set_chart_config
             />
         </div>
     }
@@ -146,7 +146,7 @@ pub fn HeliosChart(
 ) -> impl IntoView {
     let canvas_ref = create_node_ref::<Canvas>();
     let renderer = store_value(None::<HeliosRenderer>);
-    
+
     // Initialize WebGPU renderer
     create_effect(move |_| {
         let canvas = canvas_ref.get().expect("Canvas ref available");
@@ -155,7 +155,7 @@ pub fn HeliosChart(
             renderer.set_value(Some(new_renderer));
         });
     });
-    
+
     // Reactive rendering on spec changes
     create_effect(move |_| {
         let chart_spec = spec.get();
@@ -163,10 +163,10 @@ pub fn HeliosChart(
             r.render(&chart_spec);
         }
     });
-    
+
     view! {
-        <canvas 
-            node_ref=canvas_ref 
+        <canvas
+            node_ref=canvas_ref
             width=width.unwrap_or(800)
             height=height.unwrap_or(600)
         />
@@ -192,15 +192,15 @@ impl HeliosDataPipeline {
         if let Some(cached) = self.cache.lock().unwrap().get(&spec.hash()) {
             return Ok(cached.clone());
         }
-        
+
         // Select optimal processing strategy
         let strategy = match (spec.size(), spec.complexity(), spec.is_streaming()) {
             (_, _, true) => ProcessingStrategy::Streaming,
-            (size, complexity, _) if size > 1_000_000 && complexity > 0.7 => 
+            (size, complexity, _) if size > 1_000_000 && complexity > 0.7 =>
                 ProcessingStrategy::GPU,
             _ => ProcessingStrategy::CPU,
         };
-        
+
         match strategy {
             ProcessingStrategy::CPU => self.processor.process_parallel(spec).await,
             ProcessingStrategy::GPU => self.compute_engine.process_gpu(spec).await,
@@ -227,15 +227,15 @@ pub struct HeliosRenderer {
 impl HeliosRenderer {
     pub fn render(&mut self, spec: &ChartSpec) -> RenderStats {
         let start_time = Instant::now();
-        
+
         // Adaptive quality based on frame timing
         let quality_level = self.frame_timer.suggest_quality();
         let render_config = RenderConfig::for_quality(quality_level);
-        
+
         // Efficient GPU buffer management
         let buffers = self.buffer_pool.get_buffers_for_spec(spec);
         let stats = self.execute_render_pass(&buffers, render_config);
-        
+
         // Update frame timing for adaptation
         self.frame_timer.record_frame(start_time.elapsed());
         stats
@@ -294,7 +294,7 @@ impl StructOfArrays {
 **Rationale**: 3x performance improvement for modern browsers, graceful degradation
 **Impact**: Maximum performance with universal compatibility
 
-### ADR-002: Fine-Grained Reactivity with Leptos Signals  
+### ADR-002: Fine-Grained Reactivity with Leptos Signals
 **Decision**: Leverage Leptos v0.8's signal system for selective DOM updates
 **Rationale**: Eliminates virtual DOM overhead, provides compile-time optimization
 **Impact**: 50-70% reduction in unnecessary re-renders
@@ -336,7 +336,7 @@ use ndarray::{Array2, ArrayD};
 /// Universal data source trait that supports multiple data types
 pub trait DataSource: Send + Sync {
     type Item;
-    
+
     fn data_type(&self) -> DataType;
     fn schema(&self) -> Option<&Schema>;  // Optional for non-tabular
     fn iter(&self) -> Box<dyn Iterator<Item = Self::Item>>;
@@ -365,7 +365,7 @@ pub struct GraphDataSource<N, E, Ty = Directed> {
     metadata: GraphMetadata,
 }
 
-impl<N, E, Ty> GraphDataSource<N, E, Ty> 
+impl<N, E, Ty> GraphDataSource<N, E, Ty>
 where
     N: NodeData + 'static,
     E: EdgeData + 'static,
@@ -378,18 +378,18 @@ where
             metadata: GraphMetadata::analyze(&graph),
         }
     }
-    
+
     /// Apply force-directed layout using WebGPU
     pub async fn layout_force_directed(&mut self, config: ForceConfig) -> Result<()> {
         let layout = ForceDirectedLayout::new(config);
         self.layout = Some(layout.compute_gpu(&self.graph).await?);
         Ok(())
     }
-    
+
     /// Community detection algorithms
     pub fn detect_communities(&self) -> Vec<Community> {
         use graph_algorithms::{louvain, label_propagation};
-        
+
         match self.metadata.size {
             GraphSize::Small => louvain::detect(&self.graph),
             GraphSize::Large => label_propagation::parallel_detect(&self.graph),
@@ -430,7 +430,7 @@ impl<T: TreeData> HierarchicalDataSource<T> {
             TreeLayoutAlgorithm::Pack => self.circle_packing_layout(),
         }
     }
-    
+
     /// GPU-accelerated treemap layout for large hierarchies
     pub async fn treemap_layout_gpu(&mut self) -> Result<()> {
         let nodes = self.flatten_to_array();
@@ -455,18 +455,18 @@ impl GeospatialDataSource {
     pub fn from_geojson(geojson: &str) -> Result<Self> {
         let features = geojson::parse(geojson)?;
         let spatial_index = Self::build_rtree(&features);
-        
+
         Ok(Self {
             features,
             projection: Box::new(Mercator::default()),
             spatial_index,
         })
     }
-    
+
     /// GPU-accelerated vector tile rendering
     pub async fn render_vector_tiles(&self, zoom: u32, bounds: Bounds) -> Vec<Tile> {
         let tiles = self.get_tiles_in_bounds(bounds, zoom);
-        
+
         // Parallel tile generation using Rayon
         tiles.par_iter()
             .map(|tile_coord| self.generate_tile(tile_coord))
@@ -499,14 +499,14 @@ impl TensorDataSource {
             }
         }
     }
-    
+
     /// GPU-accelerated parallel coordinates
     pub async fn parallel_coordinates(&self, axes: &[usize]) -> ParallelCoordData {
         let gpu_tensor = Tensor::from_array(self.tensor.as_slice(), &self.device)?;
-        
+
         // Normalize each dimension
         let normalized = self.normalize_gpu(&gpu_tensor).await?;
-        
+
         // Extract coordinates for selected axes
         self.extract_coordinates(normalized, axes)
     }

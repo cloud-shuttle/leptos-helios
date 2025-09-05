@@ -63,13 +63,13 @@ pub enum RenderBackend {
         compute_capability: bool,
         memory_budget: usize,
     },
-    
-    /// Fallback: WebGL2 for broad compatibility  
+
+    /// Fallback: WebGL2 for broad compatibility
     WebGL2 {
         context: WebGl2RenderingContext,
         extensions: Vec<String>,
     },
-    
+
     /// Last resort: Canvas 2D for universal support
     Canvas2D {
         context: CanvasRenderingContext2d,
@@ -86,7 +86,7 @@ impl RenderBackend {
             Self::canvas2d_backend()
         }
     }
-    
+
     pub fn performance_characteristics(&self) -> PerformanceProfile {
         match self {
             WebGPU { .. } => PerformanceProfile {
@@ -125,9 +125,9 @@ pub struct AdaptiveQualityManager {
 impl AdaptiveQualityManager {
     pub fn update_frame_stats(&mut self, frame_time: Duration) {
         self.frame_timer.record_frame(frame_time);
-        
+
         let avg_frame_time = self.frame_timer.average_frame_time();
-        
+
         // Adjust quality based on performance
         if avg_frame_time > self.target_frame_time * 1.2 {
             // Too slow - reduce quality
@@ -137,17 +137,17 @@ impl AdaptiveQualityManager {
             self.quality_level = (self.quality_level + 0.05).min(1.0);
         }
     }
-    
+
     pub fn get_render_config(&self) -> RenderConfig {
         RenderConfig {
             point_size: self.base_point_size() * self.quality_level,
             anti_aliasing: self.quality_level > 0.7,
             msaa_samples: if self.quality_level > 0.8 { 4 } else { 1 },
             lod_bias: (1.0 - self.quality_level) * 2.0,
-            texture_filtering: if self.quality_level > 0.6 { 
-                FilterMode::Linear 
-            } else { 
-                FilterMode::Nearest 
+            texture_filtering: if self.quality_level > 0.6 {
+                FilterMode::Linear
+            } else {
+                FilterMode::Nearest
             },
         }
     }
@@ -181,14 +181,14 @@ pub fn process_data_efficiently(df: DataFrame) -> Result<DataFrame, PolarsError>
 // ❌ BAD: Eager evaluation with multiple passes
 pub fn process_data_inefficiently(df: DataFrame) -> Result<DataFrame, PolarsError> {
     let mut result = df;
-    
+
     // Multiple passes through data
     result = result.filter(&col("value").gt(0))?;     // First pass
     result = result.select(["timestamp", "value", "category"])?; // Second pass
     result = result.group_by(["category"])?.mean()?;   // Third pass
     result = result.sort(["avg_value"], false)?;       // Fourth pass
     result = result.head(Some(1000));                  // Fifth pass
-    
+
     Ok(result)
 }
 ```
@@ -203,20 +203,20 @@ pub async fn optimized_query(
     params: QueryParams
 ) -> Result<DataFrame, ServerFnError> {
     let ctx = SessionContext::new();
-    
+
     // Register optimized data sources
     ctx.register_parquet("data", &params.parquet_path, ParquetReadOptions::default()).await?;
-    
+
     // DataFusion automatically optimizes:
     // - Predicate pushdown
-    // - Projection pushdown  
+    // - Projection pushdown
     // - Join reordering
     // - Constant folding
     let optimized_plan = ctx.sql(&sql).await?;
-    
+
     // Collect results efficiently
     let batches = optimized_plan.collect().await?;
-    
+
     // Convert to Polars with zero-copy when possible
     Ok(arrow_to_polars(batches)?)
 }
@@ -224,19 +224,19 @@ pub async fn optimized_query(
 // Example optimized query
 let df = optimized_query(
     r#"
-    SELECT 
+    SELECT
         DATE_TRUNC('hour', timestamp) as hour,
         AVG(value) as avg_value,
         COUNT(*) as count
-    FROM data 
-    WHERE value > 100 
+    FROM data
+    WHERE value > 100
       AND timestamp >= '2024-01-01'::timestamp
     GROUP BY DATE_TRUNC('hour', timestamp)
     ORDER BY hour
     LIMIT 1000
     "#.to_string(),
-    QueryParams { 
-        parquet_path: "large_dataset.parquet".to_string() 
+    QueryParams {
+        parquet_path: "large_dataset.parquet".to_string()
     }
 ).await?;
 ```
@@ -249,7 +249,7 @@ let df = optimized_query(
 pub struct PointCloudSoA {
     // All X coordinates together
     x_coords: Vec<f32>,
-    // All Y coordinates together  
+    // All Y coordinates together
     y_coords: Vec<f32>,
     // All colors together
     colors: Vec<u32>,
@@ -262,18 +262,18 @@ impl PointCloudSoA {
     pub fn transform_simd(&mut self, transform: &Transform2D) {
         let len = self.x_coords.len();
         let chunks = len / 4;
-        
+
         #[cfg(target_feature = "simd128")]
         {
             use std::arch::wasm32::*;
-            
+
             for i in 0..chunks {
                 let base = i * 4;
-                
+
                 // Load 4 points at once
                 let x_vec = v128_load(&self.x_coords[base]);
                 let y_vec = v128_load(&self.y_coords[base]);
-                
+
                 // Apply transformation matrix
                 let new_x = f32x4_add(
                     f32x4_mul(x_vec, f32x4_splat(transform.m11)),
@@ -282,7 +282,7 @@ impl PointCloudSoA {
                         f32x4_splat(transform.tx)
                     )
                 );
-                
+
                 let new_y = f32x4_add(
                     f32x4_mul(x_vec, f32x4_splat(transform.m21)),
                     f32x4_add(
@@ -290,34 +290,34 @@ impl PointCloudSoA {
                         f32x4_splat(transform.ty)
                     )
                 );
-                
+
                 // Store transformed points
                 v128_store(&mut self.x_coords[base], new_x);
                 v128_store(&mut self.y_coords[base], new_y);
             }
         }
-        
+
         // Handle remaining points
         for i in (chunks * 4)..len {
             let x = self.x_coords[i];
             let y = self.y_coords[i];
-            
+
             self.x_coords[i] = transform.m11 * x + transform.m12 * y + transform.tx;
             self.y_coords[i] = transform.m21 * x + transform.m22 * y + transform.ty;
         }
     }
-    
+
     /// Convert to GPU buffer efficiently
     pub fn to_gpu_buffer(&self, device: &wgpu::Device) -> wgpu::Buffer {
         // Interleave data for GPU efficiency
         let interleaved: Vec<[f32; 3]> = (0..self.count)
             .map(|i| [
                 self.x_coords[i],
-                self.y_coords[i], 
+                self.y_coords[i],
                 f32::from_bits(self.colors[i])
             ])
             .collect();
-            
+
         device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("point_cloud"),
             contents: bytemuck::cast_slice(&interleaved),
@@ -344,15 +344,15 @@ impl BufferPool {
         // Try to reuse existing buffer
         if let Some(buffer) = self.available_buffers
             .get_mut(&spec)
-            .and_then(|queue| queue.pop_front()) 
+            .and_then(|queue| queue.pop_front())
         {
             return buffer;
         }
-        
+
         // Create new buffer if needed
         self.create_buffer(spec)
     }
-    
+
     pub fn return_buffer(&mut self, buffer: wgpu::Buffer, spec: BufferSpec) {
         // Return to pool if we have space
         if self.allocated_size.load(Ordering::Relaxed) < self.max_pool_size {
@@ -363,10 +363,10 @@ impl BufferPool {
         }
         // Otherwise let it drop and be deallocated
     }
-    
+
     fn create_buffer(&self, spec: BufferSpec) -> wgpu::Buffer {
         self.allocated_size.fetch_add(spec.size, Ordering::Relaxed);
-        
+
         self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some(&spec.label),
             size: spec.size as u64,
@@ -390,14 +390,14 @@ pub struct InstancedPointRenderer {
 impl InstancedPointRenderer {
     pub fn render(&mut self, points: &[PointInstance], render_pass: &mut wgpu::RenderPass) {
         let instance_count = points.len().min(self.max_instances as usize) as u32;
-        
+
         // Update instance buffer with point data
         self.queue.write_buffer(
             &self.instance_buffer,
             0,
             bytemuck::cast_slice(&points[..instance_count as usize]),
         );
-        
+
         // Single draw call for all instances
         render_pass.set_pipeline(&self.render_pipeline);
         render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
@@ -441,7 +441,7 @@ impl LODManager {
     pub fn select_lod(&self, zoom_level: f32, point_count: u32) -> LODLevel {
         // Dynamic LOD based on zoom and point density
         let screen_point_density = point_count as f32 / (zoom_level * zoom_level);
-        
+
         if screen_point_density < 1000.0 {
             LODLevel::High {
                 point_size: 4.0,
@@ -462,26 +462,26 @@ impl LODManager {
             }
         }
     }
-    
+
     pub fn cull_points(&self, points: &[Point2D], viewport: &Viewport) -> Vec<Point2D> {
         // Frustum culling - only render visible points
         let bounds = viewport.world_bounds();
-        
+
         points
             .iter()
             .filter(|point| bounds.contains(**point))
             .copied()
             .collect()
     }
-    
+
     pub fn decimate_points(&self, points: &[Point2D], target_count: u32) -> Vec<Point2D> {
         if points.len() <= target_count as usize {
             return points.to_vec();
         }
-        
+
         // Smart decimation preserving important points
         let step = points.len() / target_count as usize;
-        
+
         points
             .iter()
             .step_by(step)
@@ -541,12 +541,12 @@ twiggy dominators optimized.wasm
 // Lazy load heavy features
 pub mod heavy_features {
     use wasm_bindgen::prelude::*;
-    
+
     #[wasm_bindgen]
     pub struct MLFeatures {
         // Heavy ML models loaded on demand
     }
-    
+
     #[wasm_bindgen]
     impl MLFeatures {
         #[wasm_bindgen(constructor)]
@@ -574,7 +574,7 @@ pub fn AdvancedChart() -> impl IntoView {
             }
         }
     );
-    
+
     view! {
         <Suspense fallback=|| view! { <div>"Loading advanced features..."</div> }>
             {move || ml_features.get().map(|features| {
@@ -604,16 +604,16 @@ impl<T> StreamingBuffer<T> {
             self.buffer.pop_front();
             self.dropped_count.fetch_add(1, Ordering::Relaxed);
         }
-        
+
         self.buffer.push_back(item);
         Ok(())
     }
-    
+
     pub fn drain_batch(&mut self, max_items: usize) -> Vec<T> {
         let count = self.buffer.len().min(max_items);
         self.buffer.drain(..count).collect()
     }
-    
+
     pub fn health_metrics(&self) -> StreamHealth {
         StreamHealth {
             buffer_utilization: self.buffer.len() as f32 / self.max_size as f32,
@@ -637,17 +637,17 @@ pub struct AdaptiveStreamRenderer {
 impl AdaptiveStreamRenderer {
     pub fn render_stream_batch(&mut self, stream: &mut Stream<DataPoint>) {
         let start_time = Instant::now();
-        
+
         // Adaptive batch size based on performance
         let current_batch_size = self.batch_size.load(Ordering::Relaxed);
         let batch: Vec<_> = stream.take(current_batch_size as usize).collect();
-        
+
         // Render batch
         self.render_points(&batch);
-        
+
         let frame_time = start_time.elapsed();
         let target_frame_time = Duration::from_secs_f32(1.0 / self.target_fps);
-        
+
         // Adjust batch size for next frame
         if frame_time > target_frame_time {
             // Too slow - reduce batch size
@@ -683,17 +683,17 @@ impl PerformanceMetrics {
         if self.frame_times.is_empty() {
             return 0.0;
         }
-        
-        let avg_frame_time: Duration = self.frame_times.iter().sum::<Duration>() 
+
+        let avg_frame_time: Duration = self.frame_times.iter().sum::<Duration>()
             / self.frame_times.len() as u32;
-            
+
         1.0 / avg_frame_time.as_secs_f64()
     }
-    
+
     pub fn frame_time_percentiles(&self) -> (Duration, Duration, Duration) {
         let mut sorted: Vec<_> = self.frame_times.iter().cloned().collect();
         sorted.sort();
-        
+
         let len = sorted.len();
         (
             sorted[len * 50 / 100], // p50
@@ -701,11 +701,11 @@ impl PerformanceMetrics {
             sorted[len * 99 / 100], // p99
         )
     }
-    
+
     pub fn performance_grade(&self) -> PerformanceGrade {
         let fps = self.fps();
         let p95_frame_time = self.frame_time_percentiles().1;
-        
+
         match (fps, p95_frame_time.as_millis()) {
             (f, t) if f >= 55.0 && t <= 20 => PerformanceGrade::Excellent,
             (f, t) if f >= 45.0 && t <= 30 => PerformanceGrade::Good,
@@ -723,7 +723,7 @@ impl PerformanceMetrics {
 pub fn PerformanceMonitor() -> impl IntoView {
     let (metrics, set_metrics) = create_signal(PerformanceMetrics::default());
     let (show_details, set_show_details) = create_signal(false);
-    
+
     // Update metrics every second
     use_interval_fn(
         move || {
@@ -733,35 +733,35 @@ pub fn PerformanceMonitor() -> impl IntoView {
         },
         Duration::from_secs(1)
     );
-    
+
     let performance_color = move || {
         match metrics.get().performance_grade() {
             PerformanceGrade::Excellent => "green",
-            PerformanceGrade::Good => "blue", 
+            PerformanceGrade::Good => "blue",
             PerformanceGrade::Fair => "orange",
             PerformanceGrade::Poor => "red",
         }
     };
-    
+
     view! {
         <div class="performance-monitor" style:color=performance_color>
             <div class="fps-counter">
                 {move || format!("{:.1} FPS", metrics.get().fps())}
             </div>
-            
-            <button 
+
+            <button
                 on:click=move |_| set_show_details.update(|s| *s = !*s)
                 class="details-toggle"
             >
                 "Details"
             </button>
-            
+
             <Show when=move || show_details.get()>
                 <div class="performance-details">
                     {move || {
                         let m = metrics.get();
                         let (p50, p95, p99) = m.frame_time_percentiles();
-                        
+
                         view! {
                             <div>"Frame times - p50: "{p50.as_millis()}"ms, p95: "{p95.as_millis()}"ms"</div>
                             <div>"Memory: "{m.memory_usage.used / 1024 / 1024}"MB"</div>
@@ -861,10 +861,10 @@ if interaction_latency > Duration::from_millis(100) {
 pub fn enable_performance_debugging() {
     // GPU debugging
     std::env::set_var("WGPU_BACKEND", "gl"); // Force WebGL for debugging
-    
+
     // Memory tracking
     GLOBAL_ALLOCATOR.enable_tracking();
-    
+
     // Frame timing
     FRAME_PROFILER.enable_detailed_timing();
 }
@@ -873,35 +873,35 @@ pub fn enable_performance_debugging() {
 #[cfg(test)]
 mod performance_tests {
     use super::*;
-    
+
     #[test]
     fn benchmark_point_rendering() {
         let points = generate_test_points(100_000);
         let start = Instant::now();
-        
+
         render_points(&points);
-        
+
         let elapsed = start.elapsed();
-        assert!(elapsed < Duration::from_millis(10), 
+        assert!(elapsed < Duration::from_millis(10),
                 "Rendering 100K points took {elapsed:?}, expected <10ms");
     }
-    
+
     #[test]
     fn memory_usage_bounds() {
         let initial_memory = get_memory_usage();
-        
+
         {
             let large_chart = create_large_chart(1_000_000);
             render_chart(&large_chart);
-            
+
             let peak_memory = get_memory_usage();
             assert!(peak_memory - initial_memory < 200 * 1024 * 1024,
                     "Memory usage exceeded 200MB budget");
         }
-        
+
         // Force cleanup
         force_garbage_collection();
-        
+
         let final_memory = get_memory_usage();
         assert!(final_memory <= initial_memory * 1.1,
                 "Memory leak detected");

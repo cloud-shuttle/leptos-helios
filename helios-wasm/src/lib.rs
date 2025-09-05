@@ -1,5 +1,5 @@
 //! Helios WASM Bindings
-//! 
+//!
 //! This crate provides WebAssembly bindings for Helios.
 
 // use wasm_bindgen::prelude::*;

@@ -27,15 +27,15 @@ var<uniform> uniforms: Uniforms;
 @vertex
 fn vs_main(vertex: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    
+
     // Transform position
     let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
     out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
-    
+
     // Pass through color and UV coordinates
     out.color = vec4<f32>(vertex.color, uniforms.alpha, 1.0);
     out.uv = vertex.position;
-    
+
     return out;
 }
 
@@ -46,20 +46,20 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let offset = in.uv - center;
     let distance = length(offset);
     let angle = atan2(offset.y, offset.x);
-    
+
     // Create radar chart pattern
     let max_radius = uniforms.radius;
     let normalized_distance = distance / max_radius;
-    
+
     if (normalized_distance > 1.0) {
         discard;
     }
-    
+
     // Add grid lines
     let grid_factor = 1.0 - smoothstep(0.0, 0.02, abs(fract(normalized_distance * 5.0) - 0.5));
-    
+
     // Apply fill opacity
     let fill_alpha = uniforms.fill_opacity * (1.0 - normalized_distance * 0.3);
-    
+
     return vec4<f32>(in.color.rgb, in.color.a * fill_alpha * (1.0 + grid_factor * 0.5));
 }

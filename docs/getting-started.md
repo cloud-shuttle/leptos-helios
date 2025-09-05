@@ -59,7 +59,7 @@ pub fn MyFirstChart() -> impl IntoView {
         "x" => [1, 2, 3, 4, 5],
         "y" => [2, 5, 3, 8, 7],
     }.unwrap();
-    
+
     // Define chart specification
     let chart_spec = helios::chart! {
         data: data,
@@ -69,7 +69,7 @@ pub fn MyFirstChart() -> impl IntoView {
             y: { field: "y", type: Quantitative }
         }
     };
-    
+
     view! {
         <div class="chart-container">
             <h2>"My First Helios Chart"</h2>
@@ -130,7 +130,7 @@ pub fn ReactiveChart() -> impl IntoView {
     // Create reactive data source
     let (raw_data, set_raw_data) = create_signal(DataFrame::empty());
     let (filter_value, set_filter_value) = create_signal(0.0);
-    
+
     // Processed data updates automatically when dependencies change
     let filtered_data = create_memo(move |_| {
         raw_data.with(|df| {
@@ -141,7 +141,7 @@ pub fn ReactiveChart() -> impl IntoView {
                 .unwrap()
         })
     });
-    
+
     // Chart spec recomputes only when filtered_data changes
     let chart_spec = create_memo(move |_| {
         helios::chart! {
@@ -150,19 +150,19 @@ pub fn ReactiveChart() -> impl IntoView {
             encoding: {
                 x: { field: "x", type: Quantitative },
                 y: { field: "value", type: Quantitative },
-                color: { 
-                    field: "value", 
+                color: {
+                    field: "value",
                     type: Quantitative,
                     scale: { scheme: "viridis" }
                 }
             }
         }
     });
-    
+
     view! {
         <div>
-            <input 
-                type="range" 
+            <input
+                type="range"
                 min="0" max="100" step="1"
                 on:input=move |ev| {
                     set_filter_value(event_target_value(&ev).parse().unwrap_or(0.0));
@@ -281,7 +281,7 @@ pub fn StaticChart() -> impl IntoView {
     let df = CsvReader::new(std::io::Cursor::new(DATA_CSV))
         .finish()
         .unwrap();
-        
+
     let chart = helios::chart! {
         data: df,
         mark: Line,
@@ -290,7 +290,7 @@ pub fn StaticChart() -> impl IntoView {
             y: { field: "y", type: Quantitative }
         }
     };
-    
+
     view! { <HeliosChart spec=chart /> }
 }
 ```
@@ -298,7 +298,7 @@ pub fn StaticChart() -> impl IntoView {
 ### Dynamic Data Loading
 
 ```rust
-#[component] 
+#[component]
 pub fn DynamicChart() -> impl IntoView {
     // Resource automatically manages loading/error states
     let data = create_resource(
@@ -310,7 +310,7 @@ pub fn DynamicChart() -> impl IntoView {
                 .collect()
         }
     );
-    
+
     view! {
         <Suspense fallback=move || view! { <div>"Loading chart data..."</div> }>
             {move || {
@@ -344,14 +344,14 @@ pub async fn load_large_dataset(
     filter_query: String,
 ) -> Result<DataFrame, ServerFnError> {
     use datafusion::prelude::*;
-    
+
     // Use DataFusion for complex queries
     let ctx = SessionContext::new();
     ctx.register_csv("data", &file_path, CsvReadOptions::new()).await?;
-    
+
     let df = ctx.sql(&filter_query).await?
         .collect().await?;
-        
+
     // Convert Arrow to Polars
     Ok(arrow_to_polars(df)?)
 }
@@ -359,12 +359,12 @@ pub async fn load_large_dataset(
 #[component]
 pub fn ServerDataChart() -> impl IntoView {
     let load_data = create_server_action::<LoadLargeDataset>();
-    
+
     let chart_data = create_resource(
         move || load_data.value().get(),
         |data| async move { data.transpose()? }
     );
-    
+
     view! {
         <div>
             <button on:click=move |_| {
@@ -375,7 +375,7 @@ pub fn ServerDataChart() -> impl IntoView {
             }>
                 "Load Data"
             </button>
-            
+
             <Suspense fallback=|| view! { <div>"Processing..."</div> }>
                 {move || chart_data.get().map(|df| {
                     let chart = helios::chart! {
@@ -409,7 +409,7 @@ let chart = helios::chart! {
 };
 
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart
         interactions=InteractionConfig::new()
             .enable_pan()
@@ -425,17 +425,17 @@ view! {
 #[component]
 pub fn InteractiveScatterPlot() -> impl IntoView {
     let (selected_points, set_selected_points) = create_signal(Vec::<usize>::new());
-    
+
     let chart = helios::chart! {
         data: df,
-        mark: Point { 
+        mark: Point {
             size: Some(6.0),
-            opacity: Some(0.8) 
+            opacity: Some(0.8)
         },
         encoding: {
             x: { field: "x", type: Quantitative },
             y: { field: "y", type: Quantitative },
-            color: { 
+            color: {
                 condition: {
                     selection: "brush",
                     value: "red"
@@ -449,11 +449,11 @@ pub fn InteractiveScatterPlot() -> impl IntoView {
             bind: "brush"
         }]
     };
-    
+
     view! {
         <div>
-            <HeliosChart 
-                spec=chart 
+            <HeliosChart
+                spec=chart
                 on:selection_changed=move |selection| {
                     set_selected_points(selection.point_indices);
                 }
@@ -469,9 +469,9 @@ pub fn InteractiveScatterPlot() -> impl IntoView {
 ```rust
 let chart = helios::chart! {
     data: df,
-    mark: Point { 
+    mark: Point {
         size: Some(8.0),
-        tooltip: true 
+        tooltip: true
     },
     encoding: {
         x: { field: "x", type: Quantitative },
@@ -503,7 +503,7 @@ let chart = helios::chart! {
 };
 
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart
         performance=PerformanceConfig::new()
             .quality_mode(QualityMode::Adaptive {
@@ -521,7 +521,7 @@ view! {
 #[component]
 pub fn StreamingChart() -> impl IntoView {
     let (stream_data, set_stream_data) = create_signal(DataFrame::empty());
-    
+
     // Simulate streaming data
     create_effect(move |_| {
         set_interval(
@@ -539,7 +539,7 @@ pub fn StreamingChart() -> impl IntoView {
             Duration::from_millis(100) // 10fps updates
         );
     });
-    
+
     let chart = create_memo(move |_| {
         helios::chart! {
             data: stream_data.get(),
@@ -550,10 +550,10 @@ pub fn StreamingChart() -> impl IntoView {
             }
         }
     });
-    
+
     view! {
-        <HeliosChart 
-            spec=chart 
+        <HeliosChart
+            spec=chart
             performance=PerformanceConfig::new()
                 .target_fps(Some(30)) // Lower FPS for streaming
                 .quality_mode(QualityMode::Performance)
@@ -621,8 +621,8 @@ let chart = helios::chart! {
 ```rust
 // Enable debug mode for development
 view! {
-    <HeliosChart 
-        spec=chart_spec 
+    <HeliosChart
+        spec=chart_spec
         debug=true  // Shows render stats and debug info
     />
 }
@@ -631,7 +631,7 @@ view! {
 let (render_stats, set_render_stats) = create_signal(None);
 
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart_spec
         on:render_complete=move |stats| set_render_stats(Some(stats))
     />
@@ -652,7 +652,7 @@ trunk serve --open --port 3000
 
 # The chart will automatically update when you change:
 # - Data transformations
-# - Chart specifications  
+# - Chart specifications
 # - Styling
 # - Component logic
 ```
@@ -664,16 +664,16 @@ trunk serve --open --port 3000
 mod tests {
     use super::*;
     use wasm_bindgen_test::*;
-    
+
     wasm_bindgen_test_configure!(run_in_browser);
-    
+
     #[wasm_bindgen_test]
     async fn test_chart_rendering() {
         let df = df! {
             "x" => [1, 2, 3],
             "y" => [1, 4, 2],
         }.unwrap();
-        
+
         let chart_spec = helios::chart! {
             data: df,
             mark: Line,
@@ -682,10 +682,10 @@ mod tests {
                 y: { field: "y", type: Quantitative }
             }
         };
-        
+
         // Test chart specification validation
         assert!(chart_spec.validate().is_ok());
-        
+
         // Test rendering performance
         let stats = render_chart_spec(&chart_spec).await;
         assert!(stats.frame_time < Duration::from_millis(10));
@@ -709,7 +709,7 @@ mod tests {
 #[component]
 pub fn Dashboard() -> impl IntoView {
     let (data, set_data) = create_signal(load_dashboard_data());
-    
+
     view! {
         <div class="dashboard-grid">
             <div class="chart-panel">
@@ -736,7 +736,7 @@ pub fn Dashboard() -> impl IntoView {
 pub fn MonitoringDashboard() -> impl IntoView {
     let ws_context = expect_context::<WebSocketContext>();
     let (metrics, set_metrics) = create_signal(Vec::<MetricPoint>::new());
-    
+
     // Listen to WebSocket updates
     create_effect(move |_| {
         let handler = move |data: MetricPoint| {
@@ -747,7 +747,7 @@ pub fn MonitoringDashboard() -> impl IntoView {
         };
         ws_context.on_message(handler);
     });
-    
+
     let chart_spec = create_memo(move |_| {
         helios::chart! {
             data: metrics_to_dataframe(metrics.get()),
@@ -759,10 +759,10 @@ pub fn MonitoringDashboard() -> impl IntoView {
             }
         }
     });
-    
+
     view! {
-        <HeliosChart 
-            spec=chart_spec 
+        <HeliosChart
+            spec=chart_spec
             performance=PerformanceConfig::new()
                 .target_fps(Some(10)) // Smooth but not excessive
                 .quality_mode(QualityMode::Performance)

@@ -26,15 +26,15 @@ var<uniform> uniforms: Uniforms;
 @vertex
 fn vs_main(vertex: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    
+
     // Transform position
     let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
     out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
-    
+
     // Pass through color and UV coordinates
     out.color = vec4<f32>(vertex.color, uniforms.alpha, 1.0);
     out.uv = vertex.position;
-    
+
     return out;
 }
 
@@ -42,10 +42,10 @@ fn vs_main(vertex: VertexInput) -> VertexOutput {
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     // Create sankey flow effect
     let flow_width = uniforms.node_width;
-    
+
     // Determine if this is a node or link based on position
     let is_node = (in.uv.x < 0.1) || (in.uv.x > 0.9);
-    
+
     if (is_node) {
         // Render as node (rectangle)
         let node_distance = min(abs(in.uv.x - 0.05), abs(in.uv.x - 0.95));
@@ -59,11 +59,11 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
         if (link_distance > flow_width / 2.0) {
             discard;
         }
-        
+
         // Add flow effect
         let flow_factor = 1.0 - (link_distance / (flow_width / 2.0)) * 0.3;
         return vec4<f32>(in.color.rgb * flow_factor, in.color.a * uniforms.link_opacity);
     }
-    
+
     return in.color;
 }

@@ -9,16 +9,16 @@ use std::collections::HashMap;
 pub enum DataError {
     #[error("Polars error: {0}")]
     Polars(#[from] PolarsError),
-    
+
     #[error("Data format error: {0}")]
     Format(String),
-    
+
     #[error("Data validation error: {0}")]
     Validation(String),
-    
+
     #[error("Data source error: {0}")]
     Source(String),
-    
+
     #[error("Processing error: {0}")]
     Processing(String),
 }
@@ -72,12 +72,12 @@ impl StrategySelector {
             device_capabilities: DeviceCapabilities::detect(),
         }
     }
-    
+
     pub fn select(&self, spec: &DataSpec) -> ProcessingStrategy {
         let data_size = spec.estimated_size();
         let complexity = spec.complexity();
         let is_streaming = spec.is_streaming();
-        
+
         if is_streaming {
             return ProcessingStrategy::Streaming(StreamConfig {
                 buffer_size: 10_000,
@@ -85,7 +85,7 @@ impl StrategySelector {
                 enable_backpressure: true,
             });
         }
-        
+
         if data_size > 1_000_000 && complexity > 0.7 && self.device_capabilities.gpu_available {
             ProcessingStrategy::GPU(ComputeConfig {
                 workgroup_size: 64,
@@ -98,7 +98,7 @@ impl StrategySelector {
             })
         }
     }
-    
+
     pub fn benchmark(&mut self, name: &str, duration: f64) {
         self.benchmarks.insert(name.to_string(), duration);
     }
@@ -121,7 +121,7 @@ impl DeviceCapabilities {
             simd_available: Self::detect_simd(),
         }
     }
-    
+
     fn detect_gpu() -> bool {
         // Check for WebGPU support
         #[cfg(target_arch = "wasm32")]
@@ -135,12 +135,12 @@ impl DeviceCapabilities {
             false // Placeholder
         }
     }
-    
+
     fn detect_memory() -> f64 {
         // Get available memory in GB
         8.0 // Placeholder
     }
-    
+
     fn detect_simd() -> bool {
         if cfg!(target_feature = "simd128") {
             true
@@ -165,29 +165,29 @@ impl DataSpec {
         // Estimate data size based on source and transforms
         match &self.source {
             DataSource::DataFrame(df) => df.height(),
-            DataSource::Url { .. } => 100_000, // Estimate
+            DataSource::Url { .. } => 100_000,     // Estimate
             DataSource::Query { .. } => 1_000_000, // Estimate
-            DataSource::Stream { .. } => 10_000, // Streaming estimate
+            DataSource::Stream { .. } => 10_000,   // Streaming estimate
         }
     }
-    
+
     pub fn complexity(&self) -> f64 {
         let base_complexity = 1.0;
         let transform_complexity = self.transforms.len() as f64 * 0.5;
         let filter_complexity = self.filters.len() as f64 * 0.3;
         let aggregation_complexity = self.aggregations.len() as f64 * 1.0;
-        
+
         base_complexity + transform_complexity + filter_complexity + aggregation_complexity
     }
-    
+
     pub fn is_streaming(&self) -> bool {
         matches!(self.source, DataSource::Stream { .. })
     }
-    
+
     pub fn hash(&self) -> u64 {
         use std::collections::hash_map::DefaultHasher;
         use std::hash::{Hash, Hasher};
-        
+
         let mut hasher = DefaultHasher::new();
         self.source.hash(&mut hasher);
         self.transforms.hash(&mut hasher);
@@ -216,39 +216,103 @@ pub enum DataTransform {
 
 #[derive(Debug, Clone)]
 pub enum Filter {
-    Expression { expr: String },
-    Range { column: String, min: Option<f64>, max: Option<f64> },
-    Values { column: String, values: Vec<serde_json::Value> },
-    Null { column: String, keep_nulls: bool },
+    Expression {
+        expr: String,
+    },
+    Range {
+        column: String,
+        min: Option<f64>,
+        max: Option<f64>,
+    },
+    Values {
+        column: String,
+        values: Vec<serde_json::Value>,
+    },
+    Null {
+        column: String,
+        keep_nulls: bool,
+    },
 }
 
 #[derive(Debug, Clone, Hash)]
 pub enum Aggregation {
-    GroupBy { columns: Vec<String> },
-    Aggregate { operations: Vec<AggOp> },
-    Pivot { index: String, columns: String, values: String },
-    Window { operations: Vec<WindowOp> },
+    GroupBy {
+        columns: Vec<String>,
+    },
+    Aggregate {
+        operations: Vec<AggOp>,
+    },
+    Pivot {
+        index: String,
+        columns: String,
+        values: String,
+    },
+    Window {
+        operations: Vec<WindowOp>,
+    },
 }
 
 #[derive(Debug, Clone, Hash)]
 pub enum AggOp {
-    Sum { column: String, alias: Option<String> },
-    Mean { column: String, alias: Option<String> },
-    Count { column: String, alias: Option<String> },
-    Min { column: String, alias: Option<String> },
-    Max { column: String, alias: Option<String> },
-    Std { column: String, alias: Option<String> },
-    Var { column: String, alias: Option<String> },
+    Sum {
+        column: String,
+        alias: Option<String>,
+    },
+    Mean {
+        column: String,
+        alias: Option<String>,
+    },
+    Count {
+        column: String,
+        alias: Option<String>,
+    },
+    Min {
+        column: String,
+        alias: Option<String>,
+    },
+    Max {
+        column: String,
+        alias: Option<String>,
+    },
+    Std {
+        column: String,
+        alias: Option<String>,
+    },
+    Var {
+        column: String,
+        alias: Option<String>,
+    },
 }
 
 #[derive(Debug, Clone, Hash)]
 pub enum WindowOp {
-    RowNumber { alias: String },
-    Rank { column: String, alias: String },
-    Lag { column: String, offset: i64, alias: String },
-    Lead { column: String, offset: i64, alias: String },
-    RollingMean { column: String, window: usize, alias: String },
-    RollingSum { column: String, window: usize, alias: String },
+    RowNumber {
+        alias: String,
+    },
+    Rank {
+        column: String,
+        alias: String,
+    },
+    Lag {
+        column: String,
+        offset: i64,
+        alias: String,
+    },
+    Lead {
+        column: String,
+        offset: i64,
+        alias: String,
+    },
+    RollingMean {
+        column: String,
+        window: usize,
+        alias: String,
+    },
+    RollingSum {
+        column: String,
+        window: usize,
+        alias: String,
+    },
 }
 
 #[derive(Debug, Clone, Hash)]
@@ -306,17 +370,17 @@ impl DataProcessor {
             stream_buffers: HashMap::new(),
         })
     }
-    
+
     pub async fn process(&mut self, spec: &DataSpec) -> Result<ProcessedData, DataError> {
         // Check cache first
         let spec_hash = spec.hash();
         if let Some(cached) = self.cache.get(&spec_hash) {
             return Ok(cached.clone());
         }
-        
+
         // Select optimal processing strategy
         let strategy = self.strategy_selector.select(spec);
-        
+
         // Process data based on strategy
         let result = match strategy {
             ProcessingStrategy::CPU(config) => self.process_cpu(spec, &config).await,
@@ -324,62 +388,88 @@ impl DataProcessor {
             ProcessingStrategy::Streaming(config) => self.process_streaming(spec, &config).await,
             ProcessingStrategy::Hybrid(config) => self.process_hybrid(spec, &config).await,
         }?;
-        
+
         // Cache result
         self.cache.insert(spec_hash, result.clone());
-        
+
         Ok(result)
     }
-    
-    async fn process_cpu(&self, spec: &DataSpec, config: &RayonConfig) -> Result<ProcessedData, DataError> {
+
+    async fn process_cpu(
+        &self,
+        spec: &DataSpec,
+        config: &RayonConfig,
+    ) -> Result<ProcessedData, DataError> {
         // Load data
         let mut df = self.load_data(&spec.source).await?;
-        
+
         // Apply filters
         for filter in &spec.filters {
             df = self.apply_filter(df, filter)?;
         }
-        
+
         // Apply transforms
         for transform in &spec.transforms {
             df = self.apply_transform(df, transform)?;
         }
-        
+
         // Apply aggregations
         for aggregation in &spec.aggregations {
             df = self.apply_aggregation(df, aggregation)?;
         }
-        
+
         Ok(ProcessedData {
             data: df,
             metadata: DataMetadata::from_dataframe(&df),
             processing_time: std::time::Duration::from_millis(0), // Placeholder
         })
     }
-    
-    async fn process_gpu(&self, spec: &DataSpec, config: &ComputeConfig) -> Result<ProcessedData, DataError> {
+
+    async fn process_gpu(
+        &self,
+        spec: &DataSpec,
+        config: &ComputeConfig,
+    ) -> Result<ProcessedData, DataError> {
         // GPU processing would be implemented here
         // For now, fall back to CPU processing
-        self.process_cpu(spec, &RayonConfig { num_threads: None, chunk_size: None }).await
+        self.process_cpu(
+            spec,
+            &RayonConfig {
+                num_threads: None,
+                chunk_size: None,
+            },
+        )
+        .await
     }
-    
-    async fn process_streaming(&mut self, spec: &DataSpec, config: &StreamConfig) -> Result<ProcessedData, DataError> {
+
+    async fn process_streaming(
+        &mut self,
+        spec: &DataSpec,
+        config: &StreamConfig,
+    ) -> Result<ProcessedData, DataError> {
         // Streaming processing implementation
         if let DataSource::Stream { stream_id } = &spec.source {
-            let buffer = self.stream_buffers.entry(stream_id.clone()).or_insert_with(|| {
-                StreamBuffer::new(config.buffer_size)
-            });
-            
+            let buffer = self
+                .stream_buffers
+                .entry(stream_id.clone())
+                .or_insert_with(|| StreamBuffer::new(config.buffer_size));
+
             // Process streaming data
             buffer.process_batch(config.batch_size)
         } else {
-            Err(DataError::Processing("Streaming strategy requires stream source".to_string()))
+            Err(DataError::Processing(
+                "Streaming strategy requires stream source".to_string(),
+            ))
         }
     }
-    
-    async fn process_hybrid(&self, spec: &DataSpec, config: &HybridConfig) -> Result<ProcessedData, DataError> {
+
+    async fn process_hybrid(
+        &self,
+        spec: &DataSpec,
+        config: &HybridConfig,
+    ) -> Result<ProcessedData, DataError> {
         let data_size = spec.estimated_size();
-        
+
         if data_size < config.cpu_threshold {
             self.process_cpu(spec, &config.cpu_config).await
         } else if data_size < config.gpu_threshold {
@@ -389,50 +479,52 @@ impl DataProcessor {
             self.process_cpu(spec, &config.cpu_config).await
         }
     }
-    
+
     async fn load_data(&self, source: &DataSource) -> Result<DataFrame, DataError> {
         match source {
             DataSource::DataFrame(df) => Ok(df.clone()),
-            DataSource::Url { url, format } => {
-                match format {
-                    DataFormat::Csv => {
-                        let df = LazyFrame::scan_csv(url, ScanArgsIo::default())
-                            .collect()
-                            .map_err(DataError::Polars)?;
-                        Ok(df)
-                    },
-                    DataFormat::Json => {
-                        let df = LazyFrame::scan_ndjson(url, ScanArgsNdJson::default())
-                            .collect()
-                            .map_err(DataError::Polars)?;
-                        Ok(df)
-                    },
-                    DataFormat::Parquet => {
-                        let df = LazyFrame::scan_parquet(url, ScanArgsParquet::default())
-                            .collect()
-                            .map_err(DataError::Polars)?;
-                        Ok(df)
-                    },
-                    _ => Err(DataError::Format("Unsupported format".to_string())),
+            DataSource::Url { url, format } => match format {
+                DataFormat::Csv => {
+                    let df = LazyFrame::scan_csv(url, ScanArgsIo::default())
+                        .collect()
+                        .map_err(DataError::Polars)?;
+                    Ok(df)
                 }
+                DataFormat::Json => {
+                    let df = LazyFrame::scan_ndjson(url, ScanArgsNdJson::default())
+                        .collect()
+                        .map_err(DataError::Polars)?;
+                    Ok(df)
+                }
+                DataFormat::Parquet => {
+                    let df = LazyFrame::scan_parquet(url, ScanArgsParquet::default())
+                        .collect()
+                        .map_err(DataError::Polars)?;
+                    Ok(df)
+                }
+                _ => Err(DataError::Format("Unsupported format".to_string())),
             },
             DataSource::Query { sql, dataset } => {
                 // Execute SQL query - would integrate with DataFusion
-                Err(DataError::Processing("SQL queries not yet implemented".to_string()))
-            },
+                Err(DataError::Processing(
+                    "SQL queries not yet implemented".to_string(),
+                ))
+            }
             DataSource::Stream { stream_id } => {
                 // Get data from stream buffer
-                Err(DataError::Processing("Stream processing not yet implemented".to_string()))
-            },
+                Err(DataError::Processing(
+                    "Stream processing not yet implemented".to_string(),
+                ))
+            }
         }
     }
-    
+
     fn apply_filter(&self, df: DataFrame, filter: &Filter) -> Result<DataFrame, DataError> {
         match filter {
             Filter::Expression { expr } => {
                 let lazy_df = df.lazy().filter(col(expr));
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             Filter::Range { column, min, max } => {
                 let mut lazy_df = df.lazy();
                 if let Some(min_val) = min {
@@ -442,35 +534,45 @@ impl DataProcessor {
                     lazy_df = lazy_df.filter(col(column).lt(lit(*max_val)));
                 }
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             Filter::Values { column, values } => {
                 // Convert values to appropriate type and filter
                 let lazy_df = df.lazy().filter(col(column).is_in(values));
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             Filter::Null { column, keep_nulls } => {
                 if *keep_nulls {
-                    df.lazy().filter(col(column).is_null()).collect().map_err(DataError::Polars)
+                    df.lazy()
+                        .filter(col(column).is_null())
+                        .collect()
+                        .map_err(DataError::Polars)
                 } else {
-                    df.lazy().filter(col(column).is_not_null()).collect().map_err(DataError::Polars)
+                    df.lazy()
+                        .filter(col(column).is_not_null())
+                        .collect()
+                        .map_err(DataError::Polars)
                 }
-            },
+            }
         }
     }
-    
-    fn apply_transform(&self, df: DataFrame, transform: &DataTransform) -> Result<DataFrame, DataError> {
+
+    fn apply_transform(
+        &self,
+        df: DataFrame,
+        transform: &DataTransform,
+    ) -> Result<DataFrame, DataError> {
         match transform {
             DataTransform::Select { columns } => {
                 let lazy_df = df.lazy().select(columns.iter().map(|c| col(c)));
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             DataTransform::Rename { mappings } => {
                 let mut lazy_df = df.lazy();
                 for (old_name, new_name) in mappings {
                     lazy_df = lazy_df.rename([old_name], [new_name]);
                 }
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             DataTransform::Cast { column, data_type } => {
                 let polars_type = match data_type {
                     DataType::Int32 => DataType::Int32,
@@ -484,7 +586,7 @@ impl DataProcessor {
                 };
                 let lazy_df = df.lazy().with_columns([col(column).cast(polars_type)]);
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             DataTransform::FillNull { column, value } => {
                 let fill_value = match value {
                     FillValue::Zero => lit(0),
@@ -497,7 +599,7 @@ impl DataProcessor {
                 };
                 let lazy_df = df.lazy().with_columns([col(column).fill_null(fill_value)]);
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             DataTransform::DropNulls { columns } => {
                 let lazy_df = if let Some(cols) = columns {
                     df.lazy().drop_nulls(Some(cols))
@@ -505,50 +607,57 @@ impl DataProcessor {
                     df.lazy().drop_nulls(None)
                 };
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
         }
     }
-    
-    fn apply_aggregation(&self, df: DataFrame, aggregation: &Aggregation) -> Result<DataFrame, DataError> {
+
+    fn apply_aggregation(
+        &self,
+        df: DataFrame,
+        aggregation: &Aggregation,
+    ) -> Result<DataFrame, DataError> {
         match aggregation {
             Aggregation::GroupBy { columns } => {
                 let lazy_df = df.lazy().group_by(columns.iter().map(|c| col(c)));
                 lazy_df.collect().map_err(DataError::Polars)
-            },
+            }
             Aggregation::Aggregate { operations } => {
                 let mut lazy_df = df.lazy();
-                let agg_exprs: Vec<Expr> = operations.iter().map(|op| {
-                    match op {
-                        AggOp::Sum { column, alias } => {
-                            let expr = col(column).sum();
-                            if let Some(alias) = alias {
-                                expr.alias(alias)
-                            } else {
-                                expr
+                let agg_exprs: Vec<Expr> = operations
+                    .iter()
+                    .map(|op| {
+                        match op {
+                            AggOp::Sum { column, alias } => {
+                                let expr = col(column).sum();
+                                if let Some(alias) = alias {
+                                    expr.alias(alias)
+                                } else {
+                                    expr
+                                }
                             }
-                        },
-                        AggOp::Mean { column, alias } => {
-                            let expr = col(column).mean();
-                            if let Some(alias) = alias {
-                                expr.alias(alias)
-                            } else {
-                                expr
+                            AggOp::Mean { column, alias } => {
+                                let expr = col(column).mean();
+                                if let Some(alias) = alias {
+                                    expr.alias(alias)
+                                } else {
+                                    expr
+                                }
                             }
-                        },
-                        AggOp::Count { column, alias } => {
-                            let expr = col(column).count();
-                            if let Some(alias) = alias {
-                                expr.alias(alias)
-                            } else {
-                                expr
+                            AggOp::Count { column, alias } => {
+                                let expr = col(column).count();
+                                if let Some(alias) = alias {
+                                    expr.alias(alias)
+                                } else {
+                                    expr
+                                }
                             }
-                        },
-                        _ => col(column).sum(), // Placeholder
-                    }
-                }).collect();
-                
+                            _ => col(column).sum(), // Placeholder
+                        }
+                    })
+                    .collect();
+
                 lazy_df.agg(agg_exprs).collect().map_err(DataError::Polars)
-            },
+            }
             _ => Ok(df), // Placeholder for other aggregation types
         }
     }
@@ -582,7 +691,7 @@ impl DataMetadata {
                 (name.clone(), format!("{:?}", dtype))
             })
             .collect();
-        
+
         Self {
             row_count: df.height(),
             column_count: df.width(),
@@ -617,7 +726,7 @@ impl StreamBuffer {
             dropped_count: 0,
         }
     }
-    
+
     pub fn push(&mut self, data: DataFrame) {
         if self.buffer.len() >= self.max_size {
             self.buffer.remove(0);
@@ -625,7 +734,7 @@ impl StreamBuffer {
         }
         self.buffer.push(data);
     }
-    
+
     pub fn process_batch(&mut self, batch_size: usize) -> Result<ProcessedData, DataError> {
         if self.buffer.is_empty() {
             return Ok(ProcessedData {
@@ -634,24 +743,22 @@ impl StreamBuffer {
                 processing_time: std::time::Duration::from_millis(0),
             });
         }
-        
-        let combined_df = self.buffer
-            .iter()
-            .fold(DataFrame::empty(), |acc, df| {
-                if acc.is_empty() {
-                    df.clone()
-                } else {
-                    concat(&[acc, df.clone()], Default::default()).unwrap_or(df.clone())
-                }
-            });
-        
+
+        let combined_df = self.buffer.iter().fold(DataFrame::empty(), |acc, df| {
+            if acc.is_empty() {
+                df.clone()
+            } else {
+                concat(&[acc, df.clone()], Default::default()).unwrap_or(df.clone())
+            }
+        });
+
         Ok(ProcessedData {
             data: combined_df,
             metadata: DataMetadata::from_dataframe(&combined_df),
             processing_time: std::time::Duration::from_millis(0),
         })
     }
-    
+
     pub fn health_metrics(&self) -> StreamHealth {
         StreamHealth {
             buffer_utilization: self.buffer.len() as f32 / self.max_size as f32,

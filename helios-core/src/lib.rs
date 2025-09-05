@@ -17,40 +17,43 @@ pub mod intelligence;
 pub mod performance;
 pub mod utils;
 
-pub use chart::*;
-pub use data::*;
-pub use render::*;
+pub use chart::{ChartSpec, ChartSpecBuilder, DataReference, Encoding, MarkType};
+pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use gpu::*;
 pub use intelligence::*;
+pub use render::*;
 pub use utils::*;
 
 /// Core error types for Helios
 #[derive(Debug, thiserror::Error)]
 pub enum HeliosError {
     #[error("Data processing error: {0}")]
-    DataProcessing(#[from] DataError),
-    
+    DataProcessing(#[from] data_minimal::DataError),
+
     #[error("Rendering error: {0}")]
-    Rendering(#[from] RenderError),
-    
+    Rendering(#[from] render_simple::RenderError),
+
     #[error("Validation error: {0}")]
-    Validation(#[from] ValidationError),
-    
+    Validation(#[from] chart::ValidationError),
+
     #[error("ML error: {0}")]
-    MachineLearning(#[from] MLError),
-    
+    MachineLearning(#[from] intelligence::MLError),
+
     #[error("Configuration error: {0}")]
     Configuration(String),
-    
+
     #[error("Performance budget exceeded: {details}")]
     PerformanceBudget { details: String },
 }
 
 impl HeliosError {
     pub fn is_recoverable(&self) -> bool {
-        matches!(self, HeliosError::Configuration(_) | HeliosError::PerformanceBudget { .. })
+        matches!(
+            self,
+            HeliosError::Configuration(_) | HeliosError::PerformanceBudget { .. }
+        )
     }
-    
+
     pub fn user_message(&self) -> String {
         match self {
             HeliosError::DataProcessing(e) => format!("Data processing failed: {}", e),
@@ -63,7 +66,7 @@ impl HeliosError {
             }
         }
     }
-    
+
     pub fn suggested_actions(&self) -> Vec<String> {
         match self {
             HeliosError::DataProcessing(_) => vec![
@@ -118,17 +121,17 @@ pub async fn init() -> Result<()> {
     {
         console_error_panic_hook::set_once();
     }
-    
+
     // Initialize WebGPU/WebGL context
-    let renderer = Renderer::new().await?;
-    
+    let _renderer = Renderer::new().await?;
+
     // Initialize data processing pipeline
-    let data_processor = DataProcessor::new()?;
-    
+    let _data_processor = DataProcessor::new()?;
+
     // Initialize ML pipeline if available
     #[cfg(feature = "ml")]
-    let ml_pipeline = MLPipeline::new().await?;
-    
+    let _ml_pipeline = MLPipeline::new().await?;
+
     Ok(())
 }
 
@@ -156,22 +159,18 @@ pub struct BuildInfo {
 }
 
 fn get_enabled_features() -> Vec<String> {
-    let mut features = Vec::new();
-    
-    #[cfg(feature = "webgpu")]
-    features.push("webgpu".to_string());
-    
-    #[cfg(feature = "webgl2")]
-    features.push("webgl2".to_string());
-    
-    #[cfg(feature = "canvas2d")]
-    features.push("canvas2d".to_string());
-    
-    #[cfg(feature = "simd")]
-    features.push("simd".to_string());
-    
-    #[cfg(feature = "debug")]
-    features.push("debug".to_string());
-    
+    let features = vec![
+        #[cfg(feature = "webgpu")]
+        "webgpu".to_string(),
+        #[cfg(feature = "webgl2")]
+        "webgl2".to_string(),
+        #[cfg(feature = "canvas2d")]
+        "canvas2d".to_string(),
+        #[cfg(feature = "simd")]
+        "simd".to_string(),
+        #[cfg(feature = "debug")]
+        "debug".to_string(),
+    ];
+
     features
 }

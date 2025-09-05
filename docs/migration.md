@@ -103,7 +103,7 @@ const chart = new Chart(ctx, {
 // Helios line chart
 let chart_spec = helios::chart! {
     data: data,
-    mark: Line { 
+    mark: Line {
         stroke_width: Some(2.0),
         interpolate: Some(Interpolation::Smooth)
     },
@@ -158,8 +158,8 @@ let chart_spec = helios::chart! {
         x: { field: "x", type: Quantitative },
         y: { field: "y", type: Quantitative },
         z: { field: "z", type: Quantitative },
-        color: { 
-            field: "value", 
+        color: {
+            field: "value",
             type: Quantitative,
             scale: { scheme: "viridis" }
         }
@@ -321,7 +321,7 @@ let chart_spec = helios::chart! {
 const brush = d3.brush()
     .on("brush", function(event) {
         const selection = event.selection;
-        const brushedData = data.filter(d => 
+        const brushedData = data.filter(d =>
             selection[0][0] <= xScale(d.x) && xScale(d.x) <= selection[1][0] &&
             selection[0][1] <= yScale(d.y) && yScale(d.y) <= selection[1][1]
         );
@@ -385,7 +385,7 @@ let chart_spec = helios::chart! {
 };
 
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart_spec
         performance=PerformanceConfig::new()
             .quality_mode(QualityMode::Adaptive)
@@ -403,12 +403,12 @@ view! {
 function updateChart(newData) {
     const circles = svg.selectAll("circle")
         .data(newData, d => d.id);
-    
+
     circles.enter()
         .append("circle")
         .attr("cx", d => xScale(d.x))
         .attr("cy", d => yScale(d.y));
-    
+
     circles.exit().remove();
 }
 // Can only handle ~12fps with 10K points/second
@@ -420,7 +420,7 @@ function updateChart(newData) {
 #[component]
 pub fn StreamingChart() -> impl IntoView {
     let (stream_data, set_stream_data) = create_signal(DataFrame::empty());
-    
+
     create_effect(move |_| {
         let ws = WebSocket::new("ws://localhost:8080/data").unwrap();
         ws.set_onmessage(Some(Box::new(move |event| {
@@ -428,7 +428,7 @@ pub fn StreamingChart() -> impl IntoView {
             set_stream_data.update(|df| *df = combine_dataframes(df.clone(), new_data));
         })));
     });
-    
+
     let chart_spec = create_memo(move |_| {
         helios::chart! {
             data: stream_data.get(),
@@ -439,10 +439,10 @@ pub fn StreamingChart() -> impl IntoView {
             }
         }
     });
-    
+
     view! {
-        <HeliosChart 
-            spec=chart_spec 
+        <HeliosChart
+            spec=chart_spec
             performance=PerformanceConfig::new()
                 .target_fps(Some(60))
                 .quality_mode(QualityMode::Performance)
@@ -507,13 +507,13 @@ pub fn Dashboard() -> impl IntoView {
 #[component]
 pub fn ChartWrapper() -> impl IntoView {
     let canvas_ref = create_node_ref::<Canvas>();
-    
+
     create_effect(move |_| {
         let canvas = canvas_ref.get().expect("Canvas ref available");
         // Initialize existing chart library
         init_legacy_chart(&canvas);
     });
-    
+
     view! {
         <canvas node_ref=canvas_ref />
     }
@@ -529,7 +529,7 @@ pub fn HybridDashboard() -> impl IntoView {
         <div class="dashboard">
             // New charts with Helios
             <HeliosChart spec=simple_chart />
-            
+
             // Complex legacy charts
             <LegacyChartWrapper />
         </div>
@@ -545,18 +545,18 @@ pub fn HybridDashboard() -> impl IntoView {
 pub fn js_data_to_dataframe(js_data: &JsValue) -> Result<DataFrame, ConversionError> {
     let data: Vec<serde_json::Value> = js_data.into_serde()?;
     let mut columns = HashMap::new();
-    
+
     for item in data {
         for (key, value) in item.as_object().unwrap() {
             columns.entry(key.clone()).or_insert_with(Vec::new).push(value);
         }
     }
-    
+
     let series: Vec<Series> = columns
         .into_iter()
         .map(|(name, values)| Series::new(&name, values))
         .collect();
-    
+
     Ok(DataFrame::new(series)?)
 }
 ```

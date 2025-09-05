@@ -326,15 +326,15 @@ pub struct ChartRenderer {
 
 impl ChartRenderer {
     /// Renders a chart specification to the given render pass.
-    /// 
+    ///
     /// # Arguments
     /// * `spec` - The chart specification to render
     /// * `render_pass` - The WebGPU render pass
-    /// 
+    ///
     /// # Returns
     /// Rendering statistics including frame time and memory usage
     pub fn render_chart(
-        &mut self, 
+        &mut self,
         spec: &ChartSpec,
         render_pass: &mut RenderPass
     ) -> RenderStats {
@@ -362,10 +362,10 @@ use thiserror::Error;
 pub enum ChartError {
     #[error("Invalid data format: {0}")]
     InvalidData(String),
-    
+
     #[error("Rendering failed: {0}")]
     RenderError(#[from] wgpu::Error),
-    
+
     #[error("Configuration error: {field} must be > 0")]
     ConfigError { field: String },
 }
@@ -384,23 +384,23 @@ Every contribution should include appropriate tests:
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_chart_creation() {
         let spec = ChartSpec {
             mark: MarkType::Point,
             // ... other fields
         };
-        
+
         let chart = create_chart(&spec).unwrap();
         assert_eq!(chart.mark_type(), MarkType::Point);
     }
-    
+
     #[wasm_bindgen_test]
     async fn test_wasm_rendering() {
         let chart = create_test_chart();
         let stats = render_chart_to_canvas(&chart).await;
-        
+
         assert!(stats.frame_time < Duration::from_millis(16));
         assert!(stats.memory_used < 100 * 1024 * 1024); // 100MB limit
     }
@@ -418,7 +418,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 fn benchmark_point_rendering(c: &mut Criterion) {
     let points = generate_test_points(100_000);
-    
+
     c.bench_function("render 100k points", |b| {
         b.iter(|| {
             render_points(black_box(&points))
@@ -441,7 +441,7 @@ cargo bench > before.txt
 # Make your changes
 # ...
 
-# Run benchmarks after changes  
+# Run benchmarks after changes
 cargo bench > after.txt
 
 # Compare results
@@ -457,22 +457,22 @@ All public APIs must have comprehensive documentation:
 
 ```rust
 /// A high-performance chart renderer using WebGPU.
-/// 
+///
 /// The `ChartRenderer` provides efficient rendering of data visualizations
 /// by leveraging GPU acceleration and intelligent optimization strategies.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```rust
 /// use helios::ChartRenderer;
-/// 
+///
 /// let renderer = ChartRenderer::new().await?;
 /// let stats = renderer.render(&chart_spec)?;
 /// println!("Rendered in {}ms", stats.frame_time.as_millis());
 /// ```
-/// 
+///
 /// # Performance
-/// 
+///
 /// - Supports up to 10M points at 60fps with WebGPU
 /// - Memory usage scales linearly with data size
 /// - Automatic quality adjustment based on performance
@@ -552,7 +552,7 @@ Contributors are recognized in:
 ### Development Questions
 
 1. **Check existing documentation** first
-2. **Search GitHub issues** for similar questions  
+2. **Search GitHub issues** for similar questions
 3. **Ask in GitHub Discussions** for general questions
 4. **Join Discord** for real-time help
 5. **Create issue** if you find a bug or have a specific technical question
@@ -597,7 +597,7 @@ We measure project success through:
 
 Every contribution, no matter how small, helps make Helios better. Whether you're:
 - Fixing typos in documentation
-- Reporting bugs you've encountered  
+- Reporting bugs you've encountered
 - Contributing new features
 - Helping other users
 - Spreading the word about Helios

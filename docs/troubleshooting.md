@@ -102,7 +102,7 @@ let chart = helios::chart! {
 };
 
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart
         performance=PerformanceConfig::new()
             .memory_limit(Some(100 * 1024 * 1024)) // 100MB limit
@@ -138,7 +138,7 @@ use leptos::*;
 #[component]
 pub fn MyChart() -> impl IntoView {
     let (data, set_data) = create_signal(DataFrame::empty());
-    
+
     // Use create_memo for derived state
     let chart_spec = create_memo(move |_| {
         helios::chart! {
@@ -150,7 +150,7 @@ pub fn MyChart() -> impl IntoView {
             }
         }
     });
-    
+
     view! {
         <HeliosChart spec=chart_spec />
     }
@@ -190,7 +190,7 @@ fn validate_dataframe(df: &DataFrame) -> Result<(), DataError> {
     if df.is_empty() {
         return Err(DataError::EmptyData);
     }
-    
+
     // Check required columns
     let required_columns = ["x", "y"];
     for col in required_columns {
@@ -198,7 +198,7 @@ fn validate_dataframe(df: &DataFrame) -> Result<(), DataError> {
             return Err(DataError::MissingColumn(col.to_string()));
         }
     }
-    
+
     Ok(())
 }
 
@@ -227,7 +227,7 @@ let processed_df = df
 ```rust
 // Enable performance monitoring
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart_spec
         debug=true  // Shows performance metrics
         performance=PerformanceConfig::new()
@@ -282,7 +282,7 @@ pub async fn check_browser_support() -> BrowserSupport {
     let webgpu_supported = webgpu::is_supported().await;
     let webgl2_supported = webgl2::is_supported();
     let canvas_supported = canvas2d::is_supported();
-    
+
     BrowserSupport {
         webgpu: webgpu_supported,
         webgl2: webgl2_supported,
@@ -330,13 +330,13 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
           override: true
-      
+
       - name: Install trunk
         run: cargo install trunk
-      
+
       - name: Build
         run: trunk build --release
-      
+
       - name: Test
         run: cargo test
 ```
@@ -385,7 +385,7 @@ pub fn enable_performance_debugging() {
 #[component]
 pub fn PerformanceMonitor() -> impl IntoView {
     let (metrics, set_metrics) = create_signal(PerformanceMetrics::default());
-    
+
     use_interval_fn(
         move || {
             if let Some(renderer) = get_renderer_instance() {
@@ -394,7 +394,7 @@ pub fn PerformanceMonitor() -> impl IntoView {
         },
         Duration::from_secs(1)
     );
-    
+
     view! {
         <div class="performance-monitor">
             <div>"FPS: " {move || format!("{:.1}", metrics.get().fps())}</div>
@@ -412,12 +412,12 @@ pub fn PerformanceMonitor() -> impl IntoView {
 pub fn debug_dataframe(df: &DataFrame, name: &str) {
     #[cfg(debug_assertions)]
     {
-        console::log_1(&format!("DataFrame '{}': {} rows, {} columns", 
+        console::log_1(&format!("DataFrame '{}': {} rows, {} columns",
             name, df.height(), df.width()).into());
-        
+
         for col_name in df.get_column_names() {
             let series = df.column(col_name).unwrap();
-            console::log_1(&format!("  {}: {:?} ({} nulls)", 
+            console::log_1(&format!("  {}: {:?} ({} nulls)",
                 col_name, series.dtype(), series.null_count()).into());
         }
     }
@@ -435,10 +435,10 @@ where
     IV: IntoView,
 {
     let (error, set_error) = create_signal(None::<String>);
-    
+
     view! {
         <div class="error-boundary">
-            <Show 
+            <Show
                 when=move || error.get().is_some()
                 fallback=move || children()
             >

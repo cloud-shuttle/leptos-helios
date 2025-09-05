@@ -44,25 +44,25 @@ command_exists() {
 # Install missing tools
 install_tools() {
     log_info "Checking build tools..."
-    
+
     # Check for Rust
     if ! command_exists cargo; then
         log_error "Rust/Cargo not found. Please install Rust: https://rustup.rs/"
         exit 1
     fi
-    
+
     # Check for wasm-pack
     if ! command_exists wasm-pack; then
         log_warning "wasm-pack not found. Installing..."
         cargo install wasm-pack
     fi
-    
+
     # Check for trunk
     if ! command_exists trunk; then
         log_warning "trunk not found. Installing..."
         cargo install trunk
     fi
-    
+
     # Check for wasm-opt
     if ! command_exists wasm-opt; then
         log_warning "wasm-opt not found. Installing binaryen..."
@@ -75,7 +75,7 @@ install_tools() {
             exit 1
         fi
     fi
-    
+
     log_success "All build tools are available"
 }
 
@@ -91,7 +91,7 @@ clean_build() {
 # Build Rust to WASM
 build_wasm() {
     log_info "Building Rust to WASM..."
-    
+
     # Build with wasm-pack
     wasm-pack build \
         --target web \
@@ -102,14 +102,14 @@ build_wasm() {
         --no-pack \
         --no-default-features \
         --features webgpu,simd
-    
+
     log_success "WASM build completed"
 }
 
 # Optimize WASM
 optimize_wasm() {
     log_info "Optimizing WASM..."
-    
+
     if command_exists wasm-opt; then
         wasm-opt \
             -O$OPTIMIZATION_LEVEL \
@@ -125,7 +125,7 @@ optimize_wasm() {
             --strip-producers \
             $PKG_DIR/helios_bg.wasm \
             -o $PKG_DIR/helios_optimized.wasm
-        
+
         # Replace original with optimized
         mv $PKG_DIR/helios_optimized.wasm $PKG_DIR/helios_bg.wasm
         log_success "WASM optimization completed"
@@ -137,7 +137,7 @@ optimize_wasm() {
 # Build with Trunk
 build_trunk() {
     log_info "Building with Trunk..."
-    
+
     # Create index.html if it doesn't exist
     if [ ! -f "index.html" ]; then
         cat > index.html << 'EOF'
@@ -197,25 +197,25 @@ build_trunk() {
 </html>
 EOF
     fi
-    
+
     # Build with Trunk
     trunk build --release
-    
+
     log_success "Trunk build completed"
 }
 
 # Run tests
 run_tests() {
     log_info "Running tests..."
-    
+
     # Run Rust tests
     cargo test --workspace
-    
+
     # Run WASM tests if available
     if [ -f "tests/wasm_tests.js" ]; then
         node tests/wasm_tests.js
     fi
-    
+
     log_success "All tests passed"
 }
 
@@ -228,13 +228,13 @@ dev_server() {
 # Main build function
 build() {
     log_info "Starting Helios build process..."
-    
+
     install_tools
     clean_build
     build_wasm
     optimize_wasm
     build_trunk
-    
+
     log_success "Build completed successfully!"
     log_info "Output directory: $RELEASE_DIR"
     log_info "Package directory: $PKG_DIR"

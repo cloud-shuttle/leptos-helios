@@ -1,5 +1,5 @@
 //! Helios Leptos Integration
-//! 
+//!
 //! This crate provides Leptos v0.8 integration for Helios visualization library.
 
 // pub mod components;

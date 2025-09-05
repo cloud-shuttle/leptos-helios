@@ -5,10 +5,10 @@
 pub enum MLError {
     #[error("Model error: {0}")]
     Model(String),
-    
+
     #[error("Inference error: {0}")]
     Inference(String),
-    
+
     #[error("Training error: {0}")]
     Training(String),
 }

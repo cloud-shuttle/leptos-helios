@@ -28,21 +28,21 @@ var<uniform> uniforms: Uniforms;
 @vertex
 fn vs_main(vertex: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    
+
     // Transform position
     let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
     out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
-    
+
     // Color based on statistical element type
     var color = vertex.color;
     if (vertex.statistical_value >= 5.0) {
         // Outlier - different color
         color = vec2<f32>(1.0, 0.0); // Red for outliers
     }
-    
+
     out.color = vec4<f32>(color, uniforms.alpha, 1.0);
     out.stat_type = vertex.statistical_value;
-    
+
     return out;
 }
 
@@ -53,11 +53,11 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
         // Render outlier as circle
         let center = vec2<f32>(0.5, 0.5);
         let dist = distance(in.color.xy, center);
-        
+
         if (dist > 0.5) {
             discard;
         }
-        
+
         let alpha = 1.0 - smoothstep(0.3, 0.5, dist);
         return vec4<f32>(in.color.rgb, in.color.a * alpha);
     } else {

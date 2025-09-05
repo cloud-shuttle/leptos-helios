@@ -250,5 +250,5 @@ This security policy is licensed under the [Creative Commons Attribution 4.0 Int
 
 ---
 
-**Last Updated**: January 2024  
+**Last Updated**: January 2024
 **Next Review**: July 2024

@@ -33,7 +33,7 @@ Helios represents a strategic opportunity to create the definitive visualization
 [workspace]
 members = [
     "helios-core",
-    "helios-leptos", 
+    "helios-leptos",
     "helios-examples",
     "helios-benchmarks"
 ]

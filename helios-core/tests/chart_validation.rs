@@ -1,5 +1,5 @@
 //! TDD Tests for Chart Specification Validation
-//! 
+//!
 //! Following RED-GREEN-REFACTOR cycle:
 //! 1. RED: Write failing tests first
 //! 2. GREEN: Implement minimal code to make tests pass
@@ -13,7 +13,7 @@ use helios_core::DataFrame;
 fn test_chart_spec_validation_success() {
     // RED: This test should fail initially
     let spec = create_test_chart_spec();
-    
+
     // Test that valid chart specification passes validation
     let result = spec.validate();
     assert!(result.is_ok(), "Valid chart spec should pass validation");
@@ -23,13 +23,16 @@ fn test_chart_spec_validation_success() {
 fn test_chart_spec_validation_missing_required_encoding() {
     // RED: Test that missing required encodings fail validation
     let mut spec = create_test_chart_spec();
-    
+
     // Remove required x encoding for point chart
     spec.encoding.x = None;
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Chart spec missing required encoding should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Chart spec missing required encoding should fail validation"
+    );
+
     if let Err(ValidationError::MissingRequiredEncoding(msg)) = result {
         assert!(msg.contains("x and y required for points"));
     } else {
@@ -42,10 +45,10 @@ fn test_chart_spec_validation_empty_dataframe() {
     // RED: Test that empty DataFrame fails validation
     let mut spec = create_test_chart_spec();
     spec.data = DataReference::DataFrame(DataFrame::empty());
-    
+
     let result = spec.validate();
     assert!(result.is_err(), "Empty DataFrame should fail validation");
-    
+
     if let Err(ValidationError::DataValidation(msg)) = result {
         assert!(msg.contains("Empty DataFrame"));
     } else {
@@ -57,14 +60,14 @@ fn test_chart_spec_validation_empty_dataframe() {
 fn test_chart_spec_validation_invalid_url() {
     // RED: Test that invalid URL fails validation
     let mut spec = create_test_chart_spec();
-    spec.data = DataReference::Url { 
-        url: "".to_string(), 
-        format: DataFormat::Csv 
+    spec.data = DataReference::Url {
+        url: "".to_string(),
+        format: DataFormat::Csv,
     };
-    
+
     let result = spec.validate();
     assert!(result.is_err(), "Empty URL should fail validation");
-    
+
     if let Err(ValidationError::DataValidation(msg)) = result {
         assert!(msg.contains("Empty URL"));
     } else {
@@ -76,14 +79,14 @@ fn test_chart_spec_validation_invalid_url() {
 fn test_chart_spec_validation_invalid_sql_query() {
     // RED: Test that invalid SQL query fails validation
     let mut spec = create_test_chart_spec();
-    spec.data = DataReference::Query { 
-        sql: "".to_string(), 
-        dataset: "test".to_string() 
+    spec.data = DataReference::Query {
+        sql: "".to_string(),
+        dataset: "test".to_string(),
     };
-    
+
     let result = spec.validate();
     assert!(result.is_err(), "Empty SQL query should fail validation");
-    
+
     if let Err(ValidationError::DataValidation(msg)) = result {
         assert!(msg.contains("Empty SQL query"));
     } else {
@@ -105,10 +108,13 @@ fn test_chart_spec_validation_invalid_forecast_config() {
         trend_analysis: None,
         clustering: None,
     });
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Invalid forecast config should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Invalid forecast config should fail validation"
+    );
+
     if let Err(ValidationError::InvalidIntelligence(msg)) = result {
         assert!(msg.contains("Forecast periods must be > 0"));
     } else {
@@ -130,10 +136,13 @@ fn test_chart_spec_validation_invalid_confidence_interval() {
         trend_analysis: None,
         clustering: None,
     });
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Invalid confidence interval should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Invalid confidence interval should fail validation"
+    );
+
     if let Err(ValidationError::InvalidIntelligence(msg)) = result {
         assert!(msg.contains("Confidence must be between 0 and 1"));
     } else {
@@ -155,10 +164,13 @@ fn test_chart_spec_validation_invalid_anomaly_threshold() {
         trend_analysis: None,
         clustering: None,
     });
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Invalid anomaly threshold should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Invalid anomaly threshold should fail validation"
+    );
+
     if let Err(ValidationError::InvalidIntelligence(msg)) = result {
         assert!(msg.contains("Anomaly threshold must be between 0 and 1"));
     } else {
@@ -176,10 +188,13 @@ fn test_chart_spec_validation_empty_selection_name() {
         bind: None,
         fields: None,
     }];
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Empty selection name should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Empty selection name should fail validation"
+    );
+
     if let Err(ValidationError::InvalidSelection(msg)) = result {
         assert!(msg.contains("Empty selection name"));
     } else {
@@ -191,13 +206,16 @@ fn test_chart_spec_validation_empty_selection_name() {
 fn test_chart_spec_validation_empty_filter_expression() {
     // RED: Test that empty filter expression fails validation
     let mut spec = create_test_chart_spec();
-    spec.transform = vec![Transform::Filter { 
-        expression: "".to_string() // Invalid: empty expression
+    spec.transform = vec![Transform::Filter {
+        expression: "".to_string(), // Invalid: empty expression
     }];
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Empty filter expression should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Empty filter expression should fail validation"
+    );
+
     if let Err(ValidationError::InvalidTransform(msg)) = result {
         assert!(msg.contains("Empty filter expression"));
     } else {
@@ -209,14 +227,17 @@ fn test_chart_spec_validation_empty_filter_expression() {
 fn test_chart_spec_validation_empty_aggregation_operations() {
     // RED: Test that empty aggregation operations fail validation
     let mut spec = create_test_chart_spec();
-    spec.transform = vec![Transform::Aggregate { 
+    spec.transform = vec![Transform::Aggregate {
         operations: vec![], // Invalid: no operations
         groupby: vec!["category".to_string()],
     }];
-    
+
     let result = spec.validate();
-    assert!(result.is_err(), "Empty aggregation operations should fail validation");
-    
+    assert!(
+        result.is_err(),
+        "Empty aggregation operations should fail validation"
+    );
+
     if let Err(ValidationError::InvalidTransform(msg)) = result {
         assert!(msg.contains("No aggregation operations"));
     } else {
@@ -229,21 +250,27 @@ fn test_chart_spec_complexity_calculation() {
     // RED: Test complexity calculation for different chart types
     let point_spec = create_test_chart_spec();
     let complexity = point_spec.complexity();
-    
+
     // Point charts should have base complexity of 1.0
-    assert!(complexity >= 1.0, "Point chart complexity should be at least 1.0");
-    
+    assert!(
+        complexity >= 1.0,
+        "Point chart complexity should be at least 1.0"
+    );
+
     // Test line chart complexity
     let mut line_spec = create_test_chart_spec();
-    line_spec.mark = MarkType::Line { 
-        interpolate: None, 
-        stroke_width: None, 
-        stroke_dash: None 
+    line_spec.mark = MarkType::Line {
+        interpolate: None,
+        stroke_width: None,
+        stroke_dash: None,
     };
     let line_complexity = line_spec.complexity();
-    
+
     // Line charts should have higher complexity than points
-    assert!(line_complexity > complexity, "Line chart should have higher complexity than point chart");
+    assert!(
+        line_complexity > complexity,
+        "Line chart should have higher complexity than point chart"
+    );
 }
 
 #[test]
@@ -252,16 +279,19 @@ fn test_chart_spec_optimization() {
     let spec = create_test_chart_spec();
     let original_complexity = spec.complexity();
     let optimized_spec = spec.optimize();
-    
+
     // Optimized spec should still be valid
     let result = optimized_spec.validate();
     assert!(result.is_ok(), "Optimized chart spec should still be valid");
-    
+
     // Complexity should be the same or better
     let optimized_complexity = optimized_spec.complexity();
-    assert!(optimized_complexity <= original_complexity, 
-        "Optimized complexity should be same or better: {} <= {}", 
-        optimized_complexity, original_complexity);
+    assert!(
+        optimized_complexity <= original_complexity,
+        "Optimized complexity should be same or better: {} <= {}",
+        optimized_complexity,
+        original_complexity
+    );
 }
 
 #[test]
@@ -269,7 +299,11 @@ fn test_chart_spec_builder() {
     // RED: Test chart specification builder
     let spec = ChartSpecBuilder::new()
         .data(DataReference::DataFrame(create_test_dataframe()))
-        .mark(MarkType::Point { size: Some(5.0), shape: None, opacity: None })
+        .mark(MarkType::Point {
+            size: Some(5.0),
+            shape: None,
+            opacity: None,
+        })
         .encoding(Encoding {
             x: Some(PositionEncoding {
                 field: "x".to_string(),
@@ -290,11 +324,18 @@ fn test_chart_spec_builder() {
             ..Default::default()
         })
         .build();
-    
+
     assert!(spec.is_ok(), "Chart spec builder should create valid spec");
-    
+
     let spec = spec.unwrap();
-    assert_eq!(spec.mark, MarkType::Point { size: Some(5.0), shape: None, opacity: None });
+    assert_eq!(
+        spec.mark,
+        MarkType::Point {
+            size: Some(5.0),
+            shape: None,
+            opacity: None
+        }
+    );
     assert!(spec.encoding.x.is_some());
     assert!(spec.encoding.y.is_some());
 }
@@ -302,23 +343,53 @@ fn test_chart_spec_builder() {
 #[test]
 fn test_mark_type_complexity() {
     // RED: Test mark type complexity calculation
-    let point_complexity = MarkType::Point { size: None, shape: None, opacity: None }.complexity();
-    let line_complexity = MarkType::Line { interpolate: None, stroke_width: None, stroke_dash: None }.complexity();
-    let bar_complexity = MarkType::Bar { width: None, corner_radius: None }.complexity();
-    let area_complexity = MarkType::Area { interpolate: None, opacity: None }.complexity();
-    
+    let point_complexity = MarkType::Point {
+        size: None,
+        shape: None,
+        opacity: None,
+    }
+    .complexity();
+    let line_complexity = MarkType::Line {
+        interpolate: None,
+        stroke_width: None,
+        stroke_dash: None,
+    }
+    .complexity();
+    let bar_complexity = MarkType::Bar {
+        width: None,
+        corner_radius: None,
+    }
+    .complexity();
+    let area_complexity = MarkType::Area {
+        interpolate: None,
+        opacity: None,
+    }
+    .complexity();
+
     assert_eq!(point_complexity, 1.0, "Point complexity should be 1.0");
     assert_eq!(line_complexity, 2.0, "Line complexity should be 2.0");
     assert_eq!(bar_complexity, 1.5, "Bar complexity should be 1.5");
     assert_eq!(area_complexity, 3.0, "Area complexity should be 3.0");
-    
+
     // Test composite mark complexity
     let composite_complexity = MarkType::Composite(vec![
-        MarkType::Point { size: None, shape: None, opacity: None },
-        MarkType::Line { interpolate: None, stroke_width: None, stroke_dash: None },
-    ]).complexity();
-    
-    assert_eq!(composite_complexity, 3.0, "Composite complexity should be sum of parts");
+        MarkType::Point {
+            size: None,
+            shape: None,
+            opacity: None,
+        },
+        MarkType::Line {
+            interpolate: None,
+            stroke_width: None,
+            stroke_dash: None,
+        },
+    ])
+    .complexity();
+
+    assert_eq!(
+        composite_complexity, 3.0,
+        "Composite complexity should be sum of parts"
+    );
 }
 
 #[test]
@@ -343,7 +414,7 @@ fn test_encoding_complexity() {
         }),
         ..Default::default()
     };
-    
+
     let complex_encoding = Encoding {
         x: Some(PositionEncoding {
             field: "x".to_string(),
@@ -380,13 +451,22 @@ fn test_encoding_complexity() {
         }),
         ..Default::default()
     };
-    
+
     let simple_complexity = simple_encoding.complexity();
     let complex_complexity = complex_encoding.complexity();
-    
-    assert_eq!(simple_complexity, 2.0, "Simple encoding should have complexity 2.0");
-    assert!(complex_complexity > simple_complexity, "Complex encoding should have higher complexity");
-    assert_eq!(complex_complexity, 6.5, "Complex encoding should have complexity 6.5");
+
+    assert_eq!(
+        simple_complexity, 2.0,
+        "Simple encoding should have complexity 2.0"
+    );
+    assert!(
+        complex_complexity > simple_complexity,
+        "Complex encoding should have higher complexity"
+    );
+    assert_eq!(
+        complex_complexity, 6.5,
+        "Complex encoding should have complexity 6.5"
+    );
 }
 
 #[test]
@@ -398,7 +478,7 @@ fn test_intelligence_complexity() {
         trend_analysis: None,
         clustering: None,
     };
-    
+
     let with_forecast = Intelligence {
         forecast: Some(ForecastConfig {
             periods: 30,
@@ -409,7 +489,7 @@ fn test_intelligence_complexity() {
         trend_analysis: None,
         clustering: None,
     };
-    
+
     let with_all_features = Intelligence {
         forecast: Some(ForecastConfig {
             periods: 30,
@@ -428,12 +508,21 @@ fn test_intelligence_complexity() {
             features: vec!["x".to_string(), "y".to_string()],
         }),
     };
-    
+
     let no_complexity = no_intelligence.complexity();
     let forecast_complexity = with_forecast.complexity();
     let all_complexity = with_all_features.complexity();
-    
-    assert_eq!(no_complexity, 0.0, "No intelligence should have complexity 0.0");
-    assert_eq!(forecast_complexity, 2.0, "Forecast should have complexity 2.0");
-    assert_eq!(all_complexity, 7.0, "All features should have complexity 7.0");
+
+    assert_eq!(
+        no_complexity, 0.0,
+        "No intelligence should have complexity 0.0"
+    );
+    assert_eq!(
+        forecast_complexity, 2.0,
+        "Forecast should have complexity 2.0"
+    );
+    assert_eq!(
+        all_complexity, 7.0,
+        "All features should have complexity 7.0"
+    );
 }

@@ -1,0 +1,139 @@
+# Pre-commit hooks configuration for Helios
+# Ensures code quality and consistency across the project
+
+repos:
+  # Rust-specific hooks
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        name: cargo fmt
+        description: Format Rust code
+        entry: cargo fmt
+        language: system
+        types: [rust]
+        
+      - id: clippy
+        name: cargo clippy
+        description: Lint Rust code
+        entry: cargo clippy
+        language: system
+        types: [rust]
+        
+        
+
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        description: Remove trailing whitespace
+        types: [text]
+        
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        description: Ensure files end with a newline
+        types: [text]
+        
+      - id: check-yaml
+        name: Check YAML
+        description: Check YAML syntax
+        types: [yaml]
+        
+      - id: check-toml
+        name: Check TOML
+        description: Check TOML syntax
+        types: [toml]
+        
+      - id: check-json
+        name: Check JSON
+        description: Check JSON syntax
+        types: [json]
+        
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+        description: Check for merge conflict markers
+        types: [text]
+        
+      - id: check-added-large-files
+        name: Check for large files
+        description: Prevent large files from being committed
+        args: ['--maxkb=1000']
+        
+      - id: mixed-line-ending
+        name: Mixed Line Ending
+        description: Ensure consistent line endings
+        args: ['--fix=lf']
+        
+      - id: check-case-conflict
+        name: Check for case conflicts
+        description: Check for files that would conflict in case-insensitive filesystems
+
+  # Security hooks
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets
+        description: Detect potential secrets in code
+        args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            \.secrets\.baseline|
+            \.git/.*|
+            target/.*|
+            pkg/.*|
+            dist/.*
+          )$
+
+  # Documentation hooks
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: Prettier
+        description: Format code with Prettier
+        types: [javascript, jsx, ts, tsx, json, css, scss, html, markdown, yaml]
+        exclude: |
+          (?x)^(
+            target/.*|
+            pkg/.*|
+            dist/.*|
+            node_modules/.*
+          )$
+
+
+# Configuration
+default_stages: [pre-commit]
+fail_fast: false
+minimum_pre_commit_version: '3.0.0'
+
+# Exclude patterns
+exclude: |
+  (?x)^(
+    target/.*|
+    pkg/.*|
+    dist/.*|
+    node_modules/.*|
+    \.git/.*|
+    \.cargo/.*|
+    \.rustup/.*|
+    \.vscode/.*|
+    \.idea/.*|
+    \.DS_Store|
+    \.secrets\.baseline
+  )$
+
+# CI configuration
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

@@ -85,7 +85,7 @@ tree_shake = true
 # Enable code splitting
 code_split = true
 # Set chunk size limit
-chunk_size_limit = 1024 * 1024  # 1MB
+chunk_size_limit = 1048576
 
 # Source maps
 [sourcemaps]

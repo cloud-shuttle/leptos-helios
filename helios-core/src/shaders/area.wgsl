@@ -23,11 +23,11 @@ var<uniform> uniforms: Uniforms;
 @vertex
 fn vs_main(vertex: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    
+
     let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
     out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
     out.color = vec4<f32>(vertex.color, uniforms.alpha, 1.0);
-    
+
     return out;
 }
 

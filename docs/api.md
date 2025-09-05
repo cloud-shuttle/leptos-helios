@@ -13,22 +13,22 @@ The primary visualization component that integrates with Leptos's reactive syste
 pub fn HeliosChart(
     /// Chart specification - can be static or reactive
     #[prop(into)] spec: MaybeSignal<ChartSpec>,
-    
+
     /// Canvas width in pixels (optional, defaults to 800)
     #[prop(optional)] width: Option<u32>,
-    
+
     /// Canvas height in pixels (optional, defaults to 600)
     #[prop(optional)] height: Option<u32>,
-    
+
     /// Additional CSS classes (optional)
     #[prop(optional, into)] class: Option<AttributeValue>,
-    
+
     /// Interaction configuration (optional)
     #[prop(optional)] interactions: Option<InteractionConfig>,
-    
+
     /// Performance configuration (optional)
     #[prop(optional)] performance: Option<PerformanceConfig>,
-    
+
     /// Debug mode for development (optional, defaults to false)
     #[prop(optional)] debug: Option<bool>,
 ) -> impl IntoView
@@ -47,17 +47,17 @@ let (data, set_data) = create_signal(DataFrame::empty());
 let chart_spec = create_memo(move |_| create_line_chart(data.get()));
 
 view! {
-    <HeliosChart 
-        spec=chart_spec 
-        width=1200 
-        height=800 
+    <HeliosChart
+        spec=chart_spec
+        width=1200
+        height=800
         class="my-chart-class"
     />
 }
 
 // Interactive chart with performance tuning
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart_spec
         interactions=InteractionConfig::new()
             .enable_pan()
@@ -80,16 +80,16 @@ Component for loading and processing data with reactive updates.
 pub fn DataLoader<T, F, E>(
     /// Data source configuration
     source: DataSource,
-    
+
     /// Transform function applied to loaded data
     #[prop(optional)] transform: Option<T>,
-    
+
     /// Error handler function
     #[prop(optional)] on_error: Option<F>,
-    
+
     /// Loading state handler
     #[prop(optional)] on_loading: Option<fn() -> impl IntoView>,
-    
+
     /// Children components that receive the data
     children: Children,
 ) -> impl IntoView
@@ -113,7 +113,7 @@ view! {
 
 // With error handling and transforms
 view! {
-    <DataLoader 
+    <DataLoader
         source=DataSource::url("https://api.example.com/data")
         transform=|df| df.lazy().filter(col("value").gt(0)).collect()
         on_error=|e| view! { <div class="error">{e.to_string()}</div> }
@@ -135,13 +135,13 @@ Container component for multiple coordinated visualizations.
 pub fn VisualizationDashboard(
     /// Dashboard layout configuration
     #[prop(into)] layout: DashboardLayout,
-    
+
     /// Chart specifications for each panel
     #[prop(into)] charts: MaybeSignal<Vec<ChartSpec>>,
-    
+
     /// Inter-chart interactions (optional)
     #[prop(optional)] interactions: Option<Vec<ChartInteraction>>,
-    
+
     /// Global dashboard state (optional)
     #[prop(optional)] state: Option<DashboardState>,
 ) -> impl IntoView
@@ -168,13 +168,13 @@ pub struct ChartSpec {
 impl ChartSpec {
     /// Create a new chart specification
     pub fn new() -> ChartSpecBuilder;
-    
+
     /// Validate the specification
     pub fn validate(&self) -> Result<(), ValidationError>;
-    
+
     /// Optimize for performance
     pub fn optimize(self) -> Self;
-    
+
     /// Estimate render complexity
     pub fn complexity(&self) -> f64;
 }
@@ -242,16 +242,16 @@ Reference to data for visualization.
 pub enum DataReference {
     /// Direct DataFrame reference
     DataFrame(DataFrame),
-    
+
     /// URL to data source
     Url { url: String, format: DataFormat },
-    
+
     /// SQL query against registered dataset
     Query { sql: String, dataset: String },
-    
+
     /// Server function for data processing
     ServerFunction { function_name: String, params: Value },
-    
+
     /// Stream of real-time data
     Stream { stream: Box<dyn Stream<Item = DataFrame>> },
 }
@@ -276,39 +276,39 @@ pub enum MarkType {
         shape: Option<PointShape>,
         opacity: Option<f32>,
     },
-    
+
     /// Line marks for line charts
     Line {
         interpolate: Option<Interpolation>,
         stroke_width: Option<f32>,
         stroke_dash: Option<Vec<f32>>,
     },
-    
+
     /// Bar marks for bar charts
     Bar {
         width: Option<BarWidth>,
         corner_radius: Option<f32>,
     },
-    
+
     /// Area marks for area charts
     Area {
         interpolate: Option<Interpolation>,
         opacity: Option<f32>,
     },
-    
+
     /// Text marks for annotations
     Text {
         font_size: Option<f32>,
         font_family: Option<String>,
         align: Option<TextAlign>,
     },
-    
+
     /// Rectangle marks for heatmaps
     Rect {
         stroke: Option<Color>,
         stroke_width: Option<f32>,
     },
-    
+
     /// Scatter plot with enhanced features
     Scatter {
         size: Option<f32>,
@@ -317,70 +317,70 @@ pub enum MarkType {
         jitter: Option<f32>,
         trend_line: Option<bool>,
     },
-    
+
     /// Box plot for statistical visualization
     BoxPlot {
         width: Option<f32>,
         outlier_detection: Option<bool>,
         whisker_type: Option<WhiskerType>,
     },
-    
+
     /// Violin plot for distribution visualization
     Violin {
         width: Option<f32>,
         bandwidth: Option<f32>,
         kernel: Option<KernelType>,
     },
-    
+
     /// Heatmap with color mapping
     Heatmap {
         color_scheme: Option<String>,
         interpolation: Option<Interpolation>,
         stroke: Option<Color>,
     },
-    
+
     /// Histogram for distribution analysis
     Histogram {
         bin_width: Option<f32>,
         bin_count: Option<u32>,
         density: Option<bool>,
     },
-    
+
     /// Density plot for smooth distributions
     Density {
         bandwidth: Option<f32>,
         kernel: Option<KernelType>,
         fill: Option<bool>,
     },
-    
+
     /// Contour plot for 2D density
     Contour {
         levels: Option<u32>,
         color_scheme: Option<String>,
         stroke_width: Option<f32>,
     },
-    
+
     /// Radar chart for multivariate data
     Radar {
         radius: Option<f32>,
         stroke_width: Option<f32>,
         fill_opacity: Option<f32>,
     },
-    
+
     /// Sankey diagram for flow visualization
     Sankey {
         node_width: Option<f32>,
         link_opacity: Option<f32>,
         color_scheme: Option<String>,
     },
-    
+
     /// Treemap for hierarchical data
     Treemap {
         padding: Option<f32>,
         stroke: Option<Color>,
         stroke_width: Option<f32>,
     },
-    
+
     /// Composite marks
     Composite(Vec<MarkType>),
 }
@@ -620,28 +620,28 @@ pub struct DataProcessor {
 impl DataProcessor {
     /// Create new data processor with performance optimization
     pub fn new() -> Result<Self, DataError>;
-    
+
     /// Process data with automatic strategy selection
     pub async fn process(&mut self, spec: &DataSpec) -> Result<ProcessedData, DataError>;
-    
+
     /// Process data on CPU with SIMD optimization
     pub async fn process_cpu(&self, spec: &DataSpec, config: &RayonConfig) -> Result<ProcessedData, DataError>;
-    
+
     /// Process data on GPU with WebGPU acceleration
     pub async fn process_gpu(&self, spec: &DataSpec, config: &ComputeConfig) -> Result<ProcessedData, DataError>;
-    
+
     /// Process streaming data with buffering
     pub async fn process_stream(&mut self, stream_id: &str, data: DataFrame) -> Result<ProcessedData, DataError>;
-    
+
     /// Apply data transformations with optimization
     fn apply_transform_optimized(&self, df: DataFrame, transform: &DataTransform) -> Result<DataFrame, DataError>;
-    
+
     /// Apply filters with SIMD acceleration
     fn apply_filter_optimized(&self, df: DataFrame, filter: &Filter) -> Result<DataFrame, DataError>;
-    
+
     /// Apply aggregations with parallel processing
     fn apply_aggregation_optimized(&self, df: DataFrame, aggregation: &Aggregation) -> Result<DataFrame, DataError>;
-    
+
     /// Get device capabilities for strategy selection
     pub fn device_capabilities(&self) -> &DeviceCapabilities;
 }
@@ -659,16 +659,16 @@ pub struct DataSpec {
 pub enum DataTransform {
     /// Select specific columns
     Select { columns: Vec<String> },
-    
+
     /// Rename columns
     Rename { mappings: Vec<(String, String)> },
-    
+
     /// Cast columns to different types
     Cast { column: String, data_type: DataType },
-    
+
     /// Fill null values with strategies
     FillNull { column: String, value: FillValue },
-    
+
     /// Drop null values
     DropNulls { columns: Option<Vec<String>> },
 }
@@ -677,13 +677,13 @@ pub enum DataTransform {
 pub enum Filter {
     /// Expression-based filtering
     Expression { expr: String },
-    
+
     /// Range filtering
     Range { column: String, min: Option<f64>, max: Option<f64> },
-    
+
     /// Value-based filtering
     Values { column: String, values: Vec<serde_json::Value> },
-    
+
     /// Null value filtering
     Null { column: String, keep_nulls: bool },
 }
@@ -692,13 +692,13 @@ pub enum Filter {
 pub enum Aggregation {
     /// Simple aggregations
     Aggregate { operations: Vec<AggOp> },
-    
+
     /// Group by aggregations
     GroupBy { columns: Vec<String> },
-    
+
     /// Window functions
     Window { operations: Vec<WindowOp> },
-    
+
     /// Pivot operations
     Pivot { index: String, columns: String, values: String },
 }
@@ -793,45 +793,45 @@ let mut processor = DataProcessor::new()?;
 let spec = DataSpec {
     source: DataSource::csv("sales_data.csv"),
     filters: vec![
-        Filter::Range { 
-            column: "price".to_string(), 
-            min: Some(10.0), 
-            max: Some(1000.0) 
+        Filter::Range {
+            column: "price".to_string(),
+            min: Some(10.0),
+            max: Some(1000.0)
         },
-        Filter::Expression { 
-            expr: "category == 'Electronics'".to_string() 
+        Filter::Expression {
+            expr: "category == 'Electronics'".to_string()
         },
     ],
     transforms: vec![
-        DataTransform::Select { 
-            columns: vec!["date".to_string(), "price".to_string(), "category".to_string()] 
+        DataTransform::Select {
+            columns: vec!["date".to_string(), "price".to_string(), "category".to_string()]
         },
-        DataTransform::Cast { 
-            column: "date".to_string(), 
-            data_type: DataType::Temporal 
+        DataTransform::Cast {
+            column: "date".to_string(),
+            data_type: DataType::Temporal
         },
-        DataTransform::FillNull { 
-            column: "price".to_string(), 
-            value: FillValue::Mean 
+        DataTransform::FillNull {
+            column: "price".to_string(),
+            value: FillValue::Mean
         },
     ],
     aggregations: vec![
-        Aggregation::GroupBy { 
-            columns: vec!["category".to_string()] 
+        Aggregation::GroupBy {
+            columns: vec!["category".to_string()]
         },
-        Aggregation::Aggregate { 
+        Aggregation::Aggregate {
             operations: vec![
-                AggOp::Sum { 
-                    column: "price".to_string(), 
-                    alias: Some("total_sales".to_string()) 
+                AggOp::Sum {
+                    column: "price".to_string(),
+                    alias: Some("total_sales".to_string())
                 },
-                AggOp::Mean { 
-                    column: "price".to_string(), 
-                    alias: Some("avg_price".to_string()) 
+                AggOp::Mean {
+                    column: "price".to_string(),
+                    alias: Some("avg_price".to_string())
                 },
-                AggOp::Count { 
-                    column: "price".to_string(), 
-                    alias: Some("transaction_count".to_string()) 
+                AggOp::Count {
+                    column: "price".to_string(),
+                    alias: Some("transaction_count".to_string())
                 },
             ]
         },
@@ -946,37 +946,37 @@ Comprehensive configuration for performance optimization with SIMD, caching, mem
 pub struct PerformanceConfig {
     /// Enable SIMD vectorization for data processing
     pub simd_enabled: bool,
-    
+
     /// Enable intelligent caching system
     pub cache_enabled: bool,
-    
+
     /// Enable memory pooling for efficient buffer management
     pub memory_pool_enabled: bool,
-    
+
     /// Enable parallel processing with work-stealing
     pub parallel_processing: bool,
-    
+
     /// Maximum cache size in bytes (default: 100MB)
     pub max_cache_size: usize,
-    
+
     /// Memory pool size in bytes (default: 50MB)
     pub memory_pool_size: usize,
-    
+
     /// Enable work-stealing for load balancing
     pub work_stealing_enabled: bool,
-    
+
     /// Enable performance profiling and metrics collection
     pub profiling_enabled: bool,
-    
+
     /// Target FPS for rendering
     pub target_fps: Option<u32>,
-    
+
     /// Quality mode for adaptive rendering
     pub quality_mode: QualityMode,
-    
+
     /// Memory limit for operations
     pub memory_limit: Option<usize>,
-    
+
     /// GPU preference for rendering
     pub gpu_preference: GpuPreference,
 }
@@ -984,13 +984,13 @@ pub struct PerformanceConfig {
 impl PerformanceConfig {
     /// Create default performance configuration
     pub fn default() -> Self;
-    
+
     /// Create high-performance configuration
     pub fn high_performance() -> Self;
-    
+
     /// Create memory-optimized configuration
     pub fn memory_optimized() -> Self;
-    
+
     /// Create balanced configuration
     pub fn balanced() -> Self;
 }
@@ -1013,22 +1013,22 @@ pub struct PerformanceManager {
 impl PerformanceManager {
     /// Create new performance manager with configuration
     pub fn new(config: PerformanceConfig) -> Self;
-    
+
     /// Get SIMD processor for vectorized operations
     pub fn simd_processor(&self) -> &SimdProcessor;
-    
+
     /// Get cache manager for intelligent caching
     pub fn cache_manager(&self) -> &CacheManager;
-    
+
     /// Get memory pool for efficient buffer management
     pub fn memory_pool(&self) -> &MemoryPool;
-    
+
     /// Get profiler for performance metrics
     pub fn profiler(&self) -> &PerformanceProfiler;
-    
+
     /// Get parallel processor for work-stealing
     pub fn parallel_processor(&self) -> &ParallelProcessor;
-    
+
     /// Cleanup all resources
     pub fn cleanup(&self) -> Result<(), Box<dyn std::error::Error>>;
 }
@@ -1047,19 +1047,19 @@ pub struct SimdProcessor {
 impl SimdProcessor {
     /// Create SIMD processor with capability detection
     pub fn new(config: PerformanceConfig) -> Self;
-    
+
     /// Vectorized sum operation with SSE2/NEON acceleration
     pub fn vectorized_sum(&self, data: &[f32]) -> f32;
-    
+
     /// Vectorized mean calculation
     pub fn vectorized_mean(&self, data: &[f32]) -> f32;
-    
+
     /// Vectorized standard deviation calculation
     pub fn vectorized_std(&self, data: &[f32]) -> f32;
-    
+
     /// Vectorized variance calculation
     pub fn vectorized_variance(&self, data: &[f32], mean: f32) -> f32;
-    
+
     /// Vectorized filtering operation
     pub fn vectorized_filter(&self, data: &[f32], threshold: f32) -> Vec<f32>;
 }
@@ -1118,18 +1118,18 @@ pub struct CacheStats {
 impl CacheManager {
     /// Create new cache manager
     pub fn new(config: PerformanceConfig) -> Self;
-    
+
     /// Get cached value
     pub fn get<T>(&self, key: &CacheKey) -> Option<T>
     where T: serde::de::DeserializeOwned;
-    
+
     /// Put value in cache
     pub fn put<T>(&self, key: CacheKey, value: &T) -> Result<(), CacheError>
     where T: serde::Serialize;
-    
+
     /// Get cache statistics
     pub fn get_stats(&self) -> Result<CacheStats, CacheError>;
-    
+
     /// Clear all cached entries
     pub fn clear(&self) -> Result<(), CacheError>;
 }
@@ -1149,13 +1149,13 @@ pub struct MemoryPool {
 impl MemoryPool {
     /// Create new memory pool
     pub fn new(config: PerformanceConfig) -> Self;
-    
+
     /// Allocate memory from pool
     pub fn allocate(&self, size: usize) -> Result<NonNull<u8>, MemoryPoolError>;
-    
+
     /// Deallocate memory back to pool
     pub fn deallocate(&self, ptr: NonNull<u8>, size: usize) -> Result<(), MemoryPoolError>;
-    
+
     /// Cleanup all pooled memory
     pub fn cleanup(&self) -> Result<(), MemoryPoolError>;
 }
@@ -1174,20 +1174,20 @@ pub struct ParallelProcessor {
 impl ParallelProcessor {
     /// Create parallel processor with thread pool
     pub fn new(config: PerformanceConfig) -> Self;
-    
+
     /// Parallel map operation with work-stealing
     pub fn parallel_map<T, U, F>(&self, data: &[T], f: F) -> Vec<U>
     where
         T: Send + Sync,
         U: Send,
         F: Fn(&T) -> U + Send + Sync;
-    
+
     /// Parallel reduce operation
     pub fn parallel_reduce<T, F>(&self, data: &[T], identity: T, f: F) -> T
     where
         T: Send + Sync + Clone,
         F: Fn(T, &T) -> T + Send + Sync;
-    
+
     /// Parallel filter operation
     pub fn parallel_filter<T, F>(&self, data: &[T], f: F) -> Vec<T>
     where
@@ -1225,16 +1225,16 @@ pub struct PerformanceTimer {
 impl PerformanceProfiler {
     /// Create new profiler
     pub fn new(config: PerformanceConfig) -> Self;
-    
+
     /// Start timing an operation
     pub fn start_timer(&self, name: String) -> PerformanceTimer;
-    
+
     /// Record performance metric
     pub fn record_metric(&self, name: String, duration: Duration) -> Result<(), ProfilerError>;
-    
+
     /// Get all performance metrics
     pub fn get_metrics(&self) -> Result<Vec<PerformanceMetric>, ProfilerError>;
-    
+
     /// Clear all metrics
     pub fn clear_metrics(&self) -> Result<(), ProfilerError>;
 }
@@ -1324,13 +1324,13 @@ pub struct Renderer {
 impl Renderer {
     /// Create new renderer with automatic backend selection
     pub async fn new() -> Result<Self, RenderError>;
-    
+
     /// Render chart with performance optimization
     pub async fn render(&self, spec: &ChartSpec, target: &RenderTarget) -> Result<RenderStats, RenderError>;
-    
+
     /// Get or create render pipeline for chart type
     fn get_or_create_pipeline(&self, chart_type: &ChartType) -> Result<RenderPipeline, RenderError>;
-    
+
     /// Execute render pass with WebGPU acceleration
     fn execute_render_pass(&self, pipeline: &RenderPipeline, data: &RenderData) -> Result<RenderStats, RenderError>;
 }
@@ -1344,13 +1344,13 @@ pub enum RenderBackend {
         surface: Option<Arc<Surface<'static>>>,
         adapter_info: AdapterInfo,
     },
-    
+
     /// WebGL2 backend with context
     WebGL2 {
         context: Option<String>, // WebGl2RenderingContext placeholder
         capabilities: WebGL2Capabilities,
     },
-    
+
     /// Canvas2D backend with context
     Canvas2D {
         context: Option<String>, // CanvasRenderingContext2d placeholder
@@ -1395,13 +1395,13 @@ pub enum Backend {
 impl RenderBackend {
     /// Create WebGPU backend with device selection
     pub async fn webgpu_backend() -> Result<Self, RenderError>;
-    
+
     /// Create WebGL2 backend with context
     pub async fn webgl2_backend() -> Result<Self, RenderError>;
-    
+
     /// Create Canvas2D backend with context
     pub async fn canvas2d_backend() -> Result<Self, RenderError>;
-    
+
     /// Get performance characteristics of backend
     pub fn performance_characteristics(&self) -> BackendCharacteristics;
 }
@@ -1428,16 +1428,16 @@ pub struct RenderPipeline {
 impl RenderPipeline {
     /// Create new render pipeline for chart type
     pub fn new(chart_type: ChartType, backend: &RenderBackend) -> Result<Self, RenderError>;
-    
+
     /// Create WebGPU pipeline with shaders
     fn create_webgpu_pipeline(&self, device: &Device, chart_type: &ChartType) -> Result<wgpu::RenderPipeline, RenderError>;
-    
+
     /// Get shader source for chart type
     fn get_shader_source(&self, chart_type: &ChartType) -> &str;
-    
+
     /// Get vertex buffer layout for chart type
     fn get_vertex_buffer_layout(&self, chart_type: &ChartType) -> VertexBufferLayout;
-    
+
     /// Get primitive topology for chart type
     fn get_primitive_topology(&self, chart_type: &ChartType) -> PrimitiveTopology;
 }
@@ -1466,7 +1466,7 @@ pub enum ChartType {
 impl ChartType {
     /// Create chart type from mark type
     pub fn from_spec(mark_type: &MarkType) -> Self;
-    
+
     /// Get chart type name
     pub fn name(&self) -> &'static str;
 }
@@ -1510,10 +1510,10 @@ pub struct RenderStats {
 impl RenderStats {
     /// Calculate FPS from frame time
     pub fn fps(&self) -> f64;
-    
+
     /// Check if within performance budget
     pub fn is_within_budget(&self, budget: &PerformanceBudget) -> bool;
-    
+
     /// Suggest performance optimizations
     pub fn suggest_optimizations(&self) -> Vec<OptimizationSuggestion>;
 }
@@ -1688,19 +1688,19 @@ pub struct MLPipeline {
 impl MLPipeline {
     /// Create forecasts for time series data
     pub async fn forecast(
-        &self, 
-        data: &DataFrame, 
+        &self,
+        data: &DataFrame,
         periods: u32,
         config: ForecastConfig
     ) -> Result<ForecastResult, MLError>;
-    
+
     /// Detect anomalies in data
     pub async fn detect_anomalies(
         &self,
         data: &DataFrame,
         config: AnomalyConfig
     ) -> Result<Vec<Anomaly>, MLError>;
-    
+
     /// Cluster data points
     pub async fn cluster(
         &self,
@@ -1708,7 +1708,7 @@ impl MLPipeline {
         k: u32,
         config: ClusterConfig
     ) -> Result<ClusterResult, MLError>;
-    
+
     /// Classify data points
     pub async fn classify(
         &self,
@@ -1733,13 +1733,13 @@ pub struct NLProcessor {
 impl NLProcessor {
     /// Parse natural language query into chart specification
     pub fn parse_query(&self, text: &str, schema: &Schema) -> Result<ChartSpec, ParseError>;
-    
+
     /// Suggest optimal visualizations for data
     pub fn suggest_visualizations(&self, data: &DataFrame) -> Vec<ChartRecommendation>;
-    
+
     /// Generate explanation for chart
     pub fn explain_chart(&self, spec: &ChartSpec) -> String;
-    
+
     /// Convert chart to accessible description
     pub fn generate_alt_text(&self, chart: &RenderedChart) -> String;
 }
@@ -1764,19 +1764,19 @@ Comprehensive error handling throughout the API.
 pub enum HeliosError {
     #[error("Data processing error: {0}")]
     DataProcessing(#[from] DataError),
-    
+
     #[error("Rendering error: {0}")]
     Rendering(#[from] RenderError),
-    
+
     #[error("Validation error: {0}")]
     Validation(#[from] ValidationError),
-    
+
     #[error("ML error: {0}")]
     MachineLearning(#[from] MLError),
-    
+
     #[error("Configuration error: {0}")]
     Configuration(String),
-    
+
     #[error("Performance budget exceeded: {details}")]
     PerformanceBudget { details: String },
 }
@@ -1808,7 +1808,7 @@ impl AccessibilityConfig {
     pub fn wcag_aa() -> Self;
     pub fn wcag_aaa() -> Self;
     pub fn from_user_preferences(prefs: &UserPreferences) -> Self;
-    
+
     pub fn validate_compliance(&self, chart: &Chart) -> ComplianceReport;
     pub fn generate_data_table(&self, chart: &Chart) -> DataTable;
     pub fn create_sonification(&self, data: &DataFrame) -> AudioRepresentation;

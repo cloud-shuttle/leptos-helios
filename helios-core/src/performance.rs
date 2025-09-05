@@ -1,19 +1,16 @@
 //! Performance optimization module for Helios
 //! Provides SIMD support, caching, memory pooling, and parallel processing
 
+use std::alloc::{GlobalAlloc, Layout, System};
 use std::collections::HashMap;
+use std::hash::Hash;
+use std::ptr::NonNull;
 use std::sync::{Arc, Mutex, RwLock};
 use std::time::{Duration, Instant, SystemTime};
-use std::hash::{Hash, Hasher};
-use std::alloc::{GlobalAlloc, Layout, System};
-use std::ptr::NonNull;
 
 // SIMD support
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::*;
-
-#[cfg(target_arch = "aarch64")]
-use std::arch::aarch64::*;
 
 // Parallel processing
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
@@ -38,7 +35,7 @@ impl Default for PerformanceConfig {
             cache_enabled: true,
             memory_pool_enabled: true,
             parallel_processing: true,
-            max_cache_size: 100 * 1024 * 1024, // 100MB
+            max_cache_size: 100 * 1024 * 1024,  // 100MB
             memory_pool_size: 50 * 1024 * 1024, // 50MB
             work_stealing_enabled: true,
             profiling_enabled: true,
@@ -60,13 +57,13 @@ impl SimdProcessor {
             capabilities,
         }
     }
-    
+
     /// Vectorized sum operation
     pub fn vectorized_sum(&self, data: &[f32]) -> f32 {
         if !self.config.simd_enabled || !self.capabilities.sse2_available {
             return data.iter().sum();
         }
-        
+
         #[cfg(target_arch = "x86_64")]
         unsafe {
             self.sse2_sum(data)
@@ -76,7 +73,7 @@ impl SimdProcessor {
             data.iter().sum()
         }
     }
-    
+
     /// Vectorized mean operation
     pub fn vectorized_mean(&self, data: &[f32]) -> f32 {
         if data.is_empty() {
@@ -84,28 +81,28 @@ impl SimdProcessor {
         }
         self.vectorized_sum(data) / data.len() as f32
     }
-    
+
     /// Vectorized standard deviation
     pub fn vectorized_std(&self, data: &[f32]) -> f32 {
         if data.len() < 2 {
             return 0.0;
         }
-        
+
         let mean = self.vectorized_mean(data);
         let variance = self.vectorized_variance(data, mean);
         variance.sqrt()
     }
-    
+
     /// Vectorized variance calculation
     pub fn vectorized_variance(&self, data: &[f32], mean: f32) -> f32 {
         if data.len() < 2 {
             return 0.0;
         }
-        
+
         if !self.config.simd_enabled || !self.capabilities.sse2_available {
             return data.iter().map(|x| (x - mean).powi(2)).sum::<f32>() / (data.len() - 1) as f32;
         }
-        
+
         #[cfg(target_arch = "x86_64")]
         unsafe {
             self.sse2_variance(data, mean)
@@ -115,13 +112,13 @@ impl SimdProcessor {
             data.iter().map(|x| (x - mean).powi(2)).sum::<f32>() / (data.len() - 1) as f32
         }
     }
-    
+
     /// Vectorized filtering operation
     pub fn vectorized_filter(&self, data: &[f32], threshold: f32) -> Vec<f32> {
         if !self.config.simd_enabled || !self.capabilities.sse2_available {
             return data.iter().filter(|&&x| x > threshold).copied().collect();
         }
-        
+
         #[cfg(target_arch = "x86_64")]
         unsafe {
             self.sse2_filter(data, threshold)
@@ -131,84 +128,84 @@ impl SimdProcessor {
             data.iter().filter(|&&x| x > threshold).copied().collect()
         }
     }
-    
+
     #[cfg(target_arch = "x86_64")]
     unsafe fn sse2_sum(&self, data: &[f32]) -> f32 {
         let mut sum = _mm_setzero_ps();
         let chunks = data.chunks_exact(4);
         let remainder = chunks.remainder();
-        
+
         for chunk in chunks {
             let values = _mm_loadu_ps(chunk.as_ptr());
             sum = _mm_add_ps(sum, values);
         }
-        
+
         // Horizontal sum
         let sum_array = std::mem::transmute::<__m128, [f32; 4]>(sum);
         let mut result = sum_array[0] + sum_array[1] + sum_array[2] + sum_array[3];
-        
+
         // Add remainder
         for &value in remainder {
             result += value;
         }
-        
+
         result
     }
-    
+
     #[cfg(target_arch = "x86_64")]
     unsafe fn sse2_variance(&self, data: &[f32], mean: f32) -> f32 {
         let mean_vec = _mm_set1_ps(mean);
         let mut sum_squared_diff = _mm_setzero_ps();
         let chunks = data.chunks_exact(4);
         let remainder = chunks.remainder();
-        
+
         for chunk in chunks {
             let values = _mm_loadu_ps(chunk.as_ptr());
             let diff = _mm_sub_ps(values, mean_vec);
             let squared_diff = _mm_mul_ps(diff, diff);
             sum_squared_diff = _mm_add_ps(sum_squared_diff, squared_diff);
         }
-        
+
         // Horizontal sum
         let sum_array = std::mem::transmute::<__m128, [f32; 4]>(sum_squared_diff);
         let mut result = sum_array[0] + sum_array[1] + sum_array[2] + sum_array[3];
-        
+
         // Add remainder
         for &value in remainder {
             let diff = value - mean;
             result += diff * diff;
         }
-        
+
         result / (data.len() - 1) as f32
     }
-    
+
     #[cfg(target_arch = "x86_64")]
     unsafe fn sse2_filter(&self, data: &[f32], threshold: f32) -> Vec<f32> {
         let threshold_vec = _mm_set1_ps(threshold);
         let mut result = Vec::with_capacity(data.len());
-        
+
         let chunks = data.chunks_exact(4);
         let remainder = chunks.remainder();
-        
+
         for chunk in chunks {
             let values = _mm_loadu_ps(chunk.as_ptr());
             let mask = _mm_cmpgt_ps(values, threshold_vec);
             let mask_array = std::mem::transmute::<__m128, [f32; 4]>(mask);
-            
+
             for (i, &value) in chunk.iter().enumerate() {
                 if mask_array[i] != 0.0 {
                     result.push(value);
                 }
             }
         }
-        
+
         // Process remainder
         for &value in remainder {
             if value > threshold {
                 result.push(value);
             }
         }
-        
+
         result
     }
 }
@@ -309,72 +306,82 @@ impl CacheManager {
             })),
         }
     }
-    
+
     pub fn get<T>(&self, key: &CacheKey) -> Option<T>
     where
         T: serde::de::DeserializeOwned,
     {
         let cache = self.cache.read().ok()?;
         let entry = cache.get(key)?;
-        
+
         // Update access count
         let mut stats = self.stats.lock().ok()?;
         stats.hits += 1;
-        
+
         // Deserialize data
         bincode::deserialize(&entry.data).ok()
     }
-    
+
     pub fn put<T>(&self, key: CacheKey, value: &T) -> Result<(), CacheError>
     where
         T: serde::Serialize,
     {
-        let serialized = bincode::serialize(value)
-            .map_err(|e| CacheError::Serialization(e.to_string()))?;
-        
+        let serialized =
+            bincode::serialize(value).map_err(|e| CacheError::Serialization(e.to_string()))?;
+
         let entry = CacheEntry {
             data: serialized.clone(),
             timestamp: SystemTime::now(),
             access_count: 0,
             size: serialized.len(),
         };
-        
-        let mut cache = self.cache.write()
+
+        let mut cache = self
+            .cache
+            .write()
             .map_err(|e| CacheError::LockError(e.to_string()))?;
-        
+
         // Check if we need to evict entries
         self.evict_if_needed(&mut cache, entry.size)?;
-        
+
         cache.insert(key, entry);
-        
-        let mut stats = self.stats.lock()
+
+        let mut stats = self
+            .stats
+            .lock()
             .map_err(|e| CacheError::LockError(e.to_string()))?;
         stats.total_size += serialized.len();
-        
+
         Ok(())
     }
-    
-    fn evict_if_needed(&self, cache: &mut HashMap<CacheKey, CacheEntry>, new_size: usize) -> Result<(), CacheError> {
-        let mut stats = self.stats.lock()
+
+    fn evict_if_needed(
+        &self,
+        cache: &mut HashMap<CacheKey, CacheEntry>,
+        new_size: usize,
+    ) -> Result<(), CacheError> {
+        let mut stats = self
+            .stats
+            .lock()
             .map_err(|e| CacheError::LockError(e.to_string()))?;
-        
+
         if stats.total_size + new_size > self.config.max_cache_size {
             // Evict least recently used entries
             let mut entries: Vec<_> = cache.iter().collect();
             entries.sort_by_key(|(_, entry)| entry.timestamp);
-            
+
             let mut to_remove = Vec::new();
             let mut freed_size = 0;
-            
+
             for (key, entry) in entries {
                 to_remove.push(key.clone());
                 freed_size += entry.size;
-                
+
                 if stats.total_size + new_size - freed_size <= self.config.max_cache_size {
                     break;
                 }
             }
-            
+
             for key in to_remove {
                 if let Some(entry) = cache.remove(&key) {
                     stats.total_size -= entry.size;
@@ -382,25 +389,31 @@ impl CacheManager {
                 }
             }
         }
-        
+
         Ok(())
     }
-    
+
     pub fn get_stats(&self) -> Result<CacheStats, CacheError> {
-        let stats = self.stats.lock()
+        let stats = self
+            .stats
+            .lock()
             .map_err(|e| CacheError::LockError(e.to_string()))?;
         Ok(stats.clone())
     }
-    
+
     pub fn clear(&self) -> Result<(), CacheError> {
-        let mut cache = self.cache.write()
+        let mut cache = self
+            .cache
+            .write()
             .map_err(|e| CacheError::LockError(e.to_string()))?;
         cache.clear();
-        
-        let mut stats = self.stats.lock()
+
+        let mut stats = self
+            .stats
+            .lock()
             .map_err(|e| CacheError::LockError(e.to_string()))?;
         stats.total_size = 0;
-        
+
         Ok(())
     }
 }
@@ -409,10 +422,10 @@ impl CacheManager {
 pub enum CacheError {
     #[error("Serialization error: {0}")]
     Serialization(String),
-    
+
     #[error("Lock error: {0}")]
     LockError(String),
-    
+
     #[error("Cache full")]
     CacheFull,
 }
@@ -432,28 +445,29 @@ impl MemoryPool {
             allocator: Arc::new(System),
         }
     }
-    
+
     pub fn allocate(&self, size: usize) -> Result<NonNull<u8>, MemoryPoolError> {
         if size == 0 {
             return Err(MemoryPoolError::InvalidSize);
         }
-        
+
         // Try to get from pool first
         {
-            let mut pools = self.pools.lock()
+            let mut pools = self
+                .pools
+                .lock()
                 .map_err(|e| MemoryPoolError::LockError(e.to_string()))?;
-            
+
             if let Some(pool) = pools.get_mut(&size) {
                 if let Some(ptr) = pool.pop() {
                     return Ok(ptr);
                 }
             }
         }
-        
+
         // Allocate new memory
-        let layout = Layout::from_size_align(size, 8)
-            .map_err(|_| MemoryPoolError::InvalidSize)?;
-        
+        let layout = Layout::from_size_align(size, 8).map_err(|_| MemoryPoolError::InvalidSize)?;
+
         unsafe {
             let ptr = self.allocator.alloc(layout);
             if ptr.is_null() {
@@ -462,41 +476,45 @@ impl MemoryPool {
             Ok(NonNull::new_unchecked(ptr))
         }
     }
-    
+
     pub fn deallocate(&self, ptr: NonNull<u8>, size: usize) -> Result<(), MemoryPoolError> {
         if !self.config.memory_pool_enabled {
-            let layout = Layout::from_size_align(size, 8)
-                .map_err(|_| MemoryPoolError::InvalidSize)?;
+            let layout =
+                Layout::from_size_align(size, 8).map_err(|_| MemoryPoolError::InvalidSize)?;
             unsafe {
                 self.allocator.dealloc(ptr.as_ptr(), layout);
             }
             return Ok(());
         }
-        
-        let mut pools = self.pools.lock()
+
+        let mut pools = self
+            .pools
+            .lock()
             .map_err(|e| MemoryPoolError::LockError(e.to_string()))?;
-        
+
         // Add to pool
         pools.entry(size).or_insert_with(Vec::new).push(ptr);
-        
+
         Ok(())
     }
-    
+
     pub fn cleanup(&self) -> Result<(), MemoryPoolError> {
-        let mut pools = self.pools.lock()
+        let mut pools = self
+            .pools
+            .lock()
             .map_err(|e| MemoryPoolError::LockError(e.to_string()))?;
-        
+
         for (size, pool) in pools.iter_mut() {
-            let layout = Layout::from_size_align(*size, 8)
-                .map_err(|_| MemoryPoolError::InvalidSize)?;
-            
+            let layout =
+                Layout::from_size_align(*size, 8).map_err(|_| MemoryPoolError::InvalidSize)?;
+
             for ptr in pool.drain(..) {
                 unsafe {
                     self.allocator.dealloc(ptr.as_ptr(), layout);
                 }
             }
         }
-        
+
         pools.clear();
         Ok(())
     }
@@ -506,10 +524,10 @@ impl MemoryPool {
 pub enum MemoryPoolError {
     #[error("Invalid size")]
     InvalidSize,
-    
+
     #[error("Allocation failed")]
     AllocationFailed,
-    
+
     #[error("Lock error: {0}")]
     LockError(String),
 }
@@ -537,7 +555,7 @@ impl PerformanceProfiler {
             config,
         }
     }
-    
+
     pub fn start_timer(&self, name: String) -> PerformanceTimer {
         PerformanceTimer {
             name,
@@ -545,41 +563,49 @@ impl PerformanceProfiler {
             profiler: self.clone(),
         }
     }
-    
+
     pub fn record_metric(&self, name: String, duration: Duration) -> Result<(), ProfilerError> {
         if !self.config.profiling_enabled {
             return Ok(());
         }
-        
-        let mut metrics = self.metrics.lock()
+
+        let mut metrics = self
+            .metrics
+            .lock()
             .map_err(|e| ProfilerError::LockError(e.to_string()))?;
-        
-        let metric = metrics.entry(name.clone()).or_insert_with(|| PerformanceMetric {
-            name: name.clone(),
-            total_time: Duration::ZERO,
-            call_count: 0,
-            min_time: Duration::MAX,
-            max_time: Duration::ZERO,
-            avg_time: Duration::ZERO,
-        });
-        
+
+        let metric = metrics
+            .entry(name.clone())
+            .or_insert_with(|| PerformanceMetric {
+                name: name.clone(),
+                total_time: Duration::ZERO,
+                call_count: 0,
+                min_time: Duration::MAX,
+                max_time: Duration::ZERO,
+                avg_time: Duration::ZERO,
+            });
+
         metric.call_count += 1;
         metric.total_time += duration;
         metric.min_time = metric.min_time.min(duration);
         metric.max_time = metric.max_time.max(duration);
         metric.avg_time = metric.total_time / metric.call_count as u32;
-        
+
         Ok(())
     }
-    
+
     pub fn get_metrics(&self) -> Result<Vec<PerformanceMetric>, ProfilerError> {
-        let metrics = self.metrics.lock()
+        let metrics = self
+            .metrics
+            .lock()
             .map_err(|e| ProfilerError::LockError(e.to_string()))?;
         Ok(metrics.values().cloned().collect())
     }
-    
+
     pub fn clear_metrics(&self) -> Result<(), ProfilerError> {
-        let mut metrics = self.metrics.lock()
+        let mut metrics = self
+            .metrics
+            .lock()
             .map_err(|e| ProfilerError::LockError(e.to_string()))?;
         metrics.clear();
         Ok(())
@@ -626,15 +652,15 @@ impl ParallelProcessor {
             rayon::ThreadPoolBuilder::new()
                 .num_threads(num_cpus::get())
                 .build()
-                .expect("Failed to create thread pool")
+                .expect("Failed to create thread pool"),
         );
-        
+
         Self {
             config,
             thread_pool,
         }
     }
-    
+
     pub fn parallel_map<T, U, F>(&self, data: &[T], f: F) -> Vec<U>
     where
         T: Send + Sync,
@@ -644,12 +670,11 @@ impl ParallelProcessor {
         if !self.config.parallel_processing {
             return data.iter().map(f).collect();
         }
-        
-        self.thread_pool.install(|| {
-            data.par_iter().map(f).collect()
-        })
+
+        self.thread_pool
+            .install(|| data.par_iter().map(f).collect())
     }
-    
+
     pub fn parallel_reduce<T, F>(&self, data: &[T], identity: T, f: F) -> T
     where
         T: Send + Sync + Clone,
@@ -658,12 +683,14 @@ impl ParallelProcessor {
         if !self.config.parallel_processing {
             return data.iter().fold(identity, f);
         }
-        
+
         self.thread_pool.install(|| {
-            data.par_iter().fold(|| identity.clone(), |acc, x| f(acc, x)).reduce(|| identity.clone(), |acc, x| f(acc, &x))
+            data.par_iter()
+                .fold(|| identity.clone(), |acc, x| f(acc, x))
+                .reduce(|| identity.clone(), |acc, x| f(acc, &x))
         })
     }
-    
+
     pub fn parallel_filter<T, F>(&self, data: &[T], f: F) -> Vec<T>
     where
         T: Send + Sync + Clone,
@@ -672,10 +699,9 @@ impl ParallelProcessor {
         if !self.config.parallel_processing {
             return data.iter().filter(|x| f(x)).cloned().collect();
         }
-        
-        self.thread_pool.install(|| {
-            data.par_iter().filter(|x| f(x)).cloned().collect()
-        })
+
+        self.thread_pool
+            .install(|| data.par_iter().filter(|x| f(x)).cloned().collect())
     }
 }
 
@@ -700,31 +726,31 @@ impl PerformanceManager {
             config,
         }
     }
-    
+
     pub fn simd_processor(&self) -> &SimdProcessor {
         &self.simd_processor
     }
-    
+
     pub fn cache_manager(&self) -> &CacheManager {
         &self.cache_manager
     }
-    
+
     pub fn memory_pool(&self) -> &MemoryPool {
         &self.memory_pool
     }
-    
+
     pub fn profiler(&self) -> &PerformanceProfiler {
         &self.profiler
     }
-    
+
     pub fn parallel_processor(&self) -> &ParallelProcessor {
         &self.parallel_processor
     }
-    
+
     pub fn config(&self) -> &PerformanceConfig {
         &self.config
     }
-    
+
     pub fn cleanup(&self) -> Result<(), Box<dyn std::error::Error>> {
         self.memory_pool.cleanup()?;
         self.cache_manager.clear()?;

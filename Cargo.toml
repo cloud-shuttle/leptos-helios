@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "helios-core",
-    "helios-leptos", 
+    "helios-leptos",
     "helios-macros",
     "helios-wasm",
     "helios-examples",

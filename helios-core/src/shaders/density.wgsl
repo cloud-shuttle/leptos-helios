@@ -26,15 +26,15 @@ var<uniform> uniforms: Uniforms;
 @vertex
 fn vs_main(vertex: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    
+
     // Transform position
     let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
     out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
-    
+
     // Pass through color and UV coordinates
     out.color = vec4<f32>(vertex.color, uniforms.alpha, 1.0);
     out.uv = vertex.position;
-    
+
     return out;
 }
 
@@ -47,11 +47,11 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
         // Line-only density plot
         let line_width = 0.02;
         let distance_from_line = abs(in.uv.y - 0.5);
-        
+
         if (distance_from_line > line_width) {
             discard;
         }
-        
+
         let alpha = 1.0 - smoothstep(0.0, line_width, distance_from_line);
         return vec4<f32>(in.color.rgb, in.color.a * alpha);
     }

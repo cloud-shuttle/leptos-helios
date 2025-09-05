@@ -55,7 +55,7 @@ pub fn MyFirstChart() -> impl IntoView {
         "x" => [1, 2, 3, 4, 5],
         "y" => [2, 5, 3, 8, 7],
     }.unwrap();
-    
+
     // Define chart specification
     let chart_spec = helios::chart! {
         data: data,
@@ -65,7 +65,7 @@ pub fn MyFirstChart() -> impl IntoView {
             y: { field: "y", type: Quantitative }
         }
     };
-    
+
     view! {
         <div class="chart-container">
             <h2>"My First Helios Chart"</h2>
@@ -82,7 +82,7 @@ pub fn MyFirstChart() -> impl IntoView {
 pub fn InteractiveDashboard() -> impl IntoView {
     let (data, set_data) = create_signal(load_data());
     let (filter_value, set_filter_value) = create_signal(0.0);
-    
+
     // Reactive data processing
     let filtered_data = create_memo(move |_| {
         data.with(|df| {
@@ -93,7 +93,7 @@ pub fn InteractiveDashboard() -> impl IntoView {
                 .unwrap()
         })
     });
-    
+
     let chart_spec = create_memo(move |_| {
         helios::chart! {
             data: filtered_data.get(),
@@ -101,19 +101,19 @@ pub fn InteractiveDashboard() -> impl IntoView {
             encoding: {
                 x: { field: "x", type: Quantitative },
                 y: { field: "value", type: Quantitative },
-                color: { 
-                    field: "value", 
+                color: {
+                    field: "value",
                     type: Quantitative,
                     scale: { scheme: "viridis" }
                 }
             }
         }
     });
-    
+
     view! {
         <div class="dashboard">
-            <input 
-                type="range" 
+            <input
+                type="range"
                 min="0" max="100" step="1"
                 on:input=move |ev| {
                     set_filter_value(event_target_value(&ev).parse().unwrap_or(0.0));
@@ -216,7 +216,7 @@ let chart = helios::chart! {
 };
 
 view! {
-    <HeliosChart 
+    <HeliosChart
         spec=chart
         performance=PerformanceConfig::new()
             .quality_mode(QualityMode::Adaptive {
@@ -234,7 +234,7 @@ view! {
 #[component]
 pub fn StreamingChart() -> impl IntoView {
     let (stream_data, set_stream_data) = create_signal(DataFrame::empty());
-    
+
     // WebSocket integration for real-time updates
     create_effect(move |_| {
         let ws = WebSocket::new("ws://localhost:8080/data").unwrap();
@@ -243,7 +243,7 @@ pub fn StreamingChart() -> impl IntoView {
             set_stream_data.update(|df| *df = combine_dataframes(df.clone(), new_data));
         })));
     });
-    
+
     let chart_spec = create_memo(move |_| {
         helios::chart! {
             data: stream_data.get(),
@@ -254,10 +254,10 @@ pub fn StreamingChart() -> impl IntoView {
             }
         }
     });
-    
+
     view! {
-        <HeliosChart 
-            spec=chart_spec 
+        <HeliosChart
+            spec=chart_spec
             performance=PerformanceConfig::new()
                 .target_fps(Some(30))
                 .quality_mode(QualityMode::Performance)
