@@ -1,0 +1,95 @@
+# Trunk configuration for Helios visualization library
+# High-performance WASM bundling with optimization
+
+[build]
+# Build target directory
+target = "dist"
+# Source HTML file
+index = "index.html"
+# Public assets directory
+public = "public"
+
+# Build configuration
+[build.release]
+# Enable optimizations
+optimize = true
+# Strip debug symbols
+strip = true
+# Enable wasm-opt optimization
+wasm_opt = true
+# Set optimization level (0-4, 4 is most aggressive)
+wasm_opt_level = 4
+
+# Development server configuration
+[serve]
+# Server host
+host = "127.0.0.1"
+# Server port
+port = 8080
+# Enable hot reload
+watch = true
+# Open browser automatically
+open = true
+# Enable CORS
+cors = true
+
+# Tool configuration
+[tools]
+# Enable wasm-opt for optimization
+wasm_opt = { enabled = true, level = 4 }
+# Enable binaryen tools
+binaryen = { enabled = true }
+
+# Watch configuration
+[watch]
+# Watch these directories for changes
+watch = ["src", "assets", "public"]
+# Ignore these patterns
+ignore = ["target", "node_modules", "*.log"]
+
+# Asset pipeline
+[assets]
+# Enable asset optimization
+optimize = true
+# Enable asset compression
+compress = true
+# Asset cache configuration
+cache = { enabled = true, max_age = 3600 }
+
+# WebGPU and WebGL features
+[features]
+# Enable WebGPU support
+webgpu = true
+# Enable WebGL2 fallback
+webgl2 = true
+# Enable Canvas2D fallback
+canvas2d = true
+# Enable SIMD optimizations
+simd = true
+# Enable debug features in development
+debug = false
+
+# Performance optimizations
+[optimization]
+# Enable parallel compilation
+parallel = true
+# Enable incremental compilation
+incremental = true
+# Set compilation threads
+threads = 0  # 0 = auto-detect
+
+# Bundle configuration
+[bundle]
+# Enable tree shaking
+tree_shake = true
+# Enable code splitting
+code_split = true
+# Set chunk size limit
+chunk_size_limit = 1024 * 1024  # 1MB
+
+# Source maps
+[sourcemaps]
+# Enable source maps in development
+dev = true
+# Disable source maps in release
+release = false
