@@ -13,6 +13,7 @@ pub mod interactions;
 pub mod render_simple;
 pub mod renderer;
 pub mod streaming;
+pub mod webgpu_renderer;
 
 pub use data_minimal as data;
 pub use render_simple as render;

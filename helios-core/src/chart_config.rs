@@ -236,3 +236,28 @@ pub enum ChartRenderError {
 
 /// Result type for chart rendering operations
 pub type ChartRenderResult<T> = Result<T, ChartRenderError>;
+
+/// Point shape for scatter plots
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum PointShape {
+    Circle,
+    Square,
+    Triangle,
+    Diamond,
+    Cross,
+    Plus,
+}
+
+impl Default for PointShape {
+    fn default() -> Self {
+        PointShape::Circle
+    }
+}
+
+/// Render result with performance metrics for WebGPU
+#[derive(Debug, Clone)]
+pub struct WebGpuRenderResult {
+    pub render_time_ms: f64,
+    pub memory_used_bytes: usize,
+    pub vertices_rendered: usize,
+}
