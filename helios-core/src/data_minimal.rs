@@ -89,6 +89,12 @@ pub struct PerformanceMetric {
     pub timestamp: std::time::SystemTime,
 }
 
+impl Default for StrategySelector {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl StrategySelector {
     pub fn new() -> Self {
         Self {
@@ -206,13 +212,7 @@ impl DeviceCapabilities {
     }
 
     fn detect_simd() -> bool {
-        if cfg!(target_feature = "simd128") {
-            true
-        } else if cfg!(target_feature = "avx2") {
-            true
-        } else {
-            false
-        }
+        cfg!(target_feature = "simd128") || cfg!(target_feature = "avx2")
     }
 
     fn detect_cache_size() -> usize {
@@ -437,6 +437,7 @@ pub struct DataProcessor {
 impl DataProcessor {
     pub fn new() -> Result<Self, DataError> {
         let performance_config = PerformanceConfig::default();
+        #[allow(clippy::arc_with_non_send_sync)]
         let performance_manager = Arc::new(PerformanceManager::new(performance_config));
 
         Ok(Self {
@@ -694,12 +695,12 @@ impl DataProcessor {
                 }
                 let lazy_df = df
                     .lazy()
-                    .select(columns.iter().map(|c| col(c)).collect::<Vec<_>>());
+                    .select(columns.iter().map(col).collect::<Vec<_>>());
                 lazy_df.collect().map_err(DataError::Polars)
             }
             DataTransform::Rename { mappings } => {
                 // Validate all columns exist before processing
-                for (old_name, _new_name) in mappings {
+                for old_name in mappings.keys() {
                     self.validate_column_exists(&df, old_name)?;
                 }
                 let mut lazy_df = df.lazy();
@@ -784,7 +785,7 @@ impl DataProcessor {
             Aggregation::GroupBy { columns } => {
                 let lazy_df = df
                     .lazy()
-                    .group_by(columns.iter().map(|c| col(c)).collect::<Vec<_>>());
+                    .group_by(columns.iter().map(col).collect::<Vec<_>>());
                 lazy_df.agg([]).collect().map_err(DataError::Polars)
             }
             Aggregation::Aggregate { operations } => {
@@ -976,7 +977,7 @@ impl DataProcessor {
             })
             .collect();
 
-        let groupby_exprs: Vec<Expr> = groupby_columns.iter().map(|c| col(c)).collect();
+        let groupby_exprs: Vec<Expr> = groupby_columns.iter().map(col).collect();
         let lazy_df = df.lazy().group_by(groupby_exprs).agg(agg_exprs);
         lazy_df.collect().map_err(DataError::Polars)
     }
@@ -1114,7 +1115,7 @@ impl DataProcessor {
             }
             DataTransform::Rename { mappings } => {
                 // Validate columns exist
-                for (old_name, _) in mappings {
+                for old_name in mappings.keys() {
                     self.validate_column_exists(&df, old_name)?;
                 }
 

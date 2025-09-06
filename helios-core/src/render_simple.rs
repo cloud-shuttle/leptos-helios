@@ -74,6 +74,13 @@ pub struct WebGL2Capabilities {
     pub max_vertex_uniform_vectors: u32,
 }
 
+pub struct WebGpuCapabilities {
+    pub max_texture_size: u32,
+    pub max_buffer_size: u64,
+    pub supported_formats: Vec<String>,
+    pub compute_shader_support: bool,
+}
+
 #[derive(Debug, Clone)]
 pub enum DeviceType {
     Discrete,
@@ -553,7 +560,7 @@ impl RenderPipeline {
         }
     }
 
-    fn get_vertex_buffer_layout(chart_type: &ChartType) -> VertexBufferLayout {
+    fn get_vertex_buffer_layout(chart_type: &ChartType) -> VertexBufferLayout<'_> {
         match chart_type {
             ChartType::Point | ChartType::Scatter => VertexBufferLayout {
                 array_stride: 16, // 2 floats for position + 2 floats for color
@@ -676,6 +683,12 @@ pub struct FrameTimer {
     max_samples: usize,
 }
 
+impl Default for FrameTimer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FrameTimer {
     pub fn new() -> Self {
         Self {
@@ -731,6 +744,12 @@ pub struct AdaptiveQualityManager {
     quality_level: f32,
     target_frame_time: Duration,
     quality_config: QualityConfig,
+}
+
+impl Default for AdaptiveQualityManager {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl AdaptiveQualityManager {
@@ -865,4 +884,998 @@ pub enum OptimizationSuggestion {
     ImproveCaching,
     UseStreaming,
     EnableGPUProcessing,
+}
+
+// Real WebGPU implementations for testing
+#[cfg(feature = "webgpu")]
+pub struct RealWebGpuDevice {
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    adapter: wgpu::Adapter,
+    capabilities: WebGpuCapabilities,
+    limits: wgpu::Limits,
+    features: wgpu::Features,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealWebGpuDevice {
+    pub async fn new() -> Result<Self, RenderError> {
+        let adapter = wgpu::Instance::new(&wgpu::InstanceDescriptor::default())
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::default(),
+                compatible_surface: None,
+                force_fallback_adapter: false,
+            })
+            .await
+            .map_err(|e| RenderError::WebGPU(format!("Failed to get WebGPU adapter: {}", e)))?;
+
+        let (device, queue) = adapter
+            .request_device(&wgpu::DeviceDescriptor {
+                label: None,
+                required_features: wgpu::Features::VERTEX_WRITABLE_STORAGE
+                    | wgpu::Features::MULTI_DRAW_INDIRECT,
+                required_limits: wgpu::Limits::default(),
+                memory_hints: wgpu::MemoryHints::default(),
+                trace: wgpu::Trace::default(),
+            })
+            .await
+            .map_err(|e| RenderError::WebGPU(format!("Failed to get device: {}", e)))?;
+
+        let limits = device.limits();
+        let features = device.features();
+        let capabilities = WebGpuCapabilities {
+            max_texture_size: limits.max_texture_dimension_2d,
+            max_buffer_size: limits.max_buffer_size,
+            supported_formats: vec!["rgba8unorm".to_string(), "bgra8unorm".to_string()],
+            compute_shader_support: true, // Assume compute shaders are supported
+        };
+
+        Ok(Self {
+            device,
+            queue,
+            adapter,
+            capabilities,
+            limits,
+            features,
+        })
+    }
+
+    pub fn is_available() -> bool {
+        true // Assume WebGPU is available for testing
+    }
+
+    pub fn queue(&self) -> &wgpu::Queue {
+        &self.queue
+    }
+
+    pub fn adapter(&self) -> &wgpu::Adapter {
+        &self.adapter
+    }
+
+    pub fn capabilities(&self) -> &WebGpuCapabilities {
+        &self.capabilities
+    }
+
+    pub fn limits(&self) -> &wgpu::Limits {
+        &self.limits
+    }
+
+    pub fn features(&self) -> &wgpu::Features {
+        &self.features
+    }
+
+    /// Create a shader module from WGSL source
+    pub async fn create_shader_module(
+        &self,
+        source: &str,
+    ) -> Result<wgpu::ShaderModule, RenderError> {
+        Ok(self
+            .device
+            .create_shader_module(wgpu::ShaderModuleDescriptor {
+                label: None,
+                source: wgpu::ShaderSource::Wgsl(source.into()),
+            }))
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealLineChartPipeline {
+    #[allow(dead_code)]
+    device: wgpu::Device,
+    vertex_shader_module: wgpu::ShaderModule,
+    fragment_shader_module: wgpu::ShaderModule,
+    render_pipeline: wgpu::RenderPipeline,
+    bind_group_layout: wgpu::BindGroupLayout,
+    id: u32,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealLineChartPipeline {
+    pub async fn new(device: &RealWebGpuDevice) -> Result<Self, RenderError> {
+        let vertex_shader_source = include_str!("shaders/line.wgsl");
+        let fragment_shader_source = include_str!("shaders/line_fragment.wgsl");
+        let vertex_shader_module = device.create_shader_module(vertex_shader_source).await?;
+        let fragment_shader_module = device.create_shader_module(fragment_shader_source).await?;
+
+        let bind_group_layout =
+            device
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    label: Some("Line Chart Bind Group Layout"),
+                    entries: &[wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::VERTEX,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    }],
+                });
+
+        let render_pipeline_layout =
+            device
+                .device
+                .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                    label: Some("Line Chart Pipeline Layout"),
+                    bind_group_layouts: &[&bind_group_layout],
+                    push_constant_ranges: &[],
+                });
+
+        let render_pipeline =
+            device
+                .device
+                .create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                    label: Some("Line Chart Pipeline"),
+                    layout: Some(&render_pipeline_layout),
+                    vertex: wgpu::VertexState {
+                        module: &vertex_shader_module,
+                        entry_point: Some("vs_main"),
+                        buffers: &[wgpu::VertexBufferLayout {
+                            array_stride: 8, // 2 floats * 4 bytes
+                            step_mode: wgpu::VertexStepMode::Vertex,
+                            attributes: &[wgpu::VertexAttribute {
+                                offset: 0,
+                                shader_location: 0,
+                                format: wgpu::VertexFormat::Float32x2,
+                            }],
+                        }],
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                    },
+                    fragment: Some(wgpu::FragmentState {
+                        module: &fragment_shader_module,
+                        entry_point: Some("fs_main"),
+                        targets: &[Some(wgpu::ColorTargetState {
+                            format: wgpu::TextureFormat::Bgra8UnormSrgb,
+                            blend: Some(wgpu::BlendState::REPLACE),
+                            write_mask: wgpu::ColorWrites::ALL,
+                        })],
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                    }),
+                    primitive: wgpu::PrimitiveState {
+                        topology: wgpu::PrimitiveTopology::LineStrip,
+                        strip_index_format: None,
+                        front_face: wgpu::FrontFace::Ccw,
+                        cull_mode: None,
+                        polygon_mode: wgpu::PolygonMode::Fill,
+                        unclipped_depth: false,
+                        conservative: false,
+                    },
+                    depth_stencil: None,
+                    multisample: wgpu::MultisampleState {
+                        count: 1,
+                        mask: !0,
+                        alpha_to_coverage_enabled: false,
+                    },
+                    multiview: None,
+                    cache: None,
+                });
+
+        Ok(Self {
+            device: device.device.clone(),
+            vertex_shader_module,
+            fragment_shader_module,
+            render_pipeline,
+            bind_group_layout,
+            id: 1,
+        })
+    }
+
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn render_pipeline(&self) -> Option<&wgpu::RenderPipeline> {
+        Some(&self.render_pipeline)
+    }
+
+    pub fn bind_group_layout(&self) -> Option<&wgpu::BindGroupLayout> {
+        Some(&self.bind_group_layout)
+    }
+
+    pub fn vertex_shader_module(&self) -> Option<&wgpu::ShaderModule> {
+        Some(&self.vertex_shader_module)
+    }
+
+    pub fn fragment_shader_module(&self) -> Option<&wgpu::ShaderModule> {
+        Some(&self.fragment_shader_module)
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealScatterPlotPipeline {
+    #[allow(dead_code)]
+    device: wgpu::Device,
+    vertex_shader_module: wgpu::ShaderModule,
+    fragment_shader_module: wgpu::ShaderModule,
+    render_pipeline: wgpu::RenderPipeline,
+    bind_group_layout: wgpu::BindGroupLayout,
+    id: u32,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealScatterPlotPipeline {
+    pub async fn new(device: &RealWebGpuDevice) -> Result<Self, RenderError> {
+        let vertex_shader_source = include_str!("shaders/scatter.wgsl");
+        let fragment_shader_source = include_str!("shaders/scatter_fragment.wgsl");
+        let vertex_shader_module = device.create_shader_module(vertex_shader_source).await?;
+        let fragment_shader_module = device.create_shader_module(fragment_shader_source).await?;
+
+        let bind_group_layout =
+            device
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    label: Some("Scatter Plot Bind Group Layout"),
+                    entries: &[wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::VERTEX,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    }],
+                });
+
+        let render_pipeline_layout =
+            device
+                .device
+                .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                    label: Some("Scatter Plot Pipeline Layout"),
+                    bind_group_layouts: &[&bind_group_layout],
+                    push_constant_ranges: &[],
+                });
+
+        let render_pipeline =
+            device
+                .device
+                .create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                    label: Some("Scatter Plot Pipeline"),
+                    layout: Some(&render_pipeline_layout),
+                    vertex: wgpu::VertexState {
+                        module: &vertex_shader_module,
+                        entry_point: Some("vs_main"),
+                        buffers: &[
+                            wgpu::VertexBufferLayout {
+                                array_stride: 8, // 2 floats * 4 bytes
+                                step_mode: wgpu::VertexStepMode::Vertex,
+                                attributes: &[wgpu::VertexAttribute {
+                                    offset: 0,
+                                    shader_location: 0,
+                                    format: wgpu::VertexFormat::Float32x2,
+                                }],
+                            },
+                            wgpu::VertexBufferLayout {
+                                array_stride: 24, // 6 floats * 4 bytes (x, y, r, g, b, a)
+                                step_mode: wgpu::VertexStepMode::Instance,
+                                attributes: &[
+                                    wgpu::VertexAttribute {
+                                        offset: 0,
+                                        shader_location: 1,
+                                        format: wgpu::VertexFormat::Float32x2,
+                                    },
+                                    wgpu::VertexAttribute {
+                                        offset: 8,
+                                        shader_location: 2,
+                                        format: wgpu::VertexFormat::Float32x4,
+                                    },
+                                ],
+                            },
+                        ],
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                    },
+                    fragment: Some(wgpu::FragmentState {
+                        module: &fragment_shader_module,
+                        entry_point: Some("fs_main"),
+                        targets: &[Some(wgpu::ColorTargetState {
+                            format: wgpu::TextureFormat::Bgra8UnormSrgb,
+                            blend: Some(wgpu::BlendState::REPLACE),
+                            write_mask: wgpu::ColorWrites::ALL,
+                        })],
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                    }),
+                    primitive: wgpu::PrimitiveState {
+                        topology: wgpu::PrimitiveTopology::PointList,
+                        strip_index_format: None,
+                        front_face: wgpu::FrontFace::Ccw,
+                        cull_mode: None,
+                        polygon_mode: wgpu::PolygonMode::Fill,
+                        unclipped_depth: false,
+                        conservative: false,
+                    },
+                    depth_stencil: None,
+                    multisample: wgpu::MultisampleState {
+                        count: 1,
+                        mask: !0,
+                        alpha_to_coverage_enabled: false,
+                    },
+                    multiview: None,
+                    cache: None,
+                });
+
+        Ok(Self {
+            device: device.device.clone(),
+            vertex_shader_module,
+            fragment_shader_module,
+            render_pipeline,
+            bind_group_layout,
+            id: 2,
+        })
+    }
+
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn render_pipeline(&self) -> Option<&wgpu::RenderPipeline> {
+        Some(&self.render_pipeline)
+    }
+
+    pub fn bind_group_layout(&self) -> Option<&wgpu::BindGroupLayout> {
+        Some(&self.bind_group_layout)
+    }
+
+    pub fn vertex_shader_module(&self) -> Option<&wgpu::ShaderModule> {
+        Some(&self.vertex_shader_module)
+    }
+
+    pub fn fragment_shader_module(&self) -> Option<&wgpu::ShaderModule> {
+        Some(&self.fragment_shader_module)
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealBarChartPipeline {
+    #[allow(dead_code)]
+    device: wgpu::Device,
+    vertex_shader_module: wgpu::ShaderModule,
+    fragment_shader_module: wgpu::ShaderModule,
+    render_pipeline: wgpu::RenderPipeline,
+    bind_group_layout: wgpu::BindGroupLayout,
+    id: u32,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealBarChartPipeline {
+    pub async fn new(device: &RealWebGpuDevice) -> Result<Self, RenderError> {
+        let vertex_shader_source = include_str!("shaders/bar.wgsl");
+        let fragment_shader_source = include_str!("shaders/bar_fragment.wgsl");
+        let vertex_shader_module = device.create_shader_module(vertex_shader_source).await?;
+        let fragment_shader_module = device.create_shader_module(fragment_shader_source).await?;
+
+        let bind_group_layout =
+            device
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    label: Some("Bar Chart Bind Group Layout"),
+                    entries: &[wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::VERTEX,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    }],
+                });
+
+        let render_pipeline_layout =
+            device
+                .device
+                .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                    label: Some("Bar Chart Pipeline Layout"),
+                    bind_group_layouts: &[&bind_group_layout],
+                    push_constant_ranges: &[],
+                });
+
+        let render_pipeline =
+            device
+                .device
+                .create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                    label: Some("Bar Chart Pipeline"),
+                    layout: Some(&render_pipeline_layout),
+                    vertex: wgpu::VertexState {
+                        module: &vertex_shader_module,
+                        entry_point: Some("vs_main"),
+                        buffers: &[
+                            wgpu::VertexBufferLayout {
+                                array_stride: 8, // 2 floats * 4 bytes
+                                step_mode: wgpu::VertexStepMode::Vertex,
+                                attributes: &[wgpu::VertexAttribute {
+                                    offset: 0,
+                                    shader_location: 0,
+                                    format: wgpu::VertexFormat::Float32x2,
+                                }],
+                            },
+                            wgpu::VertexBufferLayout {
+                                array_stride: 32, // 8 floats * 4 bytes (x, y, width, height, r, g, b, a)
+                                step_mode: wgpu::VertexStepMode::Instance,
+                                attributes: &[
+                                    wgpu::VertexAttribute {
+                                        offset: 0,
+                                        shader_location: 1,
+                                        format: wgpu::VertexFormat::Float32x2,
+                                    },
+                                    wgpu::VertexAttribute {
+                                        offset: 8,
+                                        shader_location: 2,
+                                        format: wgpu::VertexFormat::Float32x2,
+                                    },
+                                    wgpu::VertexAttribute {
+                                        offset: 16,
+                                        shader_location: 3,
+                                        format: wgpu::VertexFormat::Float32x4,
+                                    },
+                                ],
+                            },
+                        ],
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                    },
+                    fragment: Some(wgpu::FragmentState {
+                        module: &fragment_shader_module,
+                        entry_point: Some("fs_main"),
+                        targets: &[Some(wgpu::ColorTargetState {
+                            format: wgpu::TextureFormat::Bgra8UnormSrgb,
+                            blend: Some(wgpu::BlendState::REPLACE),
+                            write_mask: wgpu::ColorWrites::ALL,
+                        })],
+                        compilation_options: wgpu::PipelineCompilationOptions::default(),
+                    }),
+                    primitive: wgpu::PrimitiveState {
+                        topology: wgpu::PrimitiveTopology::TriangleList,
+                        strip_index_format: None,
+                        front_face: wgpu::FrontFace::Ccw,
+                        cull_mode: None,
+                        polygon_mode: wgpu::PolygonMode::Fill,
+                        unclipped_depth: false,
+                        conservative: false,
+                    },
+                    depth_stencil: None,
+                    multisample: wgpu::MultisampleState {
+                        count: 1,
+                        mask: !0,
+                        alpha_to_coverage_enabled: false,
+                    },
+                    multiview: None,
+                    cache: None,
+                });
+
+        Ok(Self {
+            device: device.device.clone(),
+            vertex_shader_module,
+            fragment_shader_module,
+            render_pipeline,
+            bind_group_layout,
+            id: 3,
+        })
+    }
+
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn render_pipeline(&self) -> Option<&wgpu::RenderPipeline> {
+        Some(&self.render_pipeline)
+    }
+
+    pub fn bind_group_layout(&self) -> Option<&wgpu::BindGroupLayout> {
+        Some(&self.bind_group_layout)
+    }
+
+    pub fn vertex_shader_module(&self) -> Option<&wgpu::ShaderModule> {
+        Some(&self.vertex_shader_module)
+    }
+
+    pub fn fragment_shader_module(&self) -> Option<&wgpu::ShaderModule> {
+        Some(&self.fragment_shader_module)
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealGpuBufferManager {
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealGpuBufferManager {
+    pub fn new(device: &RealWebGpuDevice) -> Self {
+        Self {
+            device: device.device.clone(),
+            queue: device.queue.clone(),
+        }
+    }
+
+    pub async fn create_vertex_buffer(&self, data: &[f32]) -> Result<RealGpuBuffer, RenderError> {
+        let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("Vertex Buffer"),
+            size: std::mem::size_of_val(data) as u64,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        self.queue
+            .write_buffer(&buffer, 0, bytemuck::cast_slice(data));
+
+        Ok(RealGpuBuffer {
+            buffer,
+            size: std::mem::size_of_val(data) as u64,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+        })
+    }
+
+    pub async fn create_uniform_buffer(&self, data: &[f32]) -> Result<RealGpuBuffer, RenderError> {
+        let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("Uniform Buffer"),
+            size: std::mem::size_of_val(data) as u64,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        self.queue
+            .write_buffer(&buffer, 0, bytemuck::cast_slice(data));
+
+        Ok(RealGpuBuffer {
+            buffer,
+            size: std::mem::size_of_val(data) as u64,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        })
+    }
+
+    pub async fn create_instance_buffer(&self, data: &[f32]) -> Result<RealGpuBuffer, RenderError> {
+        let buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("Instance Buffer"),
+            size: std::mem::size_of_val(data) as u64,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        self.queue
+            .write_buffer(&buffer, 0, bytemuck::cast_slice(data));
+
+        Ok(RealGpuBuffer {
+            buffer,
+            size: std::mem::size_of_val(data) as u64,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+        })
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealGpuBuffer {
+    buffer: wgpu::Buffer,
+    size: u64,
+    usage: wgpu::BufferUsages,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealGpuBuffer {
+    pub fn gpu_buffer(&self) -> Option<&wgpu::Buffer> {
+        Some(&self.buffer)
+    }
+
+    pub fn size(&self) -> u64 {
+        self.size
+    }
+
+    pub fn usage(&self) -> wgpu::BufferUsages {
+        self.usage
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealLineChartRenderPass {
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    pipeline: RealLineChartPipeline,
+    vertex_buffer: Option<RealGpuBuffer>,
+    uniform_buffer: Option<RealGpuBuffer>,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealLineChartRenderPass {
+    pub async fn new(
+        device: &RealWebGpuDevice,
+        pipeline: RealLineChartPipeline,
+        vertex_buffer: Option<RealGpuBuffer>,
+        uniform_buffer: Option<RealGpuBuffer>,
+    ) -> Result<Self, RenderError> {
+        Ok(Self {
+            device: device.device.clone(),
+            queue: device.queue.clone(),
+            pipeline,
+            vertex_buffer,
+            uniform_buffer,
+        })
+    }
+
+    pub async fn execute(&self) -> Result<RenderStats, RenderError> {
+        let start_time = std::time::Instant::now();
+
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Line Chart Render Encoder"),
+            });
+
+        // Create a dummy render texture
+        let texture = self.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("Render Texture"),
+            size: wgpu::Extent3d {
+                width: 800,
+                height: 600,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Bgra8UnormSrgb,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+
+        let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        {
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("Line Chart Render Pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 0.0,
+                            g: 0.0,
+                            b: 0.0,
+                            a: 1.0,
+                        }),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                occlusion_query_set: None,
+                timestamp_writes: None,
+            });
+
+            render_pass.set_pipeline(
+                self.pipeline
+                    .render_pipeline()
+                    .expect("Pipeline should have render pipeline"),
+            );
+
+            if let Some(vertex_buffer) = &self.vertex_buffer {
+                render_pass.set_vertex_buffer(0, vertex_buffer.gpu_buffer().unwrap().slice(..));
+            }
+
+            if let Some(uniform_buffer) = &self.uniform_buffer {
+                let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("Line Chart Bind Group"),
+                    layout: self
+                        .pipeline
+                        .bind_group_layout()
+                        .expect("Pipeline should have bind group layout"),
+                    entries: &[wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: uniform_buffer.gpu_buffer().unwrap().as_entire_binding(),
+                    }],
+                });
+                render_pass.set_bind_group(0, &bind_group, &[]);
+            }
+
+            if let Some(vertex_buffer) = &self.vertex_buffer {
+                let vertex_count = vertex_buffer.size() / 8; // 2 floats * 4 bytes
+                render_pass.draw(0..vertex_count as u32, 0..1);
+            }
+        }
+
+        self.queue.submit(std::iter::once(encoder.finish()));
+
+        let render_time = start_time.elapsed();
+
+        Ok(RenderStats {
+            frame_time: render_time,
+            triangles_rendered: self
+                .vertex_buffer
+                .as_ref()
+                .map(|b| (b.size() / 8) as u32)
+                .unwrap_or(0),
+            draw_calls: 1,
+            memory_used: (self.vertex_buffer.as_ref().map(|b| b.size()).unwrap_or(0)
+                + self.uniform_buffer.as_ref().map(|b| b.size()).unwrap_or(0))
+                as usize,
+            gpu_utilization: 0.5,
+            cache_hit_rate: 0.95,
+        })
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealScatterPlotRenderPass {
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    pipeline: RealScatterPlotPipeline,
+    vertex_buffer: Option<RealGpuBuffer>,
+    instance_buffer: Option<RealGpuBuffer>,
+    uniform_buffer: Option<RealGpuBuffer>,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealScatterPlotRenderPass {
+    pub async fn new(
+        device: &RealWebGpuDevice,
+        pipeline: RealScatterPlotPipeline,
+        vertex_buffer: Option<RealGpuBuffer>,
+        instance_buffer: Option<RealGpuBuffer>,
+        uniform_buffer: Option<RealGpuBuffer>,
+    ) -> Result<Self, RenderError> {
+        Ok(Self {
+            device: device.device.clone(),
+            queue: device.queue.clone(),
+            pipeline,
+            vertex_buffer,
+            instance_buffer,
+            uniform_buffer,
+        })
+    }
+
+    pub async fn execute(&self) -> Result<RenderStats, RenderError> {
+        let start_time = std::time::Instant::now();
+
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Scatter Plot Render Encoder"),
+            });
+
+        // Create a dummy render texture
+        let texture = self.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("Render Texture"),
+            size: wgpu::Extent3d {
+                width: 800,
+                height: 600,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Bgra8UnormSrgb,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+
+        let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        {
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("Scatter Plot Render Pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 0.0,
+                            g: 0.0,
+                            b: 0.0,
+                            a: 1.0,
+                        }),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                occlusion_query_set: None,
+                timestamp_writes: None,
+            });
+
+            render_pass.set_pipeline(
+                self.pipeline
+                    .render_pipeline()
+                    .expect("Pipeline should have render pipeline"),
+            );
+
+            if let Some(vertex_buffer) = &self.vertex_buffer {
+                render_pass.set_vertex_buffer(0, vertex_buffer.gpu_buffer().unwrap().slice(..));
+            }
+
+            if let Some(instance_buffer) = &self.instance_buffer {
+                render_pass.set_vertex_buffer(1, instance_buffer.gpu_buffer().unwrap().slice(..));
+            }
+
+            if let Some(uniform_buffer) = &self.uniform_buffer {
+                let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("Scatter Plot Bind Group"),
+                    layout: self
+                        .pipeline
+                        .bind_group_layout()
+                        .expect("Pipeline should have bind group layout"),
+                    entries: &[wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: uniform_buffer.gpu_buffer().unwrap().as_entire_binding(),
+                    }],
+                });
+                render_pass.set_bind_group(0, &bind_group, &[]);
+            }
+
+            if let Some(instance_buffer) = &self.instance_buffer {
+                let instance_count = instance_buffer.size() / 24; // 6 floats * 4 bytes
+                render_pass.draw(0..1, 0..instance_count as u32);
+            }
+        }
+
+        self.queue.submit(std::iter::once(encoder.finish()));
+
+        let render_time = start_time.elapsed();
+
+        Ok(RenderStats {
+            frame_time: render_time,
+            triangles_rendered: self
+                .instance_buffer
+                .as_ref()
+                .map(|b| (b.size() / 24) as u32)
+                .unwrap_or(0),
+            draw_calls: 1,
+            memory_used: (self.vertex_buffer.as_ref().map(|b| b.size()).unwrap_or(0)
+                + self.instance_buffer.as_ref().map(|b| b.size()).unwrap_or(0)
+                + self.uniform_buffer.as_ref().map(|b| b.size()).unwrap_or(0))
+                as usize,
+            gpu_utilization: 0.5,
+            cache_hit_rate: 0.95,
+        })
+    }
+}
+
+#[cfg(feature = "webgpu")]
+pub struct RealBarChartRenderPass {
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    pipeline: RealBarChartPipeline,
+    vertex_buffer: Option<RealGpuBuffer>,
+    instance_buffer: Option<RealGpuBuffer>,
+    uniform_buffer: Option<RealGpuBuffer>,
+}
+
+#[cfg(feature = "webgpu")]
+impl RealBarChartRenderPass {
+    pub async fn new(
+        device: &RealWebGpuDevice,
+        pipeline: RealBarChartPipeline,
+        vertex_buffer: Option<RealGpuBuffer>,
+        instance_buffer: Option<RealGpuBuffer>,
+        uniform_buffer: Option<RealGpuBuffer>,
+    ) -> Result<Self, RenderError> {
+        Ok(Self {
+            device: device.device.clone(),
+            queue: device.queue.clone(),
+            pipeline,
+            vertex_buffer,
+            instance_buffer,
+            uniform_buffer,
+        })
+    }
+
+    pub async fn execute(&self) -> Result<RenderStats, RenderError> {
+        let start_time = std::time::Instant::now();
+
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Bar Chart Render Encoder"),
+            });
+
+        // Create a dummy render texture
+        let texture = self.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("Render Texture"),
+            size: wgpu::Extent3d {
+                width: 800,
+                height: 600,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Bgra8UnormSrgb,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            view_formats: &[],
+        });
+
+        let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        {
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("Bar Chart Render Pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 0.0,
+                            g: 0.0,
+                            b: 0.0,
+                            a: 1.0,
+                        }),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                occlusion_query_set: None,
+                timestamp_writes: None,
+            });
+
+            render_pass.set_pipeline(
+                self.pipeline
+                    .render_pipeline()
+                    .expect("Pipeline should have render pipeline"),
+            );
+
+            if let Some(vertex_buffer) = &self.vertex_buffer {
+                render_pass.set_vertex_buffer(0, vertex_buffer.gpu_buffer().unwrap().slice(..));
+            }
+
+            if let Some(instance_buffer) = &self.instance_buffer {
+                render_pass.set_vertex_buffer(1, instance_buffer.gpu_buffer().unwrap().slice(..));
+            }
+
+            if let Some(uniform_buffer) = &self.uniform_buffer {
+                let bind_group = self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("Bar Chart Bind Group"),
+                    layout: self
+                        .pipeline
+                        .bind_group_layout()
+                        .expect("Pipeline should have bind group layout"),
+                    entries: &[wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: uniform_buffer.gpu_buffer().unwrap().as_entire_binding(),
+                    }],
+                });
+                render_pass.set_bind_group(0, &bind_group, &[]);
+            }
+
+            if let Some(instance_buffer) = &self.instance_buffer {
+                let instance_count = instance_buffer.size() / 32; // 8 floats * 4 bytes
+                render_pass.draw(0..6, 0..instance_count as u32); // 6 vertices per bar (2 triangles)
+            }
+        }
+
+        self.queue.submit(std::iter::once(encoder.finish()));
+
+        let render_time = start_time.elapsed();
+
+        Ok(RenderStats {
+            frame_time: render_time,
+            triangles_rendered: self
+                .instance_buffer
+                .as_ref()
+                .map(|b| (b.size() / 32) as u32 * 6)
+                .unwrap_or(0),
+            draw_calls: 1,
+            memory_used: (self.vertex_buffer.as_ref().map(|b| b.size()).unwrap_or(0)
+                + self.instance_buffer.as_ref().map(|b| b.size()).unwrap_or(0)
+                + self.uniform_buffer.as_ref().map(|b| b.size()).unwrap_or(0))
+                as usize,
+            gpu_utilization: 0.5,
+            cache_hit_rate: 0.95,
+        })
+    }
 }

@@ -1,53 +1,33 @@
-// Bar chart shader for WebGPU
-// Renders rectangular bars with customizable colors and gradients
-
-struct VertexInput {
-    @location(0) position: vec2<f32>,
-    @location(1) color: vec2<f32>, // RG as vec2, BA will be uniforms
-}
-
-struct VertexOutput {
-    @builtin(position) clip_position: vec4<f32>,
-    @location(0) color: vec4<f32>,
-    @location(1) uv: vec2<f32>,
-}
-
+// Bar chart vertex shader
 struct Uniforms {
     view_matrix: mat4x4<f32>,
     projection_matrix: mat4x4<f32>,
-    alpha: f32,
-    gradient_enabled: f32,
 }
 
 @group(0) @binding(0)
 var<uniform> uniforms: Uniforms;
 
-@vertex
-fn vs_main(vertex: VertexInput) -> VertexOutput {
-    var out: VertexOutput;
-
-    // Transform position
-    let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
-    out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
-
-    // Pass through color with alpha from uniforms
-    out.color = vec4<f32>(vertex.color, uniforms.alpha, 1.0);
-
-    // UV coordinates for gradient effect
-    out.uv = vertex.position;
-
-    return out;
+struct VertexInput {
+    @location(0) position: vec2<f32>,
 }
 
-@fragment
-fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    var color = in.color;
+struct InstanceInput {
+    @location(1) instance_position: vec2<f32>,
+    @location(2) instance_size: vec2<f32>,
+    @location(3) instance_color: vec4<f32>,
+}
 
-    // Apply gradient if enabled
-    if (uniforms.gradient_enabled > 0.5) {
-        let gradient_factor = in.uv.y * 0.3 + 0.7; // Subtle vertical gradient
-        color.rgb *= gradient_factor;
-    }
+struct VertexOutput {
+    @builtin(position) clip_position: vec4<f32>,
+    @location(0) color: vec4<f32>,
+}
 
-    return color;
+@vertex
+fn vs_main(vertex: VertexInput, instance: InstanceInput) -> VertexOutput {
+    var out: VertexOutput;
+    let scaled_position = vertex.position * instance.instance_size;
+    let world_position = vec4<f32>(scaled_position + instance.instance_position, 0.0, 1.0);
+    out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_position;
+    out.color = instance.instance_color;
+    return out;
 }

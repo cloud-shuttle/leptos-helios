@@ -177,6 +177,12 @@ pub mod memory {
         peak: AtomicUsize,
     }
 
+    impl Default for MemoryTracker {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
     impl MemoryTracker {
         pub const fn new() -> Self {
             Self {
@@ -233,7 +239,7 @@ pub mod validation {
         // Check that encoding data types match actual data
         if let crate::chart::DataReference::DataFrame(df) = &spec.data {
             for (field, encoding) in spec.encoding.get_field_encodings() {
-                if let Some(series) = df.column(&field).ok() {
+                if let Ok(series) = df.column(&field) {
                     let actual_type = series.dtype();
                     let expected_type = encoding.data_type();
 
@@ -254,26 +260,25 @@ pub mod validation {
         actual: &polars::prelude::DataType,
         expected: &crate::chart::DataType,
     ) -> bool {
-        match (actual, expected) {
+        matches!(
+            (actual, expected),
             (
                 polars::prelude::DataType::Int32 | polars::prelude::DataType::Int64,
                 crate::chart::DataType::Quantitative,
-            ) => true,
-            (
+            ) | (
                 polars::prelude::DataType::Float32 | polars::prelude::DataType::Float64,
                 crate::chart::DataType::Quantitative,
-            ) => true,
-            (
+            ) | (
                 polars::prelude::DataType::String,
                 crate::chart::DataType::Nominal | crate::chart::DataType::Ordinal,
-            ) => true,
-            (polars::prelude::DataType::Boolean, crate::chart::DataType::Nominal) => true,
-            (
+            ) | (
+                polars::prelude::DataType::Boolean,
+                crate::chart::DataType::Nominal
+            ) | (
                 polars::prelude::DataType::Date | polars::prelude::DataType::Datetime(_, _),
                 crate::chart::DataType::Temporal,
-            ) => true,
-            _ => false,
-        }
+            )
+        )
     }
 }
 

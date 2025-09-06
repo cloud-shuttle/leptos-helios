@@ -15,6 +15,7 @@ helios-core = { path = "../helios-core" }
 helios-leptos = { path = "../helios-leptos" }
 helios-macros = { path = "../helios-macros" }
 leptos = { workspace = true }
+# polars = { version = "0.50", features = ["lazy"] }
 
 # Web and WASM
 wasm-bindgen = { workspace = true }

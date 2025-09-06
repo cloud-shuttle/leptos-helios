@@ -12,15 +12,15 @@ repos:
         entry: cargo fmt
         language: system
         types: [rust]
-        
+
       - id: clippy
         name: cargo clippy
         description: Lint Rust code
         entry: cargo clippy
         language: system
         types: [rust]
-        
-        
+
+
 
   # General hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -30,42 +30,42 @@ repos:
         name: Trim Trailing Whitespace
         description: Remove trailing whitespace
         types: [text]
-        
+
       - id: end-of-file-fixer
         name: Fix End of Files
         description: Ensure files end with a newline
         types: [text]
-        
+
       - id: check-yaml
         name: Check YAML
         description: Check YAML syntax
         types: [yaml]
-        
+
       - id: check-toml
         name: Check TOML
         description: Check TOML syntax
         types: [toml]
-        
+
       - id: check-json
         name: Check JSON
         description: Check JSON syntax
         types: [json]
-        
+
       - id: check-merge-conflict
         name: Check for merge conflicts
         description: Check for merge conflict markers
         types: [text]
-        
+
       - id: check-added-large-files
         name: Check for large files
         description: Prevent large files from being committed
         args: ['--maxkb=1000']
-        
+
       - id: mixed-line-ending
         name: Mixed Line Ending
         description: Ensure consistent line endings
         args: ['--fix=lf']
-        
+
       - id: check-case-conflict
         name: Check for case conflicts
         description: Check for files that would conflict in case-insensitive filesystems

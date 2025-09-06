@@ -440,6 +440,7 @@ pub struct MemoryPool {
 impl MemoryPool {
     pub fn new(config: PerformanceConfig) -> Self {
         Self {
+            #[allow(clippy::arc_with_non_send_sync)]
             pools: Arc::new(Mutex::new(HashMap::new())),
             config,
             allocator: Arc::new(System),
@@ -686,7 +687,7 @@ impl ParallelProcessor {
 
         self.thread_pool.install(|| {
             data.par_iter()
-                .fold(|| identity.clone(), |acc, x| f(acc, x))
+                .fold(|| identity.clone(), &f)
                 .reduce(|| identity.clone(), |acc, x| f(acc, &x))
         })
     }

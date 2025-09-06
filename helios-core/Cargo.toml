@@ -37,6 +37,7 @@ uuid = { workspace = true }
 chrono = { workspace = true }
 rand = { workspace = true }
 num_cpus = "1.0"
+bytemuck = "1.14"
 
 # Performance optimization
 rayon = "1.8"
