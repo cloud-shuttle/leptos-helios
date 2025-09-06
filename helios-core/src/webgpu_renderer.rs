@@ -8,7 +8,7 @@ use crate::chart_config::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 use thiserror::Error;
-use wgpu::*;
+// use wgpu::*; // Mock implementation - imports not needed
 
 /// WebGPU renderer for high-performance chart rendering
 pub struct WebGpuRenderer {
@@ -113,7 +113,7 @@ impl WebGpuRenderer {
     }
 
     /// Create WebGPU surface
-    pub fn create_surface(device: &Device) -> Result<Surface, WebGpuError> {
+    pub fn create_surface(_device: &Device) -> Result<Surface, WebGpuError> {
         // In a real implementation, this would create a surface from a canvas
         // For now, we'll return an error since we don't have a real device
         Err(WebGpuError::SurfaceCreation(
@@ -122,7 +122,10 @@ impl WebGpuRenderer {
     }
 
     /// Compile WebGPU shader
-    pub fn compile_shader(device: &Device, shader_name: &str) -> Result<WebGpuShader, WebGpuError> {
+    pub fn compile_shader(
+        _device: &Device,
+        shader_name: &str,
+    ) -> Result<WebGpuShader, WebGpuError> {
         // In a real implementation, this would compile WGSL shaders
         // For now, we'll return an error since we don't have a real device
         Err(WebGpuError::ShaderCompilation(format!(
@@ -133,8 +136,8 @@ impl WebGpuRenderer {
 
     /// Create render pipeline for a specific chart type
     pub fn create_render_pipeline(
-        device: &Device,
-        surface: &Surface,
+        _device: &Device,
+        _surface: &Surface,
         chart_type: &str,
     ) -> Result<RenderPipeline, WebGpuError> {
         // In a real implementation, this would create optimized render pipelines
@@ -212,7 +215,7 @@ impl WebGpuRenderer {
 
 impl BufferPool {
     /// Allocate a buffer from the pool
-    pub fn allocate_buffer(&mut self, size: usize) -> Result<Buffer, WebGpuError> {
+    pub fn allocate_buffer(&mut self, _size: usize) -> Result<Buffer, WebGpuError> {
         // In a real implementation, this would allocate GPU buffers
         // For now, we'll return an error since we don't have a real device
         Err(WebGpuError::BufferAllocation(
@@ -221,7 +224,7 @@ impl BufferPool {
     }
 
     /// Deallocate a buffer back to the pool
-    pub fn deallocate_buffer(&mut self, buffer: Buffer) -> Result<(), WebGpuError> {
+    pub fn deallocate_buffer(&mut self, _buffer: Buffer) -> Result<(), WebGpuError> {
         // In a real implementation, this would return the buffer to the pool
         // For now, we'll just update statistics
         self.total_deallocations += 1;
@@ -243,7 +246,7 @@ impl WebGpuRenderer {
     pub fn render_line_chart(
         &self,
         data: &[[f32; 2]],
-        config: &LineChartConfig,
+        _config: &LineChartConfig,
     ) -> Result<WebGpuRenderResult, ChartRenderError> {
         // In a real implementation, this would render using WebGPU
         // For now, we'll return a mock result
@@ -257,7 +260,7 @@ impl WebGpuRenderer {
     pub fn render_bar_chart(
         &self,
         data: &[[f32; 2]],
-        config: &BarChartConfig,
+        _config: &BarChartConfig,
     ) -> Result<WebGpuRenderResult, ChartRenderError> {
         // In a real implementation, this would render using WebGPU
         // For now, we'll return a mock result
@@ -271,7 +274,7 @@ impl WebGpuRenderer {
     pub fn render_scatter_plot(
         &self,
         data: &[[f32; 2]],
-        config: &ScatterPlotConfig,
+        _config: &ScatterPlotConfig,
     ) -> Result<WebGpuRenderResult, ChartRenderError> {
         // In a real implementation, this would render using WebGPU
         // For now, we'll return a mock result
@@ -285,7 +288,7 @@ impl WebGpuRenderer {
     pub fn render_heatmap(
         &self,
         data: &[[f32; 2]],
-        config: &HeatmapConfig,
+        _config: &HeatmapConfig,
     ) -> Result<WebGpuRenderResult, ChartRenderError> {
         // In a real implementation, this would render using WebGPU
         // For now, we'll return a mock result

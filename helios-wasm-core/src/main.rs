@@ -1,17 +1,16 @@
 //! Helios WASM Binary Entry Point
-//! 
+//!
 //! This is the main entry point for the Helios WASM application.
 //! It provides a simple interface for testing and demonstration purposes.
 
 use wasm_bindgen::prelude::*;
-use console_error_panic_hook;
 
 /// Initialize the WASM module
 #[wasm_bindgen(start)]
-pub fn main() {
+pub fn init() {
     // Set up panic hook for better error messages in the browser
     console_error_panic_hook::set_once();
-    
+
     // Log that the module has been initialized
     web_sys::console::log_1(&"🚀 Helios WASM Module Initialized".into());
 }
@@ -48,5 +47,13 @@ pub fn get_sample_chart_config() -> String {
                 "data": [1, 2, 3, 4]
             }]
         }
-    }).to_string()
+    })
+    .to_string()
+}
+
+/// Main function for the binary target
+fn main() {
+    // This is a WASM binary, so main is not used in the browser
+    // The actual entry point is the init() function with #[wasm_bindgen(start)]
+    println!("Helios WASM Binary - Use in browser environment");
 }
