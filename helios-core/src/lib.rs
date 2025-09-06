@@ -14,6 +14,7 @@ pub mod render_simple;
 pub mod renderer;
 pub mod streaming;
 pub mod webgpu_renderer;
+pub mod advanced_charts;
 
 pub use data_minimal as data;
 pub use render_simple as render;

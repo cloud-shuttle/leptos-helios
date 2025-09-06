@@ -1,69 +1,75 @@
-// Sankey diagram shader for WebGPU
-// Renders flow diagrams with nodes and links
+//! Sankey Diagram Shader
+//! 
+//! WebGPU shader for rendering Sankey diagrams with flow visualization
 
 struct VertexInput {
     @location(0) position: vec2<f32>,
-    @location(1) color: vec2<f32>,
+    @location(1) color: vec4<f32>,
+    @location(2) node_id: f32,
+    @location(3) flow_value: f32,
 }
 
 struct VertexOutput {
     @builtin(position) clip_position: vec4<f32>,
     @location(0) color: vec4<f32>,
-    @location(1) uv: vec2<f32>,
+    @location(1) node_id: f32,
+    @location(2) flow_value: f32,
 }
 
-struct Uniforms {
-    view_matrix: mat4x4<f32>,
-    projection_matrix: mat4x4<f32>,
+struct SankeyUniforms {
     node_width: f32,
+    node_padding: f32,
     link_opacity: f32,
-    alpha: f32,
+    viewport_size: vec2<f32>,
+    num_nodes: f32,
+    num_links: f32,
 }
 
 @group(0) @binding(0)
-var<uniform> uniforms: Uniforms;
+var<uniform> uniforms: SankeyUniforms;
 
 @vertex
-fn vs_main(vertex: VertexInput) -> VertexOutput {
+fn vs_main(model: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-
-    // Transform position
-    let world_pos = vec4<f32>(vertex.position, 0.0, 1.0);
-    out.clip_position = uniforms.projection_matrix * uniforms.view_matrix * world_pos;
-
-    // Pass through color and UV coordinates
-    out.color = vec4<f32>(vertex.color, uniforms.alpha, 1.0);
-    out.uv = vertex.position;
-
+    
+    // Scale position to viewport
+    let x = (model.position.x / uniforms.viewport_size.x) * 2.0 - 1.0;
+    let y = (model.position.y / uniforms.viewport_size.y) * 2.0 - 1.0;
+    
+    out.clip_position = vec4<f32>(x, y, 0.0, 1.0);
+    out.color = model.color;
+    out.node_id = model.node_id;
+    out.flow_value = model.flow_value;
+    
     return out;
 }
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    // Create sankey flow effect
-    let flow_width = uniforms.node_width;
-
-    // Determine if this is a node or link based on position
-    let is_node = (in.uv.x < 0.1) || (in.uv.x > 0.9);
-
-    if (is_node) {
-        // Render as node (rectangle)
-        let node_distance = min(abs(in.uv.x - 0.05), abs(in.uv.x - 0.95));
-        if (node_distance > flow_width / 2.0) {
-            discard;
-        }
+    // Apply link opacity for flow visualization
+    var color = in.color;
+    
+    // Different opacity for nodes vs links
+    if (in.node_id >= 0.0) {
+        // Node rendering - full opacity
+        color.a = 1.0;
     } else {
-        // Render as link (flowing curve)
-        let link_center = 0.5;
-        let link_distance = abs(in.uv.y - link_center);
-        if (link_distance > flow_width / 2.0) {
-            discard;
-        }
-
-        // Add flow effect
-        let flow_factor = 1.0 - (link_distance / (flow_width / 2.0)) * 0.3;
-        return vec4<f32>(in.color.rgb * flow_factor, in.color.a * uniforms.link_opacity);
+        // Link rendering - reduced opacity
+        color.a *= uniforms.link_opacity;
     }
+    
+    return color;
+}
 
-    return in.color;
+// Link curve rendering shader
+@vertex
+fn vs_link_curve(vertex: vec2<f32>) -> @builtin(position) vec4<f32> {
+    let x = (vertex.x / uniforms.viewport_size.x) * 2.0 - 1.0;
+    let y = (vertex.y / uniforms.viewport_size.y) * 2.0 - 1.0;
+    return vec4<f32>(x, y, 0.0, 1.0);
+}
+
+@fragment
+fn fs_link_curve() -> @location(0) vec4<f32> {
+    return vec4<f32>(0.5, 0.5, 0.5, uniforms.link_opacity);
 }
