@@ -15,12 +15,12 @@ pub mod renderer;
 pub mod streaming;
 pub mod webgpu_renderer;
 pub mod advanced_charts;
+pub mod performance;
 
 pub use data_minimal as data;
 pub use render_simple as render;
 pub mod gpu;
 pub mod intelligence;
-pub mod performance;
 pub mod utils;
 
 pub use chart::{ChartSpec, ChartSpecBuilder, DataReference, Encoding, MarkType};
