@@ -4,8 +4,10 @@ members = [
     "helios-leptos",
     "helios-macros",
     "helios-wasm",
+    "helios-wasm-core",
     "helios-examples",
-    "helios-benchmarks"
+    "helios-benchmarks",
+    "helios-app"
 ]
 
 resolver = "2"
@@ -20,6 +22,7 @@ candle-core = { version = "0.8" }
 
 # Web and WASM
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
 web-sys = "0.3"
 js-sys = "0.3"
 console_error_panic_hook = "0.1"
@@ -47,7 +50,7 @@ criterion = "0.5"
 wasm-bindgen-test = "0.3"
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.0-beta"
 edition = "2021"
 authors = ["CloudShuttle <contact@cloudshuttle.com>"]
 license = "MIT"

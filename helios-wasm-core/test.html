@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Helios WASM Test</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Helios WASM Test</h1>
+    <p>This page tests the basic functionality of the Helios WASM module.</p>
+
+    <div class="test-section">
+        <h2>Initialization Test</h2>
+        <button onclick="testInit()">Test Initialization</button>
+        <div id="init-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Version Test</h2>
+        <button onclick="testVersion()">Get Version</button>
+        <div id="version-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Chart Creation Test</h2>
+        <button onclick="testChartCreation()">Create Chart Spec</button>
+        <div id="chart-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>WebGPU Device Test</h2>
+        <button onclick="testWebGpuDevice()">Test WebGPU Device</button>
+        <div id="webgpu-result"></div>
+    </div>
+
+    <script type="module">
+        import init, { init_helios, get_version, create_chart_spec, WasmWebGpuDevice } from './pkg/helios_wasm_core.js';
+
+        // Initialize the WASM module
+        await init();
+
+        // Make functions available globally for testing
+        window.testInit = async function() {
+            const resultDiv = document.getElementById('init-result');
+            try {
+                await init_helios();
+                resultDiv.innerHTML = '<span class="success">✓ Initialization successful!</span>';
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Initialization failed: ${error}</span>`;
+            }
+        };
+
+        window.testVersion = function() {
+            const resultDiv = document.getElementById('version-result');
+            try {
+                const version = get_version();
+                resultDiv.innerHTML = `<span class="success">✓ Version: ${version}</span>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Version test failed: ${error}</span>`;
+            }
+        };
+
+        window.testChartCreation = function() {
+            const resultDiv = document.getElementById('chart-result');
+            try {
+                const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                const chartSpec = create_chart_spec("line", data, 800, 600, "Test Chart");
+                resultDiv.innerHTML = `<span class="success">✓ Chart spec created successfully!</span><br><pre>${JSON.stringify(chartSpec, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ Chart creation failed: ${error}</span>`;
+            }
+        };
+
+        window.testWebGpuDevice = async function() {
+            const resultDiv = document.getElementById('webgpu-result');
+            try {
+                const isAvailable = WasmWebGpuDevice.is_available();
+                if (isAvailable) {
+                    const device = await WasmWebGpuDevice.new();
+                    resultDiv.innerHTML = '<span class="success">✓ WebGPU device created successfully!</span>';
+                } else {
+                    resultDiv.innerHTML = '<span class="error">✗ WebGPU not available</span>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ WebGPU device test failed: ${error}</span>`;
+            }
+        };
+
+        // Auto-run initialization test
+        window.testInit();
+    </script>
+</body>
+</html>

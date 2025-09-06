@@ -92,17 +92,17 @@ clean_build() {
 build_wasm() {
     log_info "Building Rust to WASM..."
 
-    # Build with wasm-pack
+    # Build with wasm-pack from helios-app directory
+    cd helios-app
     wasm-pack build \
         --target web \
         --out-dir $PKG_DIR \
         --out-name helios \
         --release \
         --no-typescript \
-        --no-pack \
-        --no-default-features \
-        --features webgpu,simd
+        --no-pack
 
+    cd ..
     log_success "WASM build completed"
 }
 
@@ -119,15 +119,14 @@ optimize_wasm() {
             --enable-mutable-globals \
             --enable-nontrapping-float-to-int \
             --enable-sign-ext \
-            --enable-saturating-float-to-int \
             --enable-tail-call \
             --strip-debug \
             --strip-producers \
-            $PKG_DIR/helios_bg.wasm \
-            -o $PKG_DIR/helios_optimized.wasm
+            helios-app/$PKG_DIR/helios_bg.wasm \
+            -o helios-app/$PKG_DIR/helios_optimized.wasm
 
         # Replace original with optimized
-        mv $PKG_DIR/helios_optimized.wasm $PKG_DIR/helios_bg.wasm
+        mv helios-app/$PKG_DIR/helios_optimized.wasm helios-app/$PKG_DIR/helios_bg.wasm
         log_success "WASM optimization completed"
     else
         log_warning "wasm-opt not available, skipping optimization"
@@ -139,8 +138,8 @@ build_trunk() {
     log_info "Building with Trunk..."
 
     # Create index.html if it doesn't exist
-    if [ ! -f "index.html" ]; then
-        cat > index.html << 'EOF'
+    if [ ! -f "helios-app/index.html" ]; then
+        cat > helios-app/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,8 +197,10 @@ build_trunk() {
 EOF
     fi
 
-    # Build with Trunk
+    # Build with Trunk from helios-app directory
+    cd helios-app
     trunk build --release
+    cd ..
 
     log_success "Trunk build completed"
 }

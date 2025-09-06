@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helios Visualization Library - Working Example</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .demo-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #2d5a2d;
+            border: 1px solid #4a7c4a;
+        }
+        .error {
+            background: #5a2d2d;
+            border: 1px solid #7c4a4a;
+        }
+        .loading {
+            background: #2d4a5a;
+            border: 1px solid #4a6a7c;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        button {
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00b8e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Helios Visualization Library</h1>
+            <p>High-Performance Rust Visualization for the Web</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>WASM Module Status</h2>
+            <div id="status" class="status loading">Loading WASM module...</div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Function Tests</h2>
+            <button onclick="testGreet()">Test Greet Function</button>
+            <button onclick="testDataProcessing()">Test Data Processing</button>
+            <button onclick="testChartCreation()">Test Chart Creation</button>
+            <button onclick="testWebGPU()">Test WebGPU Support</button>
+            <div id="results"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Console Output</h2>
+            <pre id="console-output"></pre>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { greet, process_data, create_simple_chart, test_webgpu_support } from './pkg/helios.js';
+
+        let wasmModule = null;
+        const statusDiv = document.getElementById('status');
+        const resultsDiv = document.getElementById('results');
+        const consoleOutput = document.getElementById('console-output');
+
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : '✅';
+            consoleOutput.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+
+        async function initializeWasm() {
+            try {
+                console.log('Initializing WASM module...');
+                wasmModule = await init();
+                console.log('WASM module initialized successfully!');
+
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ WASM module loaded successfully!';
+
+                // Test basic functionality
+                testGreet();
+
+            } catch (error) {
+                console.error('Failed to initialize WASM module:', error);
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Failed to load WASM module: ' + error.message;
+            }
+        }
+
+        window.testGreet = function() {
+            if (!wasmModule) {
+                resultsDiv.innerHTML = '<div class="status error">WASM module not loaded</div>';
+                return;
+            }
+
+            try {
+                const result = greet('Helios User');
+                console.log('Greet function result:', result);
+                resultsDiv.innerHTML = `<div class="status success">Greet: ${result}</div>`;
+            } catch (error) {
+                console.error('Greet function error:', error);
+                resultsDiv.innerHTML = `<div class="status error">Greet error: ${error.message}</div>`;
+            }
+        };
+
+        window.testDataProcessing = function() {
+            if (!wasmModule) {
+                resultsDiv.innerHTML = '<div class="status error">WASM module not loaded</div>';
+                return;
+            }
+
+            try {
+                const result = process_data('hello world from helios');
+                console.log('Data processing result:', result);
+                resultsDiv.innerHTML = `<div class="status success">Data Processing: ${result}</div>`;
+            } catch (error) {
+                console.error('Data processing error:', error);
+                resultsDiv.innerHTML = `<div class="status error">Data processing error: ${error.message}</div>`;
+            }
+        };
+
+        window.testChartCreation = function() {
+            if (!wasmModule) {
+                resultsDiv.innerHTML = '<div class="status error">WASM module not loaded</div>';
+                return;
+            }
+
+            try {
+                const chartJson = create_simple_chart();
+                console.log('Chart creation result:', chartJson);
+                resultsDiv.innerHTML = `
+                    <div class="status success">Chart Created Successfully!</div>
+                    <pre>${JSON.stringify(JSON.parse(chartJson), null, 2)}</pre>
+                `;
+            } catch (error) {
+                console.error('Chart creation error:', error);
+                resultsDiv.innerHTML = `<div class="status error">Chart creation error: ${error.message}</div>`;
+            }
+        };
+
+        window.testWebGPU = function() {
+            if (!wasmModule) {
+                resultsDiv.innerHTML = '<div class="status error">WASM module not loaded</div>';
+                return;
+            }
+
+            try {
+                const result = test_webgpu_support();
+                console.log('WebGPU test result:', result);
+                resultsDiv.innerHTML = `<div class="status success">WebGPU Test: ${result}</div>`;
+            } catch (error) {
+                console.error('WebGPU test error:', error);
+                resultsDiv.innerHTML = `<div class="status error">WebGPU test error: ${error.message}</div>`;
+            }
+        };
+
+        // Initialize the WASM module when the page loads
+        initializeWasm();
+    </script>
+</body>
+</html>

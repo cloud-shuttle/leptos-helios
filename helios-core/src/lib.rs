@@ -7,8 +7,12 @@
 //! - Performance optimization and adaptive quality systems
 
 pub mod chart;
+pub mod chart_config;
 pub mod data_minimal;
+pub mod interactions;
 pub mod render_simple;
+pub mod renderer;
+pub mod streaming;
 
 pub use data_minimal as data;
 pub use render_simple as render;
@@ -18,10 +22,16 @@ pub mod performance;
 pub mod utils;
 
 pub use chart::{ChartSpec, ChartSpecBuilder, DataReference, Encoding, MarkType};
+pub use chart_config::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use gpu::*;
 pub use intelligence::*;
+pub use interactions::*;
 pub use render::*;
+pub use renderer::{
+    Canvas2DRenderer, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer, WebGpuRenderer,
+};
+pub use streaming::*;
 pub use utils::*;
 
 /// Core error types for Helios
@@ -38,6 +48,9 @@ pub enum HeliosError {
 
     #[error("ML error: {0}")]
     MachineLearning(#[from] intelligence::MLError),
+
+    #[error("Chart rendering error: {0}")]
+    ChartRendering(#[from] chart_config::ChartRenderError),
 
     #[error("Configuration error: {0}")]
     Configuration(String),
@@ -60,6 +73,7 @@ impl HeliosError {
             HeliosError::Rendering(e) => format!("Rendering failed: {}", e),
             HeliosError::Validation(e) => format!("Invalid configuration: {}", e),
             HeliosError::MachineLearning(e) => format!("ML processing failed: {}", e),
+            HeliosError::ChartRendering(e) => format!("Chart rendering failed: {}", e),
             HeliosError::Configuration(msg) => format!("Configuration error: {}", msg),
             HeliosError::PerformanceBudget { details } => {
                 format!("Performance limit exceeded: {}", details)
@@ -88,6 +102,11 @@ impl HeliosError {
                 "Check ML model availability".to_string(),
                 "Verify input data format".to_string(),
                 "Consider reducing data size".to_string(),
+            ],
+            HeliosError::ChartRendering(_) => vec![
+                "Check rendering backend support".to_string(),
+                "Verify chart configuration".to_string(),
+                "Try different renderer backend".to_string(),
             ],
             HeliosError::Configuration(_) => vec![
                 "Review configuration parameters".to_string(),
@@ -123,7 +142,7 @@ pub async fn init() -> Result<()> {
     }
 
     // Initialize WebGPU/WebGL context
-    let _renderer = Renderer::new().await?;
+    let _renderer = ChartRenderer::auto_detect()?;
 
     // Initialize data processing pipeline
     let _data_processor = DataProcessor::new()?;

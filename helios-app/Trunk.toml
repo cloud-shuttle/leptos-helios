@@ -1,0 +1,3 @@
+# Trunk configuration for Helios app
+[tools]
+wasm_opt = "false"

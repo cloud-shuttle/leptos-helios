@@ -22,7 +22,7 @@ web-sys = { workspace = true }
 js-sys = { workspace = true }
 
 # Async and networking
-tokio = { workspace = true }
+tokio = { workspace = true, optional = true }
 
 # Serialization
 serde = { workspace = true }
@@ -49,11 +49,15 @@ tempfile = "3.8"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = { workspace = true }
 
-[features]
+[target.'cfg(target_arch = "wasm32")'.features]
 default = ["webgpu"]
+
+[features]
+default = ["webgpu", "async"]
 webgpu = []
 webgl2 = []
 canvas2d = []
 simd = []
 debug = []
 ml = []
+async = ["tokio"]

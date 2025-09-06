@@ -10,8 +10,8 @@ keywords.workspace = true
 categories.workspace = true
 
 [dependencies]
-# Core dependencies
-helios-core = { path = "../helios-core" }
+# Core dependencies - minimal for WASM
+helios-core = { path = "../helios-core", default-features = false, features = ["webgpu"] }
 
 # Web and WASM
 wasm-bindgen = { workspace = true }

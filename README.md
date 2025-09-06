@@ -7,6 +7,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Discord](https://img.shields.io/discord/1234567890?label=Discord&logo=discord)](https://discord.gg/helios)
 
+**🎉 v0.1.0-beta Released!** Helios now has a **working, interactive chart visualization system** with real chart rendering, user interactions, and streaming data support. Try it out at `http://localhost:8081/simple-charts.html`!
+
 Helios is a next-generation visualization library that combines Rust's performance advantages with Leptos v0.8's fine-grained reactivity to create unprecedented visualization capabilities. Built on WebGPU with intelligent fallbacks, Helios achieves **3ms render times for 100K points** while maintaining type safety and compile-time guarantees.
 
 ## 🚀 Key Features
