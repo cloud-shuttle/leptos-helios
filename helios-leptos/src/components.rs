@@ -1,8 +1,8 @@
 //! Leptos components for Helios visualization library
 
-use helios_core::chart::*;
-use helios_core::data::*;
-use helios_core::DataFrame;
+use leptos_helios::chart::*;
+use leptos_helios::data::*;
+use leptos_helios::DataFrame;
 use leptos::prelude::*;
 use std::sync::Arc;
 

@@ -2,9 +2,9 @@
 //!
 //! This module demonstrates basic usage without complex dependencies.
 
-use helios_core::chart::*;
-// use helios_core::data::*;
-use helios_core::DataFrame;
+use leptos_helios::chart::*;
+// use leptos_helios::data::*;
+use leptos_helios::DataFrame;
 
 /// Create a simple line chart example using empty DataFrame
 pub fn create_simple_line_chart() -> Result<ChartSpec, Box<dyn std::error::Error>> {

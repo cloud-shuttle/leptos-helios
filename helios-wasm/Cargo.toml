@@ -1,5 +1,5 @@
 [package]
-name = "helios-wasm"
+name = "leptos-helios-wasm"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -11,7 +11,7 @@ categories.workspace = true
 
 [dependencies]
 # Core dependencies - minimal for WASM
-helios-core = { path = "../helios-core", default-features = false, features = ["webgpu"] }
+leptos-helios = { path = "../helios-core", default-features = false, features = ["webgpu"] }
 
 # Web and WASM
 wasm-bindgen = { workspace = true }

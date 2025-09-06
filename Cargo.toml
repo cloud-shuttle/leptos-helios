@@ -1,13 +1,13 @@
 [workspace]
 members = [
-    "helios-core",
-    "helios-leptos",
-    "helios-macros",
-    "helios-wasm",
-    "helios-wasm-core",
-    "helios-examples",
-    "helios-benchmarks",
-    "helios-app"
+    "helios-core",  # Published as leptos-helios
+    "helios-leptos",  # Published as leptos-helios-components
+    "helios-macros",  # Published as leptos-helios-macros
+    "helios-wasm",  # Published as leptos-helios-wasm
+    "helios-wasm-core",  # Published as leptos-helios-wasm-core
+    "helios-examples",  # Published as leptos-helios-examples
+    "helios-benchmarks",  # Published as leptos-helios-benchmarks
+    "helios-app"  # Published as leptos-helios-app
 ]
 
 resolver = "2"

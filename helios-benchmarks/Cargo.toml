@@ -1,5 +1,5 @@
 [package]
-name = "helios-benchmarks"
+name = "leptos-helios-benchmarks"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -13,7 +13,7 @@ categories.workspace = true
 
 [dependencies]
 # Core dependencies
-helios-core = { path = "../helios-core" }
+leptos-helios = { path = "../helios-core" }
 
 # Benchmarking
 criterion = { workspace = true }

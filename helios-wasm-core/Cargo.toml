@@ -1,5 +1,5 @@
 [package]
-name = "helios-wasm-core"
+name = "leptos-helios-wasm-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
