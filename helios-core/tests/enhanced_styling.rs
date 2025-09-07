@@ -1,8 +1,9 @@
 //! Enhanced Styling Tests
 //! Tests for visual customization options and theming support
 
-use helios_core::*;
+use leptos_helios::*;
 use std::collections::HashMap;
+use std::time::Duration;
 
 /// Helper function to create a base chart config
 fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {
@@ -147,7 +148,7 @@ fn test_custom_color_palettes() {
     };
 
     let styled_config = palette_manager
-        .apply_palette(&config, "custom_palette")
+        .apply_palette(&config, "custom_palette", data.len())
         .unwrap();
 
     // Then: Should apply custom colors

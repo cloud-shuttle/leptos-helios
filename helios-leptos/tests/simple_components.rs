@@ -2,9 +2,14 @@
 //!
 //! This module tests the core Leptos component functionality without runtime complexity
 
-use leptos_helios::chart::*;
-use leptos_helios::data::*;
-use leptos_helios::*;
+use leptos_helios::chart::ChartSpec;
+use leptos_helios::data::{DataFormat, DataSource};
+use leptos_helios_components::{
+    process_data_on_server, render_chart_on_server, AccessibilityConfig, ChartType,
+    DashboardLayout, DataLoader, DataSourceType, FlexDirection, HeliosChart,
+    VisualizationDashboard,
+};
+use polars::prelude::DataFrame;
 
 /// Test HeliosChart component creation and basic functionality
 #[test]
@@ -53,7 +58,7 @@ fn test_helios_chart_different_types() {
 #[test]
 fn test_data_loader_component() {
     // RED: Test DataLoader component
-    let data_source = DataSource::DataFrame(helios_core::DataFrame::empty());
+    let data_source = DataSource::DataFrame(DataFrame::empty());
     let loader = DataLoader::new(data_source.clone());
 
     assert!(loader.is_ok(), "DataLoader should be created successfully");
@@ -83,7 +88,7 @@ fn test_data_loader_component() {
 fn test_data_loader_different_sources() {
     // RED: Test different data source types
     // Test DataFrame source
-    let df_source = DataSource::DataFrame(helios_core::DataFrame::empty());
+    let df_source = DataSource::DataFrame(DataFrame::empty());
     let df_loader = DataLoader::new(df_source).unwrap();
     assert_eq!(
         df_loader.source_type(),
@@ -94,7 +99,7 @@ fn test_data_loader_different_sources() {
     // Test URL source
     let url_source = DataSource::Url {
         url: "https://api.example.com/data".to_string(),
-        format: helios_core::DataFormat::Json,
+        format: DataFormat::Json,
     };
     let url_loader = DataLoader::new(url_source).unwrap();
     assert_eq!(
@@ -197,7 +202,7 @@ fn test_component_error_handling() {
     // Test invalid chart spec - create one with non-empty data that will fail validation
     let mut invalid_spec = ChartSpec::new();
     // Create a DataFrame with some data to trigger validation
-    let mut df = helios_core::DataFrame::empty();
+    let mut df = DataFrame::empty();
     // Add some mock data to make it non-empty
     // For now, we'll test with a different approach - test DataLoader error handling instead
     let invalid_chart = HeliosChart::new(invalid_spec);
@@ -210,7 +215,7 @@ fn test_component_error_handling() {
     // Test invalid data source
     let invalid_source = DataSource::Url {
         url: "invalid-url".to_string(),
-        format: helios_core::DataFormat::Json,
+        format: DataFormat::Json,
     };
     let invalid_loader = DataLoader::new(invalid_source);
     assert!(
@@ -305,7 +310,7 @@ fn test_canvas_lifecycle_management() {
 #[tokio::test]
 async fn test_server_functions() {
     // RED: Test server functions for heavy computation
-    let data = helios_core::DataFrame::empty();
+    let data = DataFrame::empty();
     let processing_result = process_data_on_server(data.clone()).await;
     assert!(
         processing_result.is_ok(),
@@ -359,7 +364,7 @@ fn test_data_loader_connection() {
     let chart_spec = ChartSpec::new();
     let mut chart = HeliosChart::new(chart_spec).unwrap();
 
-    let data_source = helios_core::data_minimal::DataSource::Query {
+    let data_source = DataSource::Query {
         sql: "SELECT * FROM test".to_string(),
         dataset: "test.csv".to_string(),
     };

@@ -29,7 +29,10 @@ pub mod gpu;
 pub mod intelligence;
 pub mod utils;
 
-pub use chart::{ChartSpec, ChartSpecBuilder, DataReference, Encoding, MarkType};
+pub use chart::{
+    BarWidth, ChartConfig, ChartSpec, ChartSpecBuilder, DataReference, Encoding, Interpolation,
+    MarkType,
+};
 pub use chart_config::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use gpu::*;

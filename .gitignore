@@ -222,3 +222,7 @@ config.local.*
 *.local.json
 *.local.yaml
 *.local.yml
+
+# TDD executable files
+v1_*_tdd
+v2_*_tdd

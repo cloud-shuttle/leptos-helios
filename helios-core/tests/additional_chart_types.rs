@@ -1,7 +1,7 @@
 //! Additional Chart Types Tests
 //! Tests for bar, scatter, and area chart implementations
 
-use helios_core::*;
+use leptos_helios::*;
 
 /// Helper function to create a base chart config
 fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {
@@ -21,11 +21,11 @@ fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {
 fn test_bar_chart_rendering() {
     // Given: Sample data for bar chart
     let data = vec![
-        ("Category A", 25.0),
-        ("Category B", 40.0),
-        ("Category C", 30.0),
-        ("Category D", 35.0),
-        ("Category E", 20.0),
+        ("Category A".to_string(), 25.0),
+        ("Category B".to_string(), 40.0),
+        ("Category C".to_string(), 30.0),
+        ("Category D".to_string(), 35.0),
+        ("Category E".to_string(), 20.0),
     ];
 
     let config = BarChartConfig {
@@ -65,10 +65,10 @@ fn test_bar_chart_rendering() {
 fn test_horizontal_bar_chart() {
     // Given: Sample data for horizontal bar chart
     let data = vec![
-        ("Long Category Name A", 75.0),
-        ("Category B", 60.0),
-        ("Category C", 85.0),
-        ("Category D", 45.0),
+        ("Long Category Name A".to_string(), 75.0),
+        ("Category B".to_string(), 60.0),
+        ("Category C".to_string(), 85.0),
+        ("Category D".to_string(), 45.0),
     ];
 
     let config = BarChartConfig {
@@ -106,12 +106,12 @@ fn test_horizontal_bar_chart() {
 fn test_scatter_plot_rendering() {
     // Given: Sample data for scatter plot
     let data = vec![
-        (1.0, 2.0, Some("Point A")),
-        (2.0, 3.5, Some("Point B")),
-        (3.0, 1.0, Some("Point C")),
-        (4.0, 4.0, Some("Point D")),
-        (5.0, 2.5, Some("Point E")),
-        (6.0, 3.0, Some("Point F")),
+        (1.0, 2.0, Some("Point A".to_string())),
+        (2.0, 3.5, Some("Point B".to_string())),
+        (3.0, 1.0, Some("Point C".to_string())),
+        (4.0, 4.0, Some("Point D".to_string())),
+        (5.0, 2.5, Some("Point E".to_string())),
+        (6.0, 3.0, Some("Point F".to_string())),
     ];
 
     let config = ScatterPlotConfig {
@@ -147,10 +147,10 @@ fn test_scatter_plot_rendering() {
 fn test_scatter_plot_with_different_shapes() {
     // Given: Sample data with different point shapes
     let data = vec![
-        (1.0, 2.0, Some("Circle")),
-        (2.0, 3.0, Some("Square")),
-        (3.0, 1.0, Some("Triangle")),
-        (4.0, 4.0, Some("Diamond")),
+        (1.0, 2.0, Some("Circle".to_string())),
+        (2.0, 3.0, Some("Square".to_string())),
+        (3.0, 1.0, Some("Triangle".to_string())),
+        (4.0, 4.0, Some("Diamond".to_string())),
     ];
 
     let config = ScatterPlotConfig {
@@ -286,7 +286,7 @@ fn test_stacked_area_chart() {
 fn test_chart_type_detection() {
     // Given: Different chart specifications
     let line_spec = ChartSpec {
-        data: DataReference::Static(vec![(0.0, 1.0), (1.0, 2.0)]),
+        data: DataReference::Static(serde_json::json!(vec![(0.0, 1.0), (1.0, 2.0)])),
         mark: MarkType::Line {
             interpolate: Some(Interpolation::Linear),
             stroke_width: Some(2.0),
@@ -300,7 +300,7 @@ fn test_chart_type_detection() {
     };
 
     let bar_spec = ChartSpec {
-        data: DataReference::Static(vec![("A", 10.0), ("B", 20.0)]),
+        data: DataReference::Static(serde_json::json!(vec![("A", 10.0), ("B", 20.0)])),
         mark: MarkType::Bar {
             width: Some(BarWidth::Fixed(0.8)),
             corner_radius: Some(4.0),
@@ -313,7 +313,7 @@ fn test_chart_type_detection() {
     };
 
     let area_spec = ChartSpec {
-        data: DataReference::Static(vec![(0.0, 1.0), (1.0, 2.0)]),
+        data: DataReference::Static(serde_json::json!(vec![(0.0, 1.0), (1.0, 2.0)])),
         mark: MarkType::Area {
             interpolate: Some(Interpolation::Smooth),
             opacity: Some(0.7),

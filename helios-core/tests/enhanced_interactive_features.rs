@@ -1,7 +1,7 @@
 //! Enhanced Interactive Features Tests
 //! Tests for improved zoom, pan, tooltips, and user interactions
 
-use helios_core::*;
+use leptos_helios::*;
 use std::time::Duration;
 
 /// Helper function to create a base chart config
@@ -409,7 +409,9 @@ fn test_interaction_performance() {
             .unwrap();
 
         let hover_position = [200.0 + i as f32, 300.0 + i as f32];
-        let _ = interaction_manager.handle_hover(&chart_state, hover_position, &data);
+        // Convert data to simple format for performance test
+        let simple_data: Vec<(f64, f64)> = data.iter().map(|(x, y, _)| (*x, *y)).collect();
+        let _ = interaction_manager.handle_hover(&chart_state, hover_position, &simple_data);
     }
 
     let duration = start.elapsed();

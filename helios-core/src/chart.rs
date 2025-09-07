@@ -978,6 +978,9 @@ pub enum DataReference {
     /// Direct DataFrame reference
     DataFrame(crate::DataFrame),
 
+    /// Static data directly embedded in the specification
+    Static(serde_json::Value),
+
     /// URL to data source
     Url { url: String, format: DataFormat },
 
@@ -1001,6 +1004,13 @@ impl DataReference {
                 if df.is_empty() {
                     return Err(ValidationError::DataValidation(
                         "Empty DataFrame".to_string(),
+                    ));
+                }
+            }
+            DataReference::Static(data) => {
+                if data.is_null() {
+                    return Err(ValidationError::DataValidation(
+                        "Static data cannot be null".to_string(),
                     ));
                 }
             }

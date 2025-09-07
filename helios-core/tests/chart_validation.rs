@@ -5,9 +5,9 @@
 //! 2. GREEN: Implement minimal code to make tests pass
 //! 3. REFACTOR: Improve implementation while keeping tests green
 
-use helios_core::chart::*;
-use helios_core::utils::test_utils::*;
-use helios_core::DataFrame;
+use leptos_helios::chart::*;
+use leptos_helios::utils::test_utils::*;
+use leptos_helios::DataFrame;
 
 #[test]
 fn test_chart_spec_validation_success() {

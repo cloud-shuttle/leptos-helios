@@ -318,6 +318,9 @@ pub enum ChartRenderError {
     #[error("Invalid configuration: {0}")]
     InvalidConfig(String),
 
+    #[error("Invalid data: {0}")]
+    InvalidData(String),
+
     #[error("Rendering failed: {0}")]
     RenderFailed(String),
 

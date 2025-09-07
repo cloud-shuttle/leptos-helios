@@ -45,9 +45,22 @@ uuid = { version = "1.0", features = ["v4"] }
 chrono = { version = "0.4", features = ["wasm-bindgen"] }
 rand = "0.8"
 
-# Development
+# Development & Testing
 criterion = "0.5"
 wasm-bindgen-test = "0.3"
+
+# Enhanced TDD Testing Framework
+proptest = "1.4"              # Property-based testing
+mockall = "0.12"              # Mocking framework
+rstest = "0.21"               # Parameterized tests
+serial_test = "3.1"           # Test isolation
+test-log = "0.2"              # Test logging
+fake = "2.9"                  # Test data generation
+quickcheck = "1.0"            # QuickCheck property testing
+
+# Quality & Coverage Tools
+tarpaulin = "0.31"           # Code coverage measurement
+cargo-mutants = "24.11"      # Mutation testing
 
 [workspace.package]
 version = "0.1.0"

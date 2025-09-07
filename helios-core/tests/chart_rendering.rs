@@ -1,7 +1,7 @@
 //! Chart Rendering Tests
 //! Tests for actual WebGPU/WebGL2 chart rendering functionality
 
-use helios_core::*;
+use leptos_helios::*;
 
 // Helper function to create a base chart config
 fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {
@@ -110,7 +110,12 @@ fn test_line_chart_rendering() {
 #[test]
 fn test_bar_chart_rendering() {
     // Given: Sample data for bar chart
-    let data = vec![("A", 10.0), ("B", 20.0), ("C", 15.0), ("D", 25.0)];
+    let data = vec![
+        ("A".to_string(), 10.0),
+        ("B".to_string(), 20.0),
+        ("C".to_string(), 15.0),
+        ("D".to_string(), 25.0),
+    ];
 
     let config = BarChartConfig {
         base: create_base_config("Test Bar Chart", 800, 600),
@@ -124,6 +129,8 @@ fn test_bar_chart_rendering() {
         show_values: false,
         horizontal: false,
         show_legend: true,
+        corner_radius: Some(4.0),
+        spacing: Some(0.1),
     };
 
     // When: Rendering a bar chart
@@ -145,7 +152,13 @@ fn test_bar_chart_rendering() {
 #[test]
 fn test_scatter_plot_rendering() {
     // Given: Sample data for scatter plot
-    let data = vec![(1.0, 2.0), (2.0, 3.0), (3.0, 1.0), (4.0, 4.0), (5.0, 2.5)];
+    let data = vec![
+        (1.0, 2.0, None),
+        (2.0, 3.0, None),
+        (3.0, 1.0, None),
+        (4.0, 4.0, None),
+        (5.0, 2.5, None),
+    ];
 
     let config = ScatterPlotConfig {
         base: create_base_config("Test Scatter Plot", 800, 600),
@@ -155,6 +168,9 @@ fn test_scatter_plot_rendering() {
         trend_line_color: "#ff6b6b".to_string(),
         trend_line_width: 2.0,
         show_legend: true,
+        jitter: Some(0.1),
+        opacity: Some(0.8),
+        point_shape: Some(PointShape::Circle),
     };
 
     // When: Rendering a scatter plot

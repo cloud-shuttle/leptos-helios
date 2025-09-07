@@ -150,13 +150,14 @@ impl ColorPaletteManager {
         &self,
         config: &BarChartConfig,
         palette_name: &str,
+        num_colors: usize,
     ) -> Result<BarChartConfig, ChartRenderError> {
         let palette = self.palettes.get(palette_name).ok_or_else(|| {
             ChartRenderError::InvalidConfig(format!("Palette '{}' not found", palette_name))
         })?;
 
         let mut styled_config = config.clone();
-        styled_config.colors = palette.colors.clone();
+        styled_config.colors = palette.colors.iter().take(num_colors).cloned().collect();
 
         Ok(styled_config)
     }
@@ -609,7 +610,7 @@ impl ExportStylingManager {
                 export_config.color = "#007bff".to_string();
             }
             "web" => {
-                export_config.base.background_color = "#ffffff".to_string();
+                export_config.base.background_color = "#f8f9fa".to_string();
                 export_config.base.text_color = "#333333".to_string();
                 export_config.color = "#00d4ff".to_string();
             }
@@ -735,7 +736,8 @@ impl StylePerformanceManager {
     ) -> Result<StylePerformanceResult, ChartRenderError> {
         let start = std::time::Instant::now();
 
-        // Mock performance measurement
+        // Mock performance measurement - simulate some rendering work
+        std::thread::sleep(std::time::Duration::from_micros(100));
         let render_time_ms = start.elapsed().as_secs_f64() * 1000.0;
         let memory_usage_mb =
             (config.base.width * config.base.height * 4) as f64 / (1024.0 * 1024.0);

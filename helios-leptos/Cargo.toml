@@ -29,6 +29,9 @@ anyhow = { workspace = true }
 # Utilities
 uuid = { workspace = true }
 
+# Data processing
+polars = { workspace = true }
+
 [dev-dependencies]
 tokio = { workspace = true }
 
