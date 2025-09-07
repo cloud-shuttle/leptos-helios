@@ -13,32 +13,32 @@ jobs:
   fmt:
     name: Format Check
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
         components: rustfmt
-        
+
     - name: Check formatting
       run: cargo fmt --all -- --check
-      
+
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
         components: clippy
-        
+
     - name: Cache cargo registry
       uses: actions/cache@v3
       with:
@@ -49,54 +49,54 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-cargo-
-          
+
     - name: Run clippy
       run: cargo clippy --all-targets --all-features -- -D warnings
-      
+
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-      
+
     - name: Install cargo-audit
       run: cargo install cargo-audit
-      
+
     - name: Run security audit
       run: cargo audit
-      
+
   license-check:
     name: License Check
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-      
+
     - name: Install cargo-deny
       run: cargo install cargo-deny
-      
+
     - name: Run license check
       run: cargo deny check
-      
+
   spell-check:
     name: Spell Check
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install typos
       uses: crate-ci/typos@v1.16.26
-      
+
     - name: Run spell check
       run: typos --config typos.toml

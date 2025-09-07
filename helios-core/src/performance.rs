@@ -1,5 +1,5 @@
 //! Performance Optimization Module
-//! 
+//!
 //! High-performance optimizations for large-scale data visualization:
 //! - SIMD-accelerated data processing
 //! - Web Workers for background processing
@@ -19,13 +19,16 @@ pub struct SimdDataProcessor {
 
 impl SimdDataProcessor {
     pub fn new(batch_size: usize, use_simd: bool) -> Self {
-        Self { batch_size, use_simd }
+        Self {
+            batch_size,
+            use_simd,
+        }
     }
 
     /// Process large datasets with SIMD optimization
     pub fn process_data_points(&self, data: &[f64]) -> Result<Vec<f64>, WebGpuError> {
         let _start_time = Instant::now();
-        
+
         if self.use_simd {
             self.process_with_simd(data)
         } else {
@@ -35,13 +38,13 @@ impl SimdDataProcessor {
 
     fn process_with_simd(&self, data: &[f64]) -> Result<Vec<f64>, WebGpuError> {
         let mut result = Vec::with_capacity(data.len());
-        
+
         // Process in SIMD-friendly batches
         for chunk in data.chunks(self.batch_size) {
             let processed_chunk = self.process_chunk_simd(chunk)?;
             result.extend(processed_chunk);
         }
-        
+
         Ok(result)
     }
 
@@ -54,14 +57,14 @@ impl SimdDataProcessor {
         // Mock SIMD processing - in real implementation, this would use SIMD instructions
         // For now, we'll use optimized batch processing
         let mut result = Vec::with_capacity(chunk.len());
-        
+
         // Process in groups of 4 for SIMD-like efficiency
         for group in chunk.chunks(4) {
             for &value in group {
                 result.push(value * 2.0 + 1.0);
             }
         }
-        
+
         Ok(result)
     }
 }
@@ -105,13 +108,13 @@ impl WebWorkerProcessor {
     pub fn process_next_task(&mut self) -> Result<Option<ProcessingResult>, WebGpuError> {
         if let Some(task) = self.processing_queue.pop() {
             self.is_busy = true;
-            
+
             let start_time = Instant::now();
             let processed_data = self.process_data_background(&task.data)?;
             let processing_time = start_time.elapsed();
-            
+
             self.is_busy = false;
-            
+
             Ok(Some(ProcessingResult {
                 task_id: task.id,
                 processed_data,
@@ -149,10 +152,30 @@ impl LodSystem {
     pub fn new() -> Self {
         Self {
             lod_levels: vec![
-                LodLevel { level: 0, detail_factor: 1.0, max_points: 100000, sampling_rate: 1.0 },
-                LodLevel { level: 1, detail_factor: 0.5, max_points: 50000, sampling_rate: 0.5 },
-                LodLevel { level: 2, detail_factor: 0.25, max_points: 25000, sampling_rate: 0.25 },
-                LodLevel { level: 3, detail_factor: 0.1, max_points: 10000, sampling_rate: 0.1 },
+                LodLevel {
+                    level: 0,
+                    detail_factor: 1.0,
+                    max_points: 100000,
+                    sampling_rate: 1.0,
+                },
+                LodLevel {
+                    level: 1,
+                    detail_factor: 0.5,
+                    max_points: 50000,
+                    sampling_rate: 0.5,
+                },
+                LodLevel {
+                    level: 2,
+                    detail_factor: 0.25,
+                    max_points: 25000,
+                    sampling_rate: 0.25,
+                },
+                LodLevel {
+                    level: 3,
+                    detail_factor: 0.1,
+                    max_points: 10000,
+                    sampling_rate: 0.1,
+                },
             ],
             current_lod: 0,
             viewport_scale: 1.0,
@@ -161,7 +184,7 @@ impl LodSystem {
 
     pub fn update_lod(&mut self, viewport_scale: f64, data_size: usize) {
         self.viewport_scale = viewport_scale;
-        
+
         // Determine appropriate LOD level
         for (i, lod_level) in self.lod_levels.iter().enumerate() {
             if data_size <= lod_level.max_points && viewport_scale >= lod_level.detail_factor {
@@ -178,11 +201,11 @@ impl LodSystem {
     pub fn sample_data(&self, data: &[f64]) -> Vec<f64> {
         let lod_level = self.get_current_lod();
         let sample_size = (data.len() as f64 * lod_level.sampling_rate) as usize;
-        
+
         if sample_size >= data.len() {
             return data.to_vec();
         }
-        
+
         // Uniform sampling for performance
         let step = data.len() / sample_size;
         data.iter().step_by(step).cloned().collect()
@@ -221,7 +244,12 @@ impl AdvancedMemoryPool {
         }
     }
 
-    pub fn create_pool(&mut self, name: String, buffer_size: usize, initial_count: usize) -> Result<(), WebGpuError> {
+    pub fn create_pool(
+        &mut self,
+        name: String,
+        buffer_size: usize,
+        initial_count: usize,
+    ) -> Result<(), WebGpuError> {
         let mut pool = BufferPool {
             pool_name: name.clone(),
             available_buffers: Vec::new(),
@@ -272,9 +300,17 @@ impl AdvancedMemoryPool {
         }
     }
 
-    pub fn deallocate_buffer(&mut self, pool_name: &str, buffer_id: &str) -> Result<(), WebGpuError> {
+    pub fn deallocate_buffer(
+        &mut self,
+        pool_name: &str,
+        buffer_id: &str,
+    ) -> Result<(), WebGpuError> {
         if let Some(pool) = self.buffer_pools.get_mut(pool_name) {
-            if let Some(pos) = pool.allocated_buffers.iter().position(|b| b.id == buffer_id) {
+            if let Some(pos) = pool
+                .allocated_buffers
+                .iter()
+                .position(|b| b.id == buffer_id)
+            {
                 let mut buffer = pool.allocated_buffers.remove(pos);
                 buffer.is_allocated = false;
                 pool.available_buffers.push(buffer);
@@ -356,31 +392,31 @@ impl RenderingPipelineOptimizer {
 
     pub fn render_large_dataset(&self, data: &[f64]) -> Result<PerformanceMetrics, WebGpuError> {
         let start_time = Instant::now();
-        
+
         let mut metrics = PerformanceMetrics::new();
-        
+
         // Calculate rendering parameters
         let batches = (data.len() + self.batch_size - 1) / self.batch_size;
         metrics.draw_calls = batches;
         metrics.vertices_rendered = data.len();
-        
+
         // Simulate optimized rendering time
         let base_time = data.len() as f64 * 0.001; // 1ms per 1000 points
         let optimization_factor = if self.use_instancing { 0.5 } else { 1.0 };
         let culling_factor = if self.culling_enabled { 0.7 } else { 1.0 };
         let lod_factor = if self.lod_enabled { 0.6 } else { 1.0 };
-        
+
         let total_factor = optimization_factor * culling_factor * lod_factor;
         let simulated_time = base_time * total_factor;
-        
+
         // Simulate processing time
         std::thread::sleep(Duration::from_millis(simulated_time as u64));
-        
+
         let render_time = start_time.elapsed();
         metrics.frame_time_ms = render_time.as_secs_f64() * 1000.0;
         metrics.memory_usage_bytes = data.len() * 8; // 8 bytes per f64
         metrics.calculate_fps();
-        
+
         Ok(metrics)
     }
 }
@@ -444,15 +480,19 @@ impl PerformanceManager {
         }
     }
 
-    pub fn process_data(&mut self, data: &[f64], viewport_scale: f64) -> Result<PerformanceMetrics, WebGpuError> {
+    pub fn process_data(
+        &mut self,
+        data: &[f64],
+        viewport_scale: f64,
+    ) -> Result<PerformanceMetrics, WebGpuError> {
         let metrics = self.engine.process_large_dataset(data, viewport_scale)?;
         self.metrics_history.push(metrics.clone());
-        
+
         // Keep only recent metrics
         if self.metrics_history.len() > 100 {
             self.metrics_history.remove(0);
         }
-        
+
         Ok(metrics)
     }
 
@@ -460,7 +500,7 @@ impl PerformanceManager {
         if self.metrics_history.is_empty() {
             return 0.0;
         }
-        
+
         let total_fps: f64 = self.metrics_history.iter().map(|m| m.fps).sum();
         total_fps / self.metrics_history.len() as f64
     }
@@ -486,12 +526,18 @@ pub struct HighPerformanceEngine {
 impl HighPerformanceEngine {
     pub fn new() -> Self {
         let mut memory_pool = AdvancedMemoryPool::new(1024 * 1024 * 100); // 100MB max
-        
+
         // Create buffer pools for different data types
-        memory_pool.create_pool("vertex_buffer".to_string(), 1024 * 1024, 10).unwrap();
-        memory_pool.create_pool("index_buffer".to_string(), 512 * 1024, 10).unwrap();
-        memory_pool.create_pool("uniform_buffer".to_string(), 64 * 1024, 20).unwrap();
-        
+        memory_pool
+            .create_pool("vertex_buffer".to_string(), 1024 * 1024, 10)
+            .unwrap();
+        memory_pool
+            .create_pool("index_buffer".to_string(), 512 * 1024, 10)
+            .unwrap();
+        memory_pool
+            .create_pool("uniform_buffer".to_string(), 64 * 1024, 20)
+            .unwrap();
+
         Self {
             simd_processor: SimdDataProcessor::new(1000, true),
             lod_system: LodSystem::new(),
@@ -504,22 +550,29 @@ impl HighPerformanceEngine {
         }
     }
 
-    pub fn process_large_dataset(&mut self, data: &[f64], viewport_scale: f64) -> Result<PerformanceMetrics, WebGpuError> {
+    pub fn process_large_dataset(
+        &mut self,
+        data: &[f64],
+        viewport_scale: f64,
+    ) -> Result<PerformanceMetrics, WebGpuError> {
         // Update LOD system
         self.lod_system.update_lod(viewport_scale, data.len());
-        
+
         // Sample data based on LOD
         let sampled_data = self.lod_system.sample_data(data);
-        
+
         // Optimize pipeline for dataset size
-        self.pipeline_optimizer.optimize_for_large_dataset(sampled_data.len());
-        
+        self.pipeline_optimizer
+            .optimize_for_large_dataset(sampled_data.len());
+
         // Process data with SIMD
         let _processed_data = self.simd_processor.process_data_points(&sampled_data)?;
-        
+
         // Render with optimized pipeline
-        let metrics = self.pipeline_optimizer.render_large_dataset(&sampled_data)?;
-        
+        let metrics = self
+            .pipeline_optimizer
+            .render_large_dataset(&sampled_data)?;
+
         Ok(metrics)
     }
 

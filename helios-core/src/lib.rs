@@ -6,17 +6,21 @@
 //! - Chart specification system with compile-time validation
 //! - Performance optimization and adaptive quality systems
 
+pub mod advanced_charts;
+pub mod canvas_surface;
 pub mod chart;
 pub mod chart_config;
 pub mod data_minimal;
+pub mod helios_chart;
 pub mod interactions;
+pub mod line_chart_renderer;
+pub mod performance;
+pub mod production;
 pub mod render_simple;
 pub mod renderer;
 pub mod streaming;
+pub mod webgpu_real;
 pub mod webgpu_renderer;
-pub mod advanced_charts;
-pub mod performance;
-pub mod production;
 
 pub use data_minimal as data;
 pub use render_simple as render;
@@ -28,6 +32,7 @@ pub use chart::{ChartSpec, ChartSpecBuilder, DataReference, Encoding, MarkType};
 pub use chart_config::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use gpu::*;
+pub use helios_chart::*;
 pub use intelligence::*;
 pub use interactions::*;
 pub use render::*;

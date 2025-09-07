@@ -1,5 +1,5 @@
 //! Performance Optimization Tests
-//! 
+//!
 //! Comprehensive test suite for performance optimizations including:
 //! - SIMD optimizations for data processing
 //! - Web Workers for background processing
@@ -21,34 +21,37 @@ pub struct SimdDataProcessor {
 
 impl SimdDataProcessor {
     pub fn new(batch_size: usize, use_simd: bool) -> Self {
-        Self { batch_size, use_simd }
+        Self {
+            batch_size,
+            use_simd,
+        }
     }
 
     /// Process data points with SIMD optimization
     pub fn process_data_points(&self, data: &[f64]) -> Result<Vec<f64>, WebGpuError> {
         let start_time = Instant::now();
-        
+
         if self.use_simd {
             // SIMD-optimized processing
             let mut result = Vec::with_capacity(data.len());
-            
+
             // Process in batches for SIMD efficiency
             for chunk in data.chunks(self.batch_size) {
                 let processed_chunk = self.process_chunk_simd(chunk)?;
                 result.extend(processed_chunk);
             }
-            
+
             let processing_time = start_time.elapsed();
             println!("SIMD processing time: {:?}", processing_time);
-            
+
             Ok(result)
         } else {
             // Standard processing
             let result: Vec<f64> = data.iter().map(|&x| x * 2.0 + 1.0).collect();
-            
+
             let processing_time = start_time.elapsed();
             println!("Standard processing time: {:?}", processing_time);
-            
+
             Ok(result)
         }
     }
@@ -100,10 +103,10 @@ mod tests {
     fn test_simd_data_processing() {
         let processor = SimdDataProcessor::new(1000, true);
         let data = vec![1.0, 2.0, 3.0, 4.0, 5.0];
-        
+
         let result = processor.process_data_points(&data);
         assert!(result.is_ok());
-        
+
         let processed = result.unwrap();
         assert_eq!(processed.len(), data.len());
         assert_eq!(processed[0], 3.0); // 1.0 * 2.0 + 1.0
@@ -116,17 +119,20 @@ mod tests {
         metrics.memory_usage_bytes = 1024 * 1024; // 1MB
         metrics.vertices_rendered = 10000;
         metrics.draw_calls = 5;
-        
+
         metrics.calculate_fps();
-        
+
         // Debug output
-        println!("FPS: {}, Frame time: {}", metrics.fps, metrics.frame_time_ms);
-        
+        println!(
+            "FPS: {}, Frame time: {}",
+            metrics.fps, metrics.frame_time_ms
+        );
+
         // Check individual components (allow for floating point precision)
         assert!(metrics.fps >= 59.9);
         assert!(metrics.frame_time_ms <= 16.67);
         assert!((metrics.fps - 60.0).abs() < 1.0);
-        
+
         // The combined check should pass
         assert!(metrics.is_performance_target_met());
     }

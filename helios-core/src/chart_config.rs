@@ -38,7 +38,7 @@ impl Default for ColorScheme {
 }
 
 /// Base chart configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BaseChartConfig {
     pub width: u32,
     pub height: u32,
@@ -66,7 +66,7 @@ impl Default for BaseChartConfig {
 }
 
 /// Line chart configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LineChartConfig {
     #[serde(flatten)]
     pub base: BaseChartConfig,
@@ -175,7 +175,7 @@ impl Default for HeatmapConfig {
 }
 
 /// Interpolation types for line charts
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum InterpolationType {
     Linear,
     Step,

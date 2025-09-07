@@ -2,9 +2,9 @@
 //!
 //! This module tests the core Leptos component functionality without runtime complexity
 
-use helios_leptos::*;
 use leptos_helios::chart::*;
 use leptos_helios::data::*;
+use leptos_helios::*;
 
 /// Test HeliosChart component creation and basic functionality
 #[test]

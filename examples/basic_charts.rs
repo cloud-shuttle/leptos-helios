@@ -1,5 +1,5 @@
 //! Basic Chart Examples
-//! 
+//!
 //! Examples demonstrating basic chart types in Helios
 
 use leptos::*;
@@ -50,10 +50,22 @@ pub fn BarChartExample() -> impl IntoView {
             text_color: "#000000".to_string(),
         },
         data: vec![
-            BarData { label: "Product A".to_string(), value: 1000.0 },
-            BarData { label: "Product B".to_string(), value: 1200.0 },
-            BarData { label: "Product C".to_string(), value: 800.0 },
-            BarData { label: "Product D".to_string(), value: 1500.0 },
+            BarData {
+                label: "Product A".to_string(),
+                value: 1000.0,
+            },
+            BarData {
+                label: "Product B".to_string(),
+                value: 1200.0,
+            },
+            BarData {
+                label: "Product C".to_string(),
+                value: 800.0,
+            },
+            BarData {
+                label: "Product D".to_string(),
+                value: 1500.0,
+            },
         ],
         color: "#10b981".to_string(),
         show_legend: true,
@@ -110,10 +122,26 @@ pub fn HeatmapExample() -> impl IntoView {
             text_color: "#000000".to_string(),
         },
         data: vec![
-            HeatmapData { x: 0, y: 0, value: 1.0 },
-            HeatmapData { x: 1, y: 0, value: 2.0 },
-            HeatmapData { x: 0, y: 1, value: 3.0 },
-            HeatmapData { x: 1, y: 1, value: 4.0 },
+            HeatmapData {
+                x: 0,
+                y: 0,
+                value: 1.0,
+            },
+            HeatmapData {
+                x: 1,
+                y: 0,
+                value: 2.0,
+            },
+            HeatmapData {
+                x: 0,
+                y: 1,
+                value: 3.0,
+            },
+            HeatmapData {
+                x: 1,
+                y: 1,
+                value: 4.0,
+            },
         ],
         color_scheme: ColorScheme::Viridis,
         show_legend: true,

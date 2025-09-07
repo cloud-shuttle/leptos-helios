@@ -260,19 +260,19 @@ pub fn StreamingExample() -> impl IntoView {
                 if !is_streaming() {
                     break;
                 }
-                
+
                 let new_point = DataPoint {
                     x: counter,
                     y: (counter * 0.1).sin() * 100.0,
                 };
-                
+
                 set_data.update(|data| {
                     data.push(new_point);
                     if data.len() > 1000 {
                         data.remove(0);
                     }
                 });
-                
+
                 counter += 1.0;
                 gloo_timers::future::TimeoutFuture::new(100).await;
             }

@@ -129,16 +129,16 @@ impl LodSystem {
 pub enum WebGpuError {
     #[error("WebGPU device initialization failed: {0}")]
     DeviceInit(String),
-    
+
     #[error("Surface creation failed: {0}")]
     SurfaceCreation(String),
-    
+
     #[error("Shader compilation failed: {0}")]
     ShaderCompilation(String),
-    
+
     #[error("Render pipeline creation failed: {0}")]
     PipelineCreation(String),
-    
+
     #[error("Buffer allocation failed: {0}")]
     BufferAllocation(String),
 }

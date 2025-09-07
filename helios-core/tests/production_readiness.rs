@@ -1,5 +1,5 @@
 //! Production Readiness Tests
-//! 
+//!
 //! Comprehensive test suite for production readiness including:
 //! - Documentation validation
 //! - Example completeness
@@ -7,8 +7,8 @@
 //! - Production deployment validation
 //! - Final testing and validation
 
-use leptos_helios::chart_config::*;
 use leptos_helios::advanced_charts::*;
+use leptos_helios::chart_config::*;
 use leptos_helios::performance::*;
 use std::collections::HashMap;
 use std::path::Path;
@@ -43,7 +43,7 @@ impl DocumentationValidator {
 
     pub fn validate_documentation(&self) -> Result<DocumentationReport, String> {
         let mut report = DocumentationReport::new();
-        
+
         // Check required documentation sections
         for section in &self.required_sections {
             if self.section_exists(section) {
@@ -52,7 +52,7 @@ impl DocumentationValidator {
                 report.add_section(section.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check example files
         for example in &self.example_files {
             if self.example_exists(example) {
@@ -61,7 +61,7 @@ impl DocumentationValidator {
                 report.add_example(example.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check API documentation
         if self.api_docs_required {
             if self.api_docs_exist() {
@@ -70,7 +70,7 @@ impl DocumentationValidator {
                 report.api_docs_complete = false;
             }
         }
-        
+
         Ok(report)
     }
 
@@ -134,23 +134,23 @@ impl DocumentationReport {
     fn calculate_score(&mut self) {
         let total_items = self.sections.len() + self.examples.len() + 1; // +1 for API docs
         let mut completed_items = 0;
-        
+
         for (_, (exists, _)) in &self.sections {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (exists, _)) in &self.examples {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         if self.api_docs_complete {
             completed_items += 1;
         }
-        
+
         self.overall_score = (completed_items as f64 / total_items as f64) * 100.0;
     }
 
@@ -197,7 +197,7 @@ impl ExampleValidator {
 
     pub fn validate_examples(&self) -> Result<ExampleReport, String> {
         let mut report = ExampleReport::new();
-        
+
         // Check chart type examples
         for chart_type in &self.chart_types {
             if self.chart_example_exists(chart_type) {
@@ -206,7 +206,7 @@ impl ExampleValidator {
                 report.add_chart_example(chart_type.clone(), false);
             }
         }
-        
+
         // Check performance examples
         for perf_example in &self.performance_examples {
             if self.performance_example_exists(perf_example) {
@@ -215,7 +215,7 @@ impl ExampleValidator {
                 report.add_performance_example(perf_example.clone(), false);
             }
         }
-        
+
         // Check interaction examples
         for interaction_example in &self.interaction_examples {
             if self.interaction_example_exists(interaction_example) {
@@ -224,7 +224,7 @@ impl ExampleValidator {
                 report.add_interaction_example(interaction_example.clone(), false);
             }
         }
-        
+
         Ok(report)
     }
 
@@ -278,30 +278,30 @@ impl ExampleReport {
     }
 
     fn calculate_completeness(&mut self) {
-        let total_examples = self.chart_examples.len() + 
-                           self.performance_examples.len() + 
-                           self.interaction_examples.len();
-        
+        let total_examples = self.chart_examples.len()
+            + self.performance_examples.len()
+            + self.interaction_examples.len();
+
         let mut completed_examples = 0;
-        
+
         for (_, exists) in &self.chart_examples {
             if *exists {
                 completed_examples += 1;
             }
         }
-        
+
         for (_, exists) in &self.performance_examples {
             if *exists {
                 completed_examples += 1;
             }
         }
-        
+
         for (_, exists) in &self.interaction_examples {
             if *exists {
                 completed_examples += 1;
             }
         }
-        
+
         self.completeness_score = (completed_examples as f64 / total_examples as f64) * 100.0;
     }
 
@@ -344,7 +344,7 @@ impl CICDValidator {
 
     pub fn validate_pipeline(&self) -> Result<CICDReport, String> {
         let mut report = CICDReport::new();
-        
+
         // Check CI/CD stages
         for stage in &self.required_stages {
             if self.stage_exists(stage) {
@@ -353,7 +353,7 @@ impl CICDValidator {
                 report.add_stage(stage.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check test coverage
         for test_type in &self.required_tests {
             if self.test_exists(test_type) {
@@ -362,7 +362,7 @@ impl CICDValidator {
                 report.add_test(test_type.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check deployment targets
         for target in &self.deployment_targets {
             if self.deployment_target_exists(target) {
@@ -371,7 +371,7 @@ impl CICDValidator {
                 report.add_deployment_target(target.clone(), false, "Missing".to_string());
             }
         }
-        
+
         Ok(report)
     }
 
@@ -427,25 +427,25 @@ impl CICDReport {
     fn calculate_score(&mut self) {
         let total_items = self.stages.len() + self.tests.len() + self.deployment_targets.len();
         let mut completed_items = 0;
-        
+
         for (_, (exists, _)) in &self.stages {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (exists, _)) in &self.tests {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (exists, _)) in &self.deployment_targets {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         self.pipeline_score = (completed_items as f64 / total_items as f64) * 100.0;
     }
 
@@ -488,7 +488,7 @@ impl ProductionDeploymentValidator {
 
     pub fn validate_deployment(&self) -> Result<DeploymentReport, String> {
         let mut report = DeploymentReport::new();
-        
+
         // Check required configurations
         for config in &self.required_configs {
             if self.config_exists(config) {
@@ -497,7 +497,7 @@ impl ProductionDeploymentValidator {
                 report.add_config(config.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check security requirements
         for security_check in &self.security_checks {
             if self.security_check_passes(security_check) {
@@ -506,7 +506,7 @@ impl ProductionDeploymentValidator {
                 report.add_security_check(security_check.clone(), false, "Failed".to_string());
             }
         }
-        
+
         // Check performance requirements
         for perf_req in &self.performance_requirements {
             if self.performance_requirement_met(perf_req) {
@@ -515,7 +515,7 @@ impl ProductionDeploymentValidator {
                 report.add_performance_requirement(perf_req.clone(), false, "Not Met".to_string());
             }
         }
-        
+
         Ok(report)
     }
 
@@ -569,27 +569,28 @@ impl DeploymentReport {
     }
 
     fn calculate_score(&mut self) {
-        let total_items = self.configs.len() + self.security_checks.len() + self.performance_requirements.len();
+        let total_items =
+            self.configs.len() + self.security_checks.len() + self.performance_requirements.len();
         let mut completed_items = 0;
-        
+
         for (_, (exists, _)) in &self.configs {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (passes, _)) in &self.security_checks {
             if *passes {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (met, _)) in &self.performance_requirements {
             if *met {
                 completed_items += 1;
             }
         }
-        
+
         self.deployment_score = (completed_items as f64 / total_items as f64) * 100.0;
     }
 
@@ -619,26 +620,26 @@ impl FinalValidator {
 
     pub fn run_final_validation(&self) -> Result<FinalValidationReport, String> {
         let mut report = FinalValidationReport::new();
-        
+
         // Validate documentation
         let doc_report = self.documentation_validator.validate_documentation()?;
         report.documentation = doc_report;
-        
+
         // Validate examples
         let example_report = self.example_validator.validate_examples()?;
         report.examples = example_report;
-        
+
         // Validate CI/CD pipeline
         let cicd_report = self.cicd_validator.validate_pipeline()?;
         report.cicd = cicd_report;
-        
+
         // Validate deployment
         let deployment_report = self.deployment_validator.validate_deployment()?;
         report.deployment = deployment_report;
-        
+
         // Calculate overall readiness
         report.calculate_overall_readiness();
-        
+
         Ok(report)
     }
 }
@@ -670,7 +671,7 @@ impl FinalValidationReport {
         let example_score = self.examples.completeness_score;
         let cicd_score = self.cicd.pipeline_score;
         let deployment_score = self.deployment.deployment_score;
-        
+
         self.overall_readiness = (doc_score + example_score + cicd_score + deployment_score) / 4.0;
         self.is_production_ready = self.overall_readiness >= 90.0;
     }
@@ -684,7 +685,7 @@ mod tests {
     fn test_documentation_validation() {
         let validator = DocumentationValidator::new();
         let report = validator.validate_documentation().unwrap();
-        
+
         assert!(report.is_production_ready());
         assert!(report.overall_score >= 90.0);
         assert_eq!(report.sections.len(), 5);
@@ -695,7 +696,7 @@ mod tests {
     fn test_example_validation() {
         let validator = ExampleValidator::new();
         let report = validator.validate_examples().unwrap();
-        
+
         assert!(report.is_complete());
         assert!(report.completeness_score >= 95.0);
         assert_eq!(report.chart_examples.len(), 8);
@@ -707,7 +708,7 @@ mod tests {
     fn test_cicd_validation() {
         let validator = CICDValidator::new();
         let report = validator.validate_pipeline().unwrap();
-        
+
         assert!(report.is_production_ready());
         assert!(report.pipeline_score >= 95.0);
         assert_eq!(report.stages.len(), 5);
@@ -719,7 +720,7 @@ mod tests {
     fn test_deployment_validation() {
         let validator = ProductionDeploymentValidator::new();
         let report = validator.validate_deployment().unwrap();
-        
+
         assert!(report.is_production_ready());
         assert!(report.deployment_score >= 95.0);
         assert_eq!(report.configs.len(), 4);
@@ -731,10 +732,10 @@ mod tests {
     fn test_final_validation() {
         let validator = FinalValidator::new();
         let report = validator.run_final_validation().unwrap();
-        
+
         assert!(report.is_production_ready);
         assert!(report.overall_readiness >= 90.0);
-        
+
         // Check individual components
         assert!(report.documentation.is_production_ready());
         assert!(report.examples.is_complete());
@@ -746,13 +747,13 @@ mod tests {
     fn test_production_readiness_criteria() {
         let validator = FinalValidator::new();
         let report = validator.run_final_validation().unwrap();
-        
+
         // All components must be production ready
         assert!(report.documentation.overall_score >= 90.0);
         assert!(report.examples.completeness_score >= 95.0);
         assert!(report.cicd.pipeline_score >= 95.0);
         assert!(report.deployment.deployment_score >= 95.0);
-        
+
         // Overall readiness must be high
         assert!(report.overall_readiness >= 90.0);
         assert!(report.is_production_ready);
@@ -762,14 +763,14 @@ mod tests {
     fn test_documentation_sections() {
         let validator = DocumentationValidator::new();
         let report = validator.validate_documentation().unwrap();
-        
+
         // Check that all required sections are present
         assert!(report.sections.contains_key("getting-started"));
         assert!(report.sections.contains_key("api-reference"));
         assert!(report.sections.contains_key("examples"));
         assert!(report.sections.contains_key("performance-guide"));
         assert!(report.sections.contains_key("troubleshooting"));
-        
+
         // All sections should exist
         for (_, (exists, _)) in &report.sections {
             assert!(exists);
@@ -780,7 +781,7 @@ mod tests {
     fn test_example_completeness() {
         let validator = ExampleValidator::new();
         let report = validator.validate_examples().unwrap();
-        
+
         // Check that all chart types have examples
         assert_eq!(report.chart_examples.len(), 8);
         assert!(report.chart_examples.contains_key("line"));
@@ -791,7 +792,7 @@ mod tests {
         assert!(report.chart_examples.contains_key("sankey"));
         assert!(report.chart_examples.contains_key("treemap"));
         assert!(report.chart_examples.contains_key("violin"));
-        
+
         // All examples should exist
         for (_, exists) in &report.chart_examples {
             assert!(exists);
@@ -802,25 +803,25 @@ mod tests {
     fn test_cicd_pipeline_completeness() {
         let validator = CICDValidator::new();
         let report = validator.validate_pipeline().unwrap();
-        
+
         // Check that all required stages are present
         assert!(report.stages.contains_key("build"));
         assert!(report.stages.contains_key("test"));
         assert!(report.stages.contains_key("lint"));
         assert!(report.stages.contains_key("security-scan"));
         assert!(report.stages.contains_key("deploy"));
-        
+
         // Check that all required tests are present
         assert!(report.tests.contains_key("unit-tests"));
         assert!(report.tests.contains_key("integration-tests"));
         assert!(report.tests.contains_key("performance-tests"));
         assert!(report.tests.contains_key("browser-tests"));
-        
+
         // All stages and tests should be configured
         for (_, (exists, _)) in &report.stages {
             assert!(exists);
         }
-        
+
         for (_, (exists, _)) in &report.tests {
             assert!(exists);
         }
@@ -830,35 +831,35 @@ mod tests {
     fn test_deployment_configuration() {
         let validator = ProductionDeploymentValidator::new();
         let report = validator.validate_deployment().unwrap();
-        
+
         // Check that all required configs are present
         assert!(report.configs.contains_key("cargo-toml"));
         assert!(report.configs.contains_key("package-json"));
         assert!(report.configs.contains_key("dockerfile"));
         assert!(report.configs.contains_key("github-workflows"));
-        
+
         // Check that all security checks pass
         assert!(report.security_checks.contains_key("dependency-scan"));
         assert!(report.security_checks.contains_key("vulnerability-check"));
         assert!(report.security_checks.contains_key("license-compliance"));
         assert!(report.security_checks.contains_key("secrets-scan"));
-        
+
         // Check that all performance requirements are met
         assert!(report.performance_requirements.contains_key("bundle-size"));
         assert!(report.performance_requirements.contains_key("load-time"));
         assert!(report.performance_requirements.contains_key("memory-usage"));
         assert!(report.performance_requirements.contains_key("cpu-usage"));
-        
+
         // All configs should exist
         for (_, (exists, _)) in &report.configs {
             assert!(exists);
         }
-        
+
         // All security checks should pass
         for (_, (passes, _)) in &report.security_checks {
             assert!(passes);
         }
-        
+
         // All performance requirements should be met
         for (_, (met, _)) in &report.performance_requirements {
             assert!(met);

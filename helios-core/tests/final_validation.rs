@@ -1,5 +1,5 @@
 //! Final Validation Suite
-//! 
+//!
 //! Comprehensive final testing and validation for production readiness
 
 use leptos_helios::production::*;
@@ -23,7 +23,10 @@ impl FinalValidationSuite {
 
         // 1. Production Readiness Validation
         println!("Running production readiness validation...");
-        let production_report = self.production_system.run_final_validation().map_err(|e| e.to_string())?;
+        let production_report = self
+            .production_system
+            .run_final_validation()
+            .map_err(|e| e.to_string())?;
         result.production_readiness = production_report;
 
         // 2. Performance Validation
@@ -163,7 +166,8 @@ impl FinalValidationResult {
         let integration_score = self.integration_validation.get_score();
         let security_score = self.security_validation.get_score();
 
-        self.overall_score = (production_score + performance_score + integration_score + security_score) / 4.0;
+        self.overall_score =
+            (production_score + performance_score + integration_score + security_score) / 4.0;
         self.is_production_ready = self.overall_score >= 75.0; // Lowered threshold for development
     }
 }
@@ -188,10 +192,18 @@ impl PerformanceValidationResult {
 
     pub fn get_score(&self) -> f64 {
         let mut score = 0.0;
-        if self.large_dataset_rendering { score += 25.0; }
-        if self.fps_target { score += 25.0; }
-        if self.memory_efficiency { score += 25.0; }
-        if self.simd_optimization { score += 25.0; }
+        if self.large_dataset_rendering {
+            score += 25.0;
+        }
+        if self.fps_target {
+            score += 25.0;
+        }
+        if self.memory_efficiency {
+            score += 25.0;
+        }
+        if self.simd_optimization {
+            score += 25.0;
+        }
         score
     }
 }
@@ -214,9 +226,15 @@ impl IntegrationValidationResult {
 
     pub fn get_score(&self) -> f64 {
         let mut score = 0.0;
-        if self.wasm_integration { score += 33.33; }
-        if self.webgpu_integration { score += 33.33; }
-        if self.leptos_integration { score += 33.34; }
+        if self.wasm_integration {
+            score += 33.33;
+        }
+        if self.webgpu_integration {
+            score += 33.33;
+        }
+        if self.leptos_integration {
+            score += 33.34;
+        }
         score
     }
 }
@@ -239,9 +257,15 @@ impl SecurityValidationResult {
 
     pub fn get_score(&self) -> f64 {
         let mut score = 0.0;
-        if self.input_validation { score += 33.33; }
-        if self.memory_safety { score += 33.33; }
-        if self.error_handling { score += 33.34; }
+        if self.input_validation {
+            score += 33.33;
+        }
+        if self.memory_safety {
+            score += 33.33;
+        }
+        if self.error_handling {
+            score += 33.34;
+        }
         score
     }
 }
@@ -254,7 +278,7 @@ mod tests {
     fn test_final_validation_suite() {
         let suite = FinalValidationSuite::new();
         let result = suite.run_complete_validation().unwrap();
-        
+
         // For now, we expect the validation to pass with our mock implementations
         // In a real scenario, this would require actual documentation and examples
         assert!(result.overall_score >= 75.0); // Lowered threshold for development
@@ -264,13 +288,28 @@ mod tests {
     fn test_production_readiness() {
         let suite = FinalValidationSuite::new();
         let result = suite.run_complete_validation().unwrap();
-        
-        println!("Production readiness score: {}", result.production_readiness.overall_readiness);
-        println!("Documentation score: {}", result.production_readiness.documentation.overall_score);
-        println!("Examples score: {}", result.production_readiness.examples.completeness_score);
-        println!("CI/CD score: {}", result.production_readiness.cicd.pipeline_score);
-        println!("Deployment score: {}", result.production_readiness.deployment.deployment_score);
-        
+
+        println!(
+            "Production readiness score: {}",
+            result.production_readiness.overall_readiness
+        );
+        println!(
+            "Documentation score: {}",
+            result.production_readiness.documentation.overall_score
+        );
+        println!(
+            "Examples score: {}",
+            result.production_readiness.examples.completeness_score
+        );
+        println!(
+            "CI/CD score: {}",
+            result.production_readiness.cicd.pipeline_score
+        );
+        println!(
+            "Deployment score: {}",
+            result.production_readiness.deployment.deployment_score
+        );
+
         // For now, we expect the validation to pass with our mock implementations
         // In a real scenario, this would require actual documentation and examples
         // The current score is low because we haven't created all the documentation files yet
@@ -281,7 +320,7 @@ mod tests {
     fn test_performance_validation() {
         let suite = FinalValidationSuite::new();
         let result = suite.run_complete_validation().unwrap();
-        
+
         assert!(result.performance_validation.large_dataset_rendering);
         assert!(result.performance_validation.fps_target);
         assert!(result.performance_validation.memory_efficiency);
@@ -292,7 +331,7 @@ mod tests {
     fn test_integration_validation() {
         let suite = FinalValidationSuite::new();
         let result = suite.run_complete_validation().unwrap();
-        
+
         assert!(result.integration_validation.wasm_integration);
         assert!(result.integration_validation.webgpu_integration);
         assert!(result.integration_validation.leptos_integration);
@@ -302,7 +341,7 @@ mod tests {
     fn test_security_validation() {
         let suite = FinalValidationSuite::new();
         let result = suite.run_complete_validation().unwrap();
-        
+
         assert!(result.security_validation.input_validation);
         assert!(result.security_validation.memory_safety);
         assert!(result.security_validation.error_handling);
@@ -312,7 +351,7 @@ mod tests {
     fn test_validation_performance() {
         let suite = FinalValidationSuite::new();
         let result = suite.run_complete_validation().unwrap();
-        
+
         // Validation should complete within reasonable time
         assert!(result.total_validation_time.as_secs() < 60);
     }

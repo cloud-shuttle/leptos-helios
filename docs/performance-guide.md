@@ -142,11 +142,11 @@ println!("Processing took: {:?}", elapsed);
 fn test_100k_points_performance() {
     let optimizer = RenderingPipelineOptimizer::new();
     let data_100k: Vec<f64> = (0..100000).map(|i| i as f64).collect();
-    
+
     let start_time = Instant::now();
     let metrics = optimizer.render_large_dataset(&data_100k).unwrap();
     let total_time = start_time.elapsed();
-    
+
     assert_eq!(metrics.vertices_rendered, 100000);
     assert!(metrics.fps >= 60.0);
     assert!(total_time.as_millis() < 100);
@@ -159,13 +159,13 @@ fn test_100k_points_performance() {
 #[test]
 fn test_performance_regression() {
     let mut performance_manager = PerformanceManager::new(PerformanceConfig::default());
-    
+
     // Run multiple iterations
     for _ in 0..100 {
         let metrics = performance_manager.process_data(&test_data, 1.0).unwrap();
         assert!(metrics.is_performance_target_met());
     }
-    
+
     let average_fps = performance_manager.get_average_fps();
     assert!(average_fps >= 60.0);
 }

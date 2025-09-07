@@ -1,5 +1,5 @@
 //! Performance Examples
-//! 
+//!
 //! Examples demonstrating performance optimization features in Helios
 
 use leptos::*;
@@ -91,19 +91,19 @@ pub fn StreamingExample() -> impl IntoView {
                 if !is_streaming() {
                     break;
                 }
-                
+
                 let new_point = DataPoint {
                     x: counter,
                     y: (counter * 0.1).sin() * 100.0,
                 };
-                
+
                 set_data.update(|data| {
                     data.push(new_point);
                     if data.len() > 1000 {
                         data.remove(0);
                     }
                 });
-                
+
                 counter += 1.0;
                 gloo_timers::future::TimeoutFuture::new(100).await;
             }
@@ -137,8 +137,10 @@ pub fn MemoryOptimizationExample() -> impl IntoView {
 
     let create_memory_pool = move || {
         let mut memory_pool = AdvancedMemoryPool::new(1024 * 1024 * 100); // 100MB
-        memory_pool.create_pool("vertex_buffer".to_string(), 1024 * 1024, 10).unwrap();
-        
+        memory_pool
+            .create_pool("vertex_buffer".to_string(), 1024 * 1024, 10)
+            .unwrap();
+
         // Allocate some buffers
         let mut buffers = Vec::new();
         for _ in 0..5 {
@@ -146,7 +148,7 @@ pub fn MemoryOptimizationExample() -> impl IntoView {
                 buffers.push(buffer);
             }
         }
-        
+
         set_buffer_count.set(buffers.len());
         set_memory_usage.set(memory_pool.get_memory_usage());
     };

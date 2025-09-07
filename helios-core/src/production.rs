@@ -1,5 +1,5 @@
 //! Production Readiness Module
-//! 
+//!
 //! Comprehensive production readiness system including:
 //! - Documentation validation and generation
 //! - Example completeness checking
@@ -40,7 +40,7 @@ impl DocumentationSystem {
 
     pub fn validate_documentation(&self) -> Result<DocumentationReport, WebGpuError> {
         let mut report = DocumentationReport::new();
-        
+
         // Check required documentation sections
         for section in &self.required_sections {
             if self.section_exists(section) {
@@ -49,7 +49,7 @@ impl DocumentationSystem {
                 report.add_section(section.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check example files
         for example in &self.example_files {
             if self.example_exists(example) {
@@ -58,7 +58,7 @@ impl DocumentationSystem {
                 report.add_example(example.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check API documentation
         if self.api_docs_required {
             if self.api_docs_exist() {
@@ -67,7 +67,7 @@ impl DocumentationSystem {
                 report.api_docs_complete = false;
             }
         }
-        
+
         Ok(report)
     }
 
@@ -132,23 +132,23 @@ impl DocumentationReport {
     fn calculate_score(&mut self) {
         let total_items = self.sections.len() + self.examples.len() + 1; // +1 for API docs
         let mut completed_items = 0;
-        
+
         for (_, (exists, _)) in &self.sections {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (exists, _)) in &self.examples {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         if self.api_docs_complete {
             completed_items += 1;
         }
-        
+
         self.overall_score = (completed_items as f64 / total_items as f64) * 100.0;
     }
 
@@ -194,7 +194,7 @@ impl ExampleSystem {
 
     pub fn validate_examples(&self) -> Result<ExampleReport, WebGpuError> {
         let mut report = ExampleReport::new();
-        
+
         // Check chart type examples
         for chart_type in &self.chart_types {
             if self.chart_example_exists(chart_type) {
@@ -203,7 +203,7 @@ impl ExampleSystem {
                 report.add_chart_example(chart_type.clone(), false);
             }
         }
-        
+
         // Check performance examples
         for perf_example in &self.performance_examples {
             if self.performance_example_exists(perf_example) {
@@ -212,7 +212,7 @@ impl ExampleSystem {
                 report.add_performance_example(perf_example.clone(), false);
             }
         }
-        
+
         // Check interaction examples
         for interaction_example in &self.interaction_examples {
             if self.interaction_example_exists(interaction_example) {
@@ -221,7 +221,7 @@ impl ExampleSystem {
                 report.add_interaction_example(interaction_example.clone(), false);
             }
         }
-        
+
         Ok(report)
     }
 
@@ -281,30 +281,30 @@ impl ExampleReport {
     }
 
     fn calculate_completeness(&mut self) {
-        let total_examples = self.chart_examples.len() + 
-                           self.performance_examples.len() + 
-                           self.interaction_examples.len();
-        
+        let total_examples = self.chart_examples.len()
+            + self.performance_examples.len()
+            + self.interaction_examples.len();
+
         let mut completed_examples = 0;
-        
+
         for (_, exists) in &self.chart_examples {
             if *exists {
                 completed_examples += 1;
             }
         }
-        
+
         for (_, exists) in &self.performance_examples {
             if *exists {
                 completed_examples += 1;
             }
         }
-        
+
         for (_, exists) in &self.interaction_examples {
             if *exists {
                 completed_examples += 1;
             }
         }
-        
+
         self.completeness_score = (completed_examples as f64 / total_examples as f64) * 100.0;
     }
 
@@ -346,7 +346,7 @@ impl CICDSystem {
 
     pub fn validate_pipeline(&self) -> Result<CICDReport, WebGpuError> {
         let mut report = CICDReport::new();
-        
+
         // Check CI/CD stages
         for stage in &self.required_stages {
             if self.stage_exists(stage) {
@@ -355,7 +355,7 @@ impl CICDSystem {
                 report.add_stage(stage.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check test coverage
         for test_type in &self.required_tests {
             if self.test_exists(test_type) {
@@ -364,7 +364,7 @@ impl CICDSystem {
                 report.add_test(test_type.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check deployment targets
         for target in &self.deployment_targets {
             if self.deployment_target_exists(target) {
@@ -373,7 +373,7 @@ impl CICDSystem {
                 report.add_deployment_target(target.clone(), false, "Missing".to_string());
             }
         }
-        
+
         Ok(report)
     }
 
@@ -388,7 +388,9 @@ impl CICDSystem {
         match test_type {
             "unit-tests" => Path::new("helios-core/tests").exists(),
             "integration-tests" => Path::new("tests").exists(),
-            "performance-tests" => Path::new("helios-core/tests/performance_optimization.rs").exists(),
+            "performance-tests" => {
+                Path::new("helios-core/tests/performance_optimization.rs").exists()
+            }
             "browser-tests" => Path::new("tests/browser").exists(),
             _ => false,
         }
@@ -447,25 +449,25 @@ impl CICDReport {
     fn calculate_score(&mut self) {
         let total_items = self.stages.len() + self.tests.len() + self.deployment_targets.len();
         let mut completed_items = 0;
-        
+
         for (_, (exists, _)) in &self.stages {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (exists, _)) in &self.tests {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (exists, _)) in &self.deployment_targets {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         self.pipeline_score = (completed_items as f64 / total_items as f64) * 100.0;
     }
 
@@ -507,7 +509,7 @@ impl ProductionDeploymentSystem {
 
     pub fn validate_deployment(&self) -> Result<DeploymentReport, WebGpuError> {
         let mut report = DeploymentReport::new();
-        
+
         // Check required configurations
         for config in &self.required_configs {
             if self.config_exists(config) {
@@ -516,7 +518,7 @@ impl ProductionDeploymentSystem {
                 report.add_config(config.clone(), false, "Missing".to_string());
             }
         }
-        
+
         // Check security requirements
         for security_check in &self.security_checks {
             if self.security_check_passes(security_check) {
@@ -525,7 +527,7 @@ impl ProductionDeploymentSystem {
                 report.add_security_check(security_check.clone(), false, "Failed".to_string());
             }
         }
-        
+
         // Check performance requirements
         for perf_req in &self.performance_requirements {
             if self.performance_requirement_met(perf_req) {
@@ -534,7 +536,7 @@ impl ProductionDeploymentSystem {
                 report.add_performance_requirement(perf_req.clone(), false, "Not Met".to_string());
             }
         }
-        
+
         Ok(report)
     }
 
@@ -611,27 +613,28 @@ impl DeploymentReport {
     }
 
     fn calculate_score(&mut self) {
-        let total_items = self.configs.len() + self.security_checks.len() + self.performance_requirements.len();
+        let total_items =
+            self.configs.len() + self.security_checks.len() + self.performance_requirements.len();
         let mut completed_items = 0;
-        
+
         for (_, (exists, _)) in &self.configs {
             if *exists {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (passes, _)) in &self.security_checks {
             if *passes {
                 completed_items += 1;
             }
         }
-        
+
         for (_, (met, _)) in &self.performance_requirements {
             if *met {
                 completed_items += 1;
             }
         }
-        
+
         self.deployment_score = (completed_items as f64 / total_items as f64) * 100.0;
     }
 
@@ -660,26 +663,26 @@ impl ProductionReadinessSystem {
 
     pub fn run_final_validation(&self) -> Result<FinalValidationReport, WebGpuError> {
         let mut report = FinalValidationReport::new();
-        
+
         // Validate documentation
         let doc_report = self.documentation_system.validate_documentation()?;
         report.documentation = doc_report;
-        
+
         // Validate examples
         let example_report = self.example_system.validate_examples()?;
         report.examples = example_report;
-        
+
         // Validate CI/CD pipeline
         let cicd_report = self.cicd_system.validate_pipeline()?;
         report.cicd = cicd_report;
-        
+
         // Validate deployment
         let deployment_report = self.deployment_system.validate_deployment()?;
         report.deployment = deployment_report;
-        
+
         // Calculate overall readiness
         report.calculate_overall_readiness();
-        
+
         Ok(report)
     }
 
@@ -687,16 +690,16 @@ impl ProductionReadinessSystem {
         // Generate missing documentation
         self.documentation_system.generate_api_docs()?;
         self.documentation_system.generate_examples()?;
-        
+
         // Generate missing examples
         self.example_system.generate_missing_examples()?;
-        
+
         // Generate CI/CD workflows
         self.cicd_system.generate_workflows()?;
-        
+
         // Generate deployment configs
         self.deployment_system.generate_deployment_configs()?;
-        
+
         Ok(())
     }
 }
@@ -728,7 +731,7 @@ impl FinalValidationReport {
         let example_score = self.examples.completeness_score;
         let cicd_score = self.cicd.pipeline_score;
         let deployment_score = self.deployment.deployment_score;
-        
+
         self.overall_readiness = (doc_score + example_score + cicd_score + deployment_score) / 4.0;
         self.is_production_ready = self.overall_readiness >= 90.0;
     }
@@ -738,8 +741,11 @@ impl FinalValidationReport {
         println!("Overall Readiness: {:.1}%", self.overall_readiness);
         println!("Production Ready: {}", self.is_production_ready);
         println!();
-        
-        println!("Documentation Score: {:.1}%", self.documentation.overall_score);
+
+        println!(
+            "Documentation Score: {:.1}%",
+            self.documentation.overall_score
+        );
         println!("Examples Score: {:.1}%", self.examples.completeness_score);
         println!("CI/CD Score: {:.1}%", self.cicd.pipeline_score);
         println!("Deployment Score: {:.1}%", self.deployment.deployment_score);

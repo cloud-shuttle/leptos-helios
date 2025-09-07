@@ -1,5 +1,5 @@
 //! Advanced Chart Types Tests
-//! 
+//!
 //! Comprehensive test suite for advanced chart types including:
 //! - Radar Charts (multi-dimensional polar coordinates)
 //! - Sankey Diagrams (flow visualization)
@@ -79,7 +79,13 @@ impl Default for RadarChartConfig {
                 background_color: "#ffffff".to_string(),
                 text_color: "#000000".to_string(),
             },
-            categories: vec!["A".to_string(), "B".to_string(), "C".to_string(), "D".to_string(), "E".to_string()],
+            categories: vec![
+                "A".to_string(),
+                "B".to_string(),
+                "C".to_string(),
+                "D".to_string(),
+                "E".to_string(),
+            ],
             max_value: 100.0,
             show_grid: true,
             show_labels: true,
@@ -208,10 +214,21 @@ impl Default for ViolinConfig {
 
 /// Advanced Chart Renderer Trait
 pub trait AdvancedChartRenderer {
-    fn render_radar_chart(&mut self, config: &RadarChartConfig, data: &[RadarDataPoint]) -> Result<WebGpuRenderResult, WebGpuError>;
-    fn render_sankey_diagram(&mut self, config: &SankeyConfig) -> Result<WebGpuRenderResult, WebGpuError>;
-    fn render_treemap(&mut self, config: &TreemapConfig) -> Result<WebGpuRenderResult, WebGpuError>;
-    fn render_violin_plot(&mut self, config: &ViolinConfig) -> Result<WebGpuRenderResult, WebGpuError>;
+    fn render_radar_chart(
+        &mut self,
+        config: &RadarChartConfig,
+        data: &[RadarDataPoint],
+    ) -> Result<WebGpuRenderResult, WebGpuError>;
+    fn render_sankey_diagram(
+        &mut self,
+        config: &SankeyConfig,
+    ) -> Result<WebGpuRenderResult, WebGpuError>;
+    fn render_treemap(&mut self, config: &TreemapConfig)
+        -> Result<WebGpuRenderResult, WebGpuError>;
+    fn render_violin_plot(
+        &mut self,
+        config: &ViolinConfig,
+    ) -> Result<WebGpuRenderResult, WebGpuError>;
 }
 
 /// Mock WebGpuRenderer for testing
@@ -224,7 +241,11 @@ impl MockWebGpuRenderer {
 }
 
 impl AdvancedChartRenderer for MockWebGpuRenderer {
-    fn render_radar_chart(&mut self, config: &RadarChartConfig, data: &[RadarDataPoint]) -> Result<WebGpuRenderResult, WebGpuError> {
+    fn render_radar_chart(
+        &mut self,
+        config: &RadarChartConfig,
+        data: &[RadarDataPoint],
+    ) -> Result<WebGpuRenderResult, WebGpuError> {
         // Mock implementation for testing
         Ok(WebGpuRenderResult {
             render_time_ms: 2.5,
@@ -233,7 +254,10 @@ impl AdvancedChartRenderer for MockWebGpuRenderer {
         })
     }
 
-    fn render_sankey_diagram(&mut self, config: &SankeyConfig) -> Result<WebGpuRenderResult, WebGpuError> {
+    fn render_sankey_diagram(
+        &mut self,
+        config: &SankeyConfig,
+    ) -> Result<WebGpuRenderResult, WebGpuError> {
         // Mock implementation for testing
         Ok(WebGpuRenderResult {
             render_time_ms: 5.2,
@@ -242,7 +266,10 @@ impl AdvancedChartRenderer for MockWebGpuRenderer {
         })
     }
 
-    fn render_treemap(&mut self, config: &TreemapConfig) -> Result<WebGpuRenderResult, WebGpuError> {
+    fn render_treemap(
+        &mut self,
+        config: &TreemapConfig,
+    ) -> Result<WebGpuRenderResult, WebGpuError> {
         // Mock implementation for testing
         Ok(WebGpuRenderResult {
             render_time_ms: 3.8,
@@ -251,7 +278,10 @@ impl AdvancedChartRenderer for MockWebGpuRenderer {
         })
     }
 
-    fn render_violin_plot(&mut self, config: &ViolinConfig) -> Result<WebGpuRenderResult, WebGpuError> {
+    fn render_violin_plot(
+        &mut self,
+        config: &ViolinConfig,
+    ) -> Result<WebGpuRenderResult, WebGpuError> {
         // Mock implementation for testing
         Ok(WebGpuRenderResult {
             render_time_ms: 4.1,
@@ -269,28 +299,84 @@ fn count_treemap_nodes(node: &TreemapNode) -> usize {
 /// Test data generators
 pub fn create_sample_radar_data() -> Vec<RadarDataPoint> {
     vec![
-        RadarDataPoint { category: "Performance".to_string(), value: 85.0, max_value: 100.0 },
-        RadarDataPoint { category: "Usability".to_string(), value: 92.0, max_value: 100.0 },
-        RadarDataPoint { category: "Features".to_string(), value: 78.0, max_value: 100.0 },
-        RadarDataPoint { category: "Support".to_string(), value: 88.0, max_value: 100.0 },
-        RadarDataPoint { category: "Price".to_string(), value: 95.0, max_value: 100.0 },
+        RadarDataPoint {
+            category: "Performance".to_string(),
+            value: 85.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Usability".to_string(),
+            value: 92.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Features".to_string(),
+            value: 78.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Support".to_string(),
+            value: 88.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Price".to_string(),
+            value: 95.0,
+            max_value: 100.0,
+        },
     ]
 }
 
 pub fn create_sample_sankey_data() -> (Vec<SankeyNode>, Vec<SankeyLink>) {
     let nodes = vec![
-        SankeyNode { id: "source1".to_string(), name: "Source 1".to_string(), value: 100.0 },
-        SankeyNode { id: "source2".to_string(), name: "Source 2".to_string(), value: 80.0 },
-        SankeyNode { id: "intermediate".to_string(), name: "Intermediate".to_string(), value: 0.0 },
-        SankeyNode { id: "target1".to_string(), name: "Target 1".to_string(), value: 0.0 },
-        SankeyNode { id: "target2".to_string(), name: "Target 2".to_string(), value: 0.0 },
+        SankeyNode {
+            id: "source1".to_string(),
+            name: "Source 1".to_string(),
+            value: 100.0,
+        },
+        SankeyNode {
+            id: "source2".to_string(),
+            name: "Source 2".to_string(),
+            value: 80.0,
+        },
+        SankeyNode {
+            id: "intermediate".to_string(),
+            name: "Intermediate".to_string(),
+            value: 0.0,
+        },
+        SankeyNode {
+            id: "target1".to_string(),
+            name: "Target 1".to_string(),
+            value: 0.0,
+        },
+        SankeyNode {
+            id: "target2".to_string(),
+            name: "Target 2".to_string(),
+            value: 0.0,
+        },
     ];
 
     let links = vec![
-        SankeyLink { source: "source1".to_string(), target: "intermediate".to_string(), value: 60.0 },
-        SankeyLink { source: "source2".to_string(), target: "intermediate".to_string(), value: 50.0 },
-        SankeyLink { source: "intermediate".to_string(), target: "target1".to_string(), value: 70.0 },
-        SankeyLink { source: "intermediate".to_string(), target: "target2".to_string(), value: 40.0 },
+        SankeyLink {
+            source: "source1".to_string(),
+            target: "intermediate".to_string(),
+            value: 60.0,
+        },
+        SankeyLink {
+            source: "source2".to_string(),
+            target: "intermediate".to_string(),
+            value: 50.0,
+        },
+        SankeyLink {
+            source: "intermediate".to_string(),
+            target: "target1".to_string(),
+            value: 70.0,
+        },
+        SankeyLink {
+            source: "intermediate".to_string(),
+            target: "target2".to_string(),
+            value: 40.0,
+        },
     ];
 
     (nodes, links)
@@ -307,8 +393,18 @@ pub fn create_sample_treemap_data() -> TreemapNode {
                 name: "Category 1".to_string(),
                 value: 40.0,
                 children: vec![
-                    TreemapNode { id: "item1".to_string(), name: "Item 1".to_string(), value: 25.0, children: vec![] },
-                    TreemapNode { id: "item2".to_string(), name: "Item 2".to_string(), value: 15.0, children: vec![] },
+                    TreemapNode {
+                        id: "item1".to_string(),
+                        name: "Item 1".to_string(),
+                        value: 25.0,
+                        children: vec![],
+                    },
+                    TreemapNode {
+                        id: "item2".to_string(),
+                        name: "Item 2".to_string(),
+                        value: 15.0,
+                        children: vec![],
+                    },
                 ],
             },
             TreemapNode {
@@ -316,8 +412,18 @@ pub fn create_sample_treemap_data() -> TreemapNode {
                 name: "Category 2".to_string(),
                 value: 35.0,
                 children: vec![
-                    TreemapNode { id: "item3".to_string(), name: "Item 3".to_string(), value: 20.0, children: vec![] },
-                    TreemapNode { id: "item4".to_string(), name: "Item 4".to_string(), value: 15.0, children: vec![] },
+                    TreemapNode {
+                        id: "item3".to_string(),
+                        name: "Item 3".to_string(),
+                        value: 20.0,
+                        children: vec![],
+                    },
+                    TreemapNode {
+                        id: "item4".to_string(),
+                        name: "Item 4".to_string(),
+                        value: 15.0,
+                        children: vec![],
+                    },
                 ],
             },
             TreemapNode {
@@ -507,11 +613,13 @@ mod tests {
     #[test]
     fn test_advanced_chart_performance() {
         let mut renderer = MockWebGpuRenderer::new();
-        
+
         // Test radar chart performance
         let radar_config = RadarChartConfig::default();
         let radar_data = create_sample_radar_data();
-        let radar_result = renderer.render_radar_chart(&radar_config, &radar_data).unwrap();
+        let radar_result = renderer
+            .render_radar_chart(&radar_config, &radar_data)
+            .unwrap();
         assert!(radar_result.render_time_ms < 10.0); // Should render quickly
 
         // Test sankey diagram performance
@@ -538,11 +646,13 @@ mod tests {
     #[test]
     fn test_advanced_chart_memory_usage() {
         let mut renderer = MockWebGpuRenderer::new();
-        
+
         // Test memory usage for each chart type
         let radar_config = RadarChartConfig::default();
         let radar_data = create_sample_radar_data();
-        let radar_result = renderer.render_radar_chart(&radar_config, &radar_data).unwrap();
+        let radar_result = renderer
+            .render_radar_chart(&radar_config, &radar_data)
+            .unwrap();
         assert!(radar_result.memory_used_bytes < 10000); // Should use reasonable memory
 
         let (sankey_nodes, sankey_links) = create_sample_sankey_data();

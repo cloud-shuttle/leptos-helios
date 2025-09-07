@@ -13,16 +13,16 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
         components: rustfmt, clippy
-        
+
     - name: Cache cargo registry
       uses: actions/cache@v3
       with:
@@ -33,24 +33,24 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-cargo-
-          
+
     - name: Run unit tests
       run: cargo test --verbose
-      
+
     - name: Run integration tests
       run: cargo test --test '*' --verbose
-      
+
   performance-tests:
     name: Performance Tests
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-      
+
     - name: Cache cargo registry
       uses: actions/cache@v3
       with:
@@ -61,52 +61,52 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-cargo-
-          
+
     - name: Run performance tests
       run: cargo test --test performance_optimization --verbose
-      
+
     - name: Run benchmarks
       run: cargo bench --verbose
-      
+
   browser-tests:
     name: Browser Tests
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
       with:
         targets: wasm32-unknown-unknown
-        
+
     - name: Install wasm-pack
       uses: jetli/wasm-pack-action@v0.3.0
       with:
         version: '0.12.1'
-        
+
     - name: Install Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        
+
     - name: Install Playwright
       run: |
         npm install -g playwright
         npx playwright install --with-deps
-        
+
     - name: Build WASM for testing
       run: |
         cd helios-wasm-core
         wasm-pack build --target web --out-dir pkg
-        
+
     - name: Run browser tests
       run: |
         cd tests/browser
         npm install
         npm test
-        
+
   test-matrix:
     name: Test Matrix
     runs-on: ${{ matrix.os }}
@@ -114,17 +114,17 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         rust: [stable, beta, nightly]
-        
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust ${{ matrix.rust }}
       uses: dtolnay/rust-toolchain@master
       with:
         toolchain: ${{ matrix.rust }}
         components: rustfmt, clippy
-        
+
     - name: Cache cargo registry
       uses: actions/cache@v3
       with:
@@ -135,6 +135,6 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-cargo-${{ matrix.rust }}-
-          
+
     - name: Run tests
       run: cargo test --verbose

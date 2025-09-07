@@ -1,5 +1,5 @@
 //! Interactive Demo Examples
-//! 
+//!
 //! Examples demonstrating interactive features in Helios
 
 use leptos::*;
@@ -181,7 +181,7 @@ pub fn CrossfilterExample() -> impl IntoView {
         set_filters.update(|filters| {
             filters.insert(filter_name, value);
         });
-        
+
         // Apply filters to data
         let original_data = generate_interactive_data();
         let filtered: Vec<DataPoint> = original_data
@@ -193,7 +193,7 @@ pub fn CrossfilterExample() -> impl IntoView {
                 })
             })
             .collect();
-        
+
         set_filtered_data.set(filtered);
     };
 

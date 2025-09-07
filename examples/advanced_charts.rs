@@ -1,5 +1,5 @@
 //! Advanced Chart Examples
-//! 
+//!
 //! Examples demonstrating advanced chart types in Helios
 
 use leptos::*;
@@ -35,11 +35,31 @@ pub fn RadarChartExample() -> impl IntoView {
     };
 
     let data = vec![
-        RadarDataPoint { category: "Performance".to_string(), value: 85.0, max_value: 100.0 },
-        RadarDataPoint { category: "Usability".to_string(), value: 92.0, max_value: 100.0 },
-        RadarDataPoint { category: "Features".to_string(), value: 78.0, max_value: 100.0 },
-        RadarDataPoint { category: "Support".to_string(), value: 88.0, max_value: 100.0 },
-        RadarDataPoint { category: "Price".to_string(), value: 95.0, max_value: 100.0 },
+        RadarDataPoint {
+            category: "Performance".to_string(),
+            value: 85.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Usability".to_string(),
+            value: 92.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Features".to_string(),
+            value: 78.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Support".to_string(),
+            value: 88.0,
+            max_value: 100.0,
+        },
+        RadarDataPoint {
+            category: "Price".to_string(),
+            value: 95.0,
+            max_value: 100.0,
+        },
     ];
 
     view! {
@@ -62,16 +82,48 @@ pub fn SankeyExample() -> impl IntoView {
             text_color: "#000000".to_string(),
         },
         nodes: vec![
-            SankeyNode { id: "source1".to_string(), name: "Source 1".to_string(), value: 100.0 },
-            SankeyNode { id: "source2".to_string(), name: "Source 2".to_string(), value: 80.0 },
-            SankeyNode { id: "target1".to_string(), name: "Target 1".to_string(), value: 0.0 },
-            SankeyNode { id: "target2".to_string(), name: "Target 2".to_string(), value: 0.0 },
+            SankeyNode {
+                id: "source1".to_string(),
+                name: "Source 1".to_string(),
+                value: 100.0,
+            },
+            SankeyNode {
+                id: "source2".to_string(),
+                name: "Source 2".to_string(),
+                value: 80.0,
+            },
+            SankeyNode {
+                id: "target1".to_string(),
+                name: "Target 1".to_string(),
+                value: 0.0,
+            },
+            SankeyNode {
+                id: "target2".to_string(),
+                name: "Target 2".to_string(),
+                value: 0.0,
+            },
         ],
         links: vec![
-            SankeyLink { source: "source1".to_string(), target: "target1".to_string(), value: 60.0 },
-            SankeyLink { source: "source1".to_string(), target: "target2".to_string(), value: 40.0 },
-            SankeyLink { source: "source2".to_string(), target: "target1".to_string(), value: 30.0 },
-            SankeyLink { source: "source2".to_string(), target: "target2".to_string(), value: 50.0 },
+            SankeyLink {
+                source: "source1".to_string(),
+                target: "target1".to_string(),
+                value: 60.0,
+            },
+            SankeyLink {
+                source: "source1".to_string(),
+                target: "target2".to_string(),
+                value: 40.0,
+            },
+            SankeyLink {
+                source: "source2".to_string(),
+                target: "target1".to_string(),
+                value: 30.0,
+            },
+            SankeyLink {
+                source: "source2".to_string(),
+                target: "target2".to_string(),
+                value: 50.0,
+            },
         ],
         node_width: 20.0,
         node_padding: 10.0,
@@ -108,8 +160,18 @@ pub fn TreemapExample() -> impl IntoView {
                     name: "Category 1".to_string(),
                     value: 40.0,
                     children: vec![
-                        TreemapNode { id: "item1".to_string(), name: "Item 1".to_string(), value: 25.0, children: vec![] },
-                        TreemapNode { id: "item2".to_string(), name: "Item 2".to_string(), value: 15.0, children: vec![] },
+                        TreemapNode {
+                            id: "item1".to_string(),
+                            name: "Item 1".to_string(),
+                            value: 25.0,
+                            children: vec![],
+                        },
+                        TreemapNode {
+                            id: "item2".to_string(),
+                            name: "Item 2".to_string(),
+                            value: 15.0,
+                            children: vec![],
+                        },
                     ],
                 },
                 TreemapNode {
@@ -117,8 +179,18 @@ pub fn TreemapExample() -> impl IntoView {
                     name: "Category 2".to_string(),
                     value: 35.0,
                     children: vec![
-                        TreemapNode { id: "item3".to_string(), name: "Item 3".to_string(), value: 20.0, children: vec![] },
-                        TreemapNode { id: "item4".to_string(), name: "Item 4".to_string(), value: 15.0, children: vec![] },
+                        TreemapNode {
+                            id: "item3".to_string(),
+                            name: "Item 3".to_string(),
+                            value: 20.0,
+                            children: vec![],
+                        },
+                        TreemapNode {
+                            id: "item4".to_string(),
+                            name: "Item 4".to_string(),
+                            value: 15.0,
+                            children: vec![],
+                        },
                     ],
                 },
                 TreemapNode {

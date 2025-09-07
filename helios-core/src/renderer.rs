@@ -31,6 +31,10 @@ impl WebGpuRenderer {
             surface: None,
         })
     }
+
+    pub fn backend(&self) -> RendererBackend {
+        self.backend
+    }
 }
 
 /// WebGL2 renderer implementation
@@ -49,6 +53,10 @@ impl WebGl2Renderer {
             context: None,
         })
     }
+
+    pub fn backend(&self) -> RendererBackend {
+        self.backend
+    }
 }
 
 /// Canvas2D renderer implementation
@@ -66,6 +74,10 @@ impl Canvas2DRenderer {
             backend: RendererBackend::Canvas2D,
             context: None,
         })
+    }
+
+    pub fn backend(&self) -> RendererBackend {
+        self.backend
     }
 }
 
@@ -149,6 +161,56 @@ impl Renderer {
     /// Get the current backend
     pub fn backend(&self) -> RendererBackend {
         self.backend
+    }
+
+    /// Switch to a different backend
+    pub fn switch_backend(&mut self, new_backend: RendererBackend) -> Result<(), ChartRenderError> {
+        match new_backend {
+            RendererBackend::WebGPU => {
+                let webgpu = WebGpuRenderer::new()?;
+                self.backend = RendererBackend::WebGPU;
+                self.webgpu_renderer = Some(webgpu);
+                self.webgl2_renderer = None;
+                self.canvas2d_renderer = None;
+            }
+            RendererBackend::WebGL2 => {
+                let webgl2 = WebGl2Renderer::new()?;
+                self.backend = RendererBackend::WebGL2;
+                self.webgpu_renderer = None;
+                self.webgl2_renderer = Some(webgl2);
+                self.canvas2d_renderer = None;
+            }
+            RendererBackend::Canvas2D => {
+                let canvas2d = Canvas2DRenderer::new()?;
+                self.backend = RendererBackend::Canvas2D;
+                self.webgpu_renderer = None;
+                self.webgl2_renderer = None;
+                self.canvas2d_renderer = Some(canvas2d);
+            }
+        }
+        Ok(())
+    }
+
+    /// Check if a specific backend is available
+    pub fn is_backend_available(backend: RendererBackend) -> bool {
+        match backend {
+            RendererBackend::WebGPU => WebGpuRenderer::new().is_ok(),
+            RendererBackend::WebGL2 => WebGl2Renderer::new().is_ok(),
+            RendererBackend::Canvas2D => Canvas2DRenderer::new().is_ok(),
+        }
+    }
+
+    /// Get the best available backend
+    pub fn get_best_backend() -> Option<RendererBackend> {
+        if Self::is_backend_available(RendererBackend::WebGPU) {
+            Some(RendererBackend::WebGPU)
+        } else if Self::is_backend_available(RendererBackend::WebGL2) {
+            Some(RendererBackend::WebGL2)
+        } else if Self::is_backend_available(RendererBackend::Canvas2D) {
+            Some(RendererBackend::Canvas2D)
+        } else {
+            None
+        }
     }
 
     /// Render a line chart

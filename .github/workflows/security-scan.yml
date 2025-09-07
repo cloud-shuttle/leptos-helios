@@ -15,64 +15,64 @@ jobs:
   dependency-scan:
     name: Dependency Scan
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-      
+
     - name: Install cargo-audit
       run: cargo install cargo-audit
-      
+
     - name: Run dependency scan
       run: cargo audit
-      
+
   vulnerability-check:
     name: Vulnerability Check
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-      
+
     - name: Install cargo-geiger
       run: cargo install cargo-geiger
-      
+
     - name: Run vulnerability check
       run: cargo geiger
-      
+
   license-compliance:
     name: License Compliance
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install Rust
       uses: dtolnay/rust-toolchain@stable
-      
+
     - name: Install cargo-deny
       run: cargo install cargo-deny
-      
+
     - name: Run license compliance check
       run: cargo deny check licenses
-      
+
   secrets-scan:
     name: Secrets Scan
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        
+
     - name: Run TruffleHog OSS
       uses: trufflesecurity/trufflehog@main
       with:
