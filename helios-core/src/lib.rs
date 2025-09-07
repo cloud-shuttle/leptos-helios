@@ -7,11 +7,14 @@
 //! - Performance optimization and adaptive quality systems
 
 pub mod advanced_charts;
+pub mod advanced_memory;
 pub mod canvas_surface;
 pub mod chart;
 pub mod chart_config;
+pub mod cross_browser;
 pub mod data_minimal;
 pub mod data_pipeline;
+pub mod gpu_accelerator;
 pub mod helios_chart;
 pub mod interactions;
 pub mod line_chart_renderer;
@@ -21,6 +24,7 @@ pub mod render_simple;
 pub mod renderer;
 pub mod streaming;
 pub mod styling;
+pub mod wasm_optimizer;
 pub mod webgpu_real;
 pub mod webgpu_renderer;
 
@@ -30,14 +34,17 @@ pub mod gpu;
 pub mod intelligence;
 pub mod utils;
 
+pub use advanced_memory::*;
 pub use chart::{
     BarWidth, ChartConfig, ChartSpec, ChartSpecBuilder, DataReference, Encoding, Interpolation,
     MarkType,
 };
 pub use chart_config::*;
+pub use cross_browser::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use data_pipeline::{DataPipeline, GpuBuffers, PipelineError, PipelineResult};
 pub use gpu::*;
+pub use gpu_accelerator::*;
 pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
 pub use intelligence::*;
 pub use interactions::*;
@@ -49,6 +56,7 @@ pub use renderer::{
 pub use streaming::*;
 pub use styling::*;
 pub use utils::*;
+pub use wasm_optimizer::*;
 
 /// Core error types for Helios
 #[derive(Debug, thiserror::Error)]
