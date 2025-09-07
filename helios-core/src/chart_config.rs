@@ -102,6 +102,8 @@ pub struct BarChartConfig {
     pub show_values: bool,
     pub horizontal: bool,
     pub show_legend: bool,
+    pub corner_radius: Option<f32>,
+    pub spacing: Option<f32>,
 }
 
 impl Default for BarChartConfig {
@@ -118,6 +120,8 @@ impl Default for BarChartConfig {
             show_values: false,
             horizontal: false,
             show_legend: true,
+            corner_radius: None,
+            spacing: None,
         }
     }
 }
@@ -133,6 +137,9 @@ pub struct ScatterPlotConfig {
     pub trend_line_color: String,
     pub trend_line_width: f32,
     pub show_legend: bool,
+    pub point_shape: Option<PointShape>,
+    pub opacity: Option<f32>,
+    pub jitter: Option<f32>,
 }
 
 impl Default for ScatterPlotConfig {
@@ -145,6 +152,9 @@ impl Default for ScatterPlotConfig {
             trend_line_color: "#ff6b6b".to_string(),
             trend_line_width: 2.0,
             show_legend: true,
+            point_shape: None,
+            opacity: None,
+            jitter: None,
         }
     }
 }
@@ -169,6 +179,96 @@ impl Default for HeatmapConfig {
             y_labels: Vec::new(),
             color_scheme: ColorScheme::Viridis,
             show_values: false,
+            show_legend: true,
+        }
+    }
+}
+
+/// Gradient configuration for area charts
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GradientConfig {
+    pub start_color: String,
+    pub end_color: String,
+    pub direction: GradientDirection,
+}
+
+/// Gradient direction
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum GradientDirection {
+    Vertical,
+    Horizontal,
+    Diagonal,
+    Radial,
+}
+
+impl Default for GradientDirection {
+    fn default() -> Self {
+        GradientDirection::Vertical
+    }
+}
+
+/// Area chart configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AreaChartConfig {
+    #[serde(flatten)]
+    pub base: BaseChartConfig,
+    pub fill_color: String,
+    pub stroke_color: String,
+    pub stroke_width: f32,
+    pub opacity: f32,
+    pub interpolation: InterpolationType,
+    pub show_legend: bool,
+    pub gradient: Option<GradientConfig>,
+}
+
+impl Default for AreaChartConfig {
+    fn default() -> Self {
+        Self {
+            base: BaseChartConfig::default(),
+            fill_color: "#00d4ff".to_string(),
+            stroke_color: "#0066cc".to_string(),
+            stroke_width: 2.0,
+            opacity: 0.7,
+            interpolation: InterpolationType::Linear,
+            show_legend: true,
+            gradient: None,
+        }
+    }
+}
+
+/// Stacked area data point
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StackedAreaData {
+    pub x: f64,
+    pub values: Vec<f64>,
+    pub labels: Vec<String>,
+}
+
+/// Stacked area chart configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StackedAreaChartConfig {
+    #[serde(flatten)]
+    pub base: BaseChartConfig,
+    pub colors: Vec<String>,
+    pub stroke_width: f32,
+    pub opacity: f32,
+    pub interpolation: InterpolationType,
+    pub show_legend: bool,
+}
+
+impl Default for StackedAreaChartConfig {
+    fn default() -> Self {
+        Self {
+            base: BaseChartConfig::default(),
+            colors: vec![
+                "#00d4ff".to_string(),
+                "#ff6b6b".to_string(),
+                "#4ecdc4".to_string(),
+                "#45b7d1".to_string(),
+            ],
+            stroke_width: 1.0,
+            opacity: 0.8,
+            interpolation: InterpolationType::Linear,
             show_legend: true,
         }
     }

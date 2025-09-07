@@ -1,7 +1,7 @@
 //! Browser Build Integration Tests
 //! Tests for ensuring the build pipeline works correctly for browser deployment
 
-use helios_core::*;
+use leptos_helios::*;
 use std::fs;
 use std::path::Path;
 use std::process::Command;

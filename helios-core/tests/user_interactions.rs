@@ -1,7 +1,7 @@
 //! User Interaction Tests
 //! Tests for pan, zoom, hover, and other user interaction functionality
 
-use helios_core::*;
+use leptos_helios::*;
 
 /// Helper function to create a base chart config
 fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {

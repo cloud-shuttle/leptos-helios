@@ -50,7 +50,7 @@ criterion = "0.5"
 wasm-bindgen-test = "0.3"
 
 [workspace.package]
-version = "0.1.0-alpha.1"
+version = "0.1.0"
 edition = "2021"
 authors = ["CloudShuttle <contact@cloudshuttle.com>"]
 license = "MIT"

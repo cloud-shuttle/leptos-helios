@@ -1,7 +1,7 @@
 //! Streaming Data Tests
 //! Tests for real-time data updates and streaming functionality
 
-use helios_core::*;
+use leptos_helios::*;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 

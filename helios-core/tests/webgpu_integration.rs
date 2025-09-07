@@ -9,8 +9,7 @@
 //! - Actual render pass execution with command encoding
 //! - Performance benchmarking with real GPU operations
 
-use helios_core::chart::*;
-use helios_core::render_simple::*;
+use leptos_helios::*;
 use std::time::Duration;
 
 /// Test real WebGPU device initialization

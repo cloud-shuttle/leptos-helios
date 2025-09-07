@@ -19,6 +19,7 @@ pub mod production;
 pub mod render_simple;
 pub mod renderer;
 pub mod streaming;
+pub mod styling;
 pub mod webgpu_real;
 pub mod webgpu_renderer;
 
@@ -40,6 +41,7 @@ pub use renderer::{
     Canvas2DRenderer, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer, WebGpuRenderer,
 };
 pub use streaming::*;
+pub use styling::*;
 pub use utils::*;
 
 /// Core error types for Helios

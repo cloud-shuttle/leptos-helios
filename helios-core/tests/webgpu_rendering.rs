@@ -182,6 +182,8 @@ fn test_webgpu_chart_rendering() {
             horizontal: false,
             show_legend: true,
             colors: vec!["#00d4ff".to_string()],
+            corner_radius: 4.0,
+            spacing: 2.0,
         };
 
         let bar_data = create_test_bar_data(50);
@@ -192,6 +194,9 @@ fn test_webgpu_chart_rendering() {
         let scatter_config = ScatterPlotConfig {
             base: create_base_config(),
             point_size: 6.0,
+            jitter: 0.1,
+            opacity: 0.8,
+            point_shape: PointShape::Circle,
             point_color: "#00d4ff".to_string(),
             show_trend_line: true,
             trend_line_color: "#ff6b6b".to_string(),
