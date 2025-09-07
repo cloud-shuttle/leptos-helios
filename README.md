@@ -7,6 +7,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Discord](https://img.shields.io/discord/1234567890?label=Discord&logo=discord)](https://discord.gg/helios)
 
+## ⚠️ **Important Disclaimer**
+
+**This entire codebase has been generated using AI-assisted development tools.** While the code follows Rust best practices and includes comprehensive test coverage, it should be considered experimental and used with appropriate caution in production environments. The implementation represents a proof-of-concept for AI-assisted software development methodologies.
+
+**Key Points:**
+- ✅ **Comprehensive Test Coverage**: 28+ tests across all modules
+- ✅ **TDD Methodology**: RED-GREEN-REFACTOR cycles applied throughout
+- ✅ **Performance Benchmarks**: 3ms/100K points baseline established
+- ⚠️ **Generated Code**: All implementations created via AI assistance
+- ⚠️ **Experimental**: Use in production with appropriate testing and validation
+
 **🎉 Phase 2 Performance Complete!** Helios v0.3.0-beta has successfully completed Phase 2 with **GPU acceleration**, **WASM optimization**, **advanced memory management**, and **cross-browser compatibility**. Production-ready for v0.3.0-beta release!
 
 Helios is a next-generation visualization library that combines Rust's performance advantages with Leptos v0.8's fine-grained reactivity to create unprecedented visualization capabilities. Built on WebGPU with intelligent fallbacks, Helios achieves **3ms render times for 100K points** while maintaining type safety and compile-time guarantees.

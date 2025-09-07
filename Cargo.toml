@@ -69,7 +69,7 @@ authors = ["CloudShuttle <contact@cloudshuttle.com>"]
 license = "MIT"
 repository = "https://github.com/cloud-shuttle/leptos-helios"
 documentation = "https://docs.rs/leptos-helios"
-description = "High-performance Rust visualization library for Leptos v0.8"
+description = "High-performance Rust visualization library for Leptos v0.8 (AI-generated codebase - experimental)"
 keywords = ["visualization", "charts", "rust", "leptos", "webgpu"]
 categories = ["visualization", "web-programming"]
 
