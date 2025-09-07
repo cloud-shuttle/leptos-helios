@@ -63,11 +63,12 @@ tarpaulin = "0.31"           # Code coverage measurement
 cargo-mutants = "24.11"      # Mutation testing
 
 [workspace.package]
-version = "0.3.0-beta"
+version = "0.3.0-beta.1"
 edition = "2021"
 authors = ["CloudShuttle <contact@cloudshuttle.com>"]
 license = "MIT"
-repository = "https://github.com/cloudshuttle/helios"
+repository = "https://github.com/cloud-shuttle/leptos-helios"
+documentation = "https://docs.rs/leptos-helios"
 description = "High-performance Rust visualization library for Leptos v0.8"
 keywords = ["visualization", "charts", "rust", "leptos", "webgpu"]
 categories = ["visualization", "web-programming"]
