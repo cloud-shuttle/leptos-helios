@@ -11,6 +11,50 @@ pub enum RendererBackend {
     Canvas2D,
 }
 
+/// Result of a rendering operation
+#[derive(Debug, Clone, PartialEq)]
+pub enum RenderStatus {
+    /// Successful rendering
+    Success,
+    /// Rendering completed with warnings
+    Warning(String),
+    /// Rendering failed
+    Error(String),
+}
+
+impl RenderStatus {
+    /// Check if the result is successful
+    pub fn is_success(&self) -> bool {
+        matches!(self, RenderStatus::Success)
+    }
+
+    /// Check if the result has warnings
+    pub fn has_warnings(&self) -> bool {
+        matches!(self, RenderStatus::Warning(_))
+    }
+
+    /// Check if the result is an error
+    pub fn is_error(&self) -> bool {
+        matches!(self, RenderStatus::Error(_))
+    }
+
+    /// Get the error message if this is an error result
+    pub fn error_message(&self) -> Option<&str> {
+        match self {
+            RenderStatus::Error(msg) => Some(msg),
+            _ => None,
+        }
+    }
+
+    /// Get the warning message if this is a warning result
+    pub fn warning_message(&self) -> Option<&str> {
+        match self {
+            RenderStatus::Warning(msg) => Some(msg),
+            _ => None,
+        }
+    }
+}
+
 /// WebGPU renderer implementation
 pub struct WebGpuRenderer {
     backend: RendererBackend,

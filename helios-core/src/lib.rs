@@ -11,6 +11,7 @@ pub mod canvas_surface;
 pub mod chart;
 pub mod chart_config;
 pub mod data_minimal;
+pub mod data_pipeline;
 pub mod helios_chart;
 pub mod interactions;
 pub mod line_chart_renderer;
@@ -35,13 +36,15 @@ pub use chart::{
 };
 pub use chart_config::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
+pub use data_pipeline::{DataPipeline, GpuBuffers, PipelineError, PipelineResult};
 pub use gpu::*;
-pub use helios_chart::*;
+pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
 pub use intelligence::*;
 pub use interactions::*;
 pub use render::*;
 pub use renderer::{
-    Canvas2DRenderer, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer, WebGpuRenderer,
+    Canvas2DRenderer, RenderStatus, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer,
+    WebGpuRenderer,
 };
 pub use streaming::*;
 pub use styling::*;

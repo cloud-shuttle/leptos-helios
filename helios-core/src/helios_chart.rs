@@ -1,9 +1,11 @@
 use crate::canvas_surface::*;
+use crate::chart::ChartSpec;
 use crate::chart_config::*;
 use crate::line_chart_renderer::*;
 use crate::webgpu_real::*;
 use leptos::prelude::*;
 use leptos::*;
+use std::sync::{Arc, Mutex};
 use web_sys::*;
 
 /// Props for the HeliosChart component
@@ -144,5 +146,74 @@ mod tests {
         assert_eq!(props.config.base.width, 800);
         assert_eq!(props.data.len(), 3);
         assert_eq!(props.canvas_id, Some("test-canvas".to_string()));
+    }
+}
+
+/// HeliosChart component with lifecycle management
+#[derive(Debug, Clone)]
+pub struct HeliosChart {
+    spec: ChartSpec,
+    mounted: Arc<Mutex<bool>>,
+    canvas_id: Option<String>,
+}
+
+impl HeliosChart {
+    /// Create a new HeliosChart with the given specification
+    pub fn new(spec: ChartSpec) -> Self {
+        Self {
+            spec,
+            mounted: Arc::new(Mutex::new(false)),
+            canvas_id: None,
+        }
+    }
+
+    /// Mount the chart component
+    pub fn mount(&self) -> Result<(), String> {
+        let mut mounted = self.mounted.lock().unwrap();
+        if *mounted {
+            return Err("Chart is already mounted".to_string());
+        }
+        *mounted = true;
+        Ok(())
+    }
+
+    /// Check if the chart is mounted
+    pub fn is_mounted(&self) -> bool {
+        *self.mounted.lock().unwrap()
+    }
+
+    /// Update the chart with a new specification
+    pub fn update(&self, new_spec: ChartSpec) -> Result<(), String> {
+        let mounted = self.mounted.lock().unwrap();
+        if !*mounted {
+            return Err("Chart must be mounted before updating".to_string());
+        }
+
+        // In a real implementation, this would update the chart
+        // For now, we just validate the new spec
+        new_spec
+            .validate()
+            .map_err(|e| format!("Invalid chart spec: {:?}", e))?;
+        Ok(())
+    }
+
+    /// Unmount the chart component
+    pub fn unmount(&self) -> Result<(), String> {
+        let mut mounted = self.mounted.lock().unwrap();
+        if !*mounted {
+            return Err("Chart is not mounted".to_string());
+        }
+        *mounted = false;
+        Ok(())
+    }
+
+    /// Get the current chart specification
+    pub fn get_spec(&self) -> &ChartSpec {
+        &self.spec
+    }
+
+    /// Set the canvas ID for rendering
+    pub fn set_canvas_id(&mut self, canvas_id: String) {
+        self.canvas_id = Some(canvas_id);
     }
 }
