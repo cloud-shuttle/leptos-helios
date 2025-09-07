@@ -1,0 +1,60 @@
+{
+  "name": "leptos-helios",
+  "version": "0.1.0-beta.1",
+  "description": "High-performance Rust visualization library for Leptos v0.8 with WebGPU acceleration",
+  "main": "helios-wasm-core/pkg/helios_wasm_core.js",
+  "types": "helios-wasm-core/pkg/helios_wasm_core.d.ts",
+  "files": [
+    "helios-wasm-core/pkg/",
+    "helios-wasm/pkg/",
+    "docs/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "wasm-pack build --target web --out-dir pkg",
+    "build:node": "wasm-pack build --target nodejs --out-dir pkg",
+    "test": "cargo test",
+    "test:wasm": "wasm-pack test --headless --firefox",
+    "lint": "cargo clippy --all-targets --all-features -- -D warnings",
+    "fmt": "cargo fmt --all",
+    "docs": "cargo doc --no-deps --open",
+    "clean": "cargo clean && rm -rf helios-wasm-core/pkg helios-wasm/pkg"
+  },
+  "keywords": [
+    "rust",
+    "wasm",
+    "webgpu",
+    "visualization",
+    "charts",
+    "leptos",
+    "data-viz",
+    "performance"
+  ],
+  "author": "Helios Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/leptos-helios.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/leptos-helios/issues"
+  },
+  "homepage": "https://github.com/your-org/leptos-helios#readme",
+  "devDependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.0",
+    "webpack-dev-server": "^4.15.0"
+  },
+  "dependencies": {
+    "leptos": "^0.8.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

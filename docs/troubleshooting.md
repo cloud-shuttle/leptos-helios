@@ -1,516 +1,312 @@
-# Troubleshooting Guide
+# Troubleshooting
 
-> Common issues and solutions for Helios development and deployment
+This guide helps you resolve common issues when using Helios.
 
-## Quick Diagnosis
+## Common Issues
+
+### WebGPU Not Available
+
+**Problem**: WebGPU is not supported in your browser or environment.
+
+**Solution**: Helios automatically falls back to WebGL2 or Canvas2D. Check browser compatibility:
+
+```rust
+let renderer = ChartRenderer::auto_detect()?;
+match renderer.backend() {
+    RendererBackend::WebGPU => println!("Using WebGPU"),
+    RendererBackend::WebGL2 => println!("Using WebGL2 fallback"),
+    RendererBackend::Canvas2D => println!("Using Canvas2D fallback"),
+}
+```
 
 ### Performance Issues
-- **Slow Rendering**: Check WebGPU support and fallback status
-- **High Memory Usage**: Verify data size and streaming configuration
-- **Poor Responsiveness**: Check interaction latency and frame timing
 
-### Build Issues
-- **WASM Compilation Errors**: Verify Rust toolchain and target installation
-- **Bundle Size Too Large**: Check optimization flags and dependencies
-- **Runtime Errors**: Verify browser compatibility and feature support
+**Problem**: Charts are rendering slowly or stuttering.
 
-### Integration Issues
-- **Leptos Integration**: Check version compatibility and feature flags
-- **Data Processing**: Verify Polars version and DataFrame format
-- **Server Functions**: Check network configuration and CORS settings
+**Solutions**:
 
-## Common Issues and Solutions
-
-### 1. WebGPU Not Available
-
-**Symptoms:**
-- Charts fall back to WebGL2 or Canvas rendering
-- Performance is slower than expected
-- Console warnings about WebGPU support
-
-**Solutions:**
-
+1. **Enable LOD for large datasets**:
 ```rust
-// Check WebGPU support
-if !webgpu::is_supported().await {
-    console::warn_1(&"WebGPU not supported, falling back to WebGL2".into());
-}
-
-// Force WebGL2 fallback for testing
-#[cfg(debug_assertions)]
-std::env::set_var("HELIOS_FORCE_WEBGL2", "true");
+let mut lod_system = LodSystem::new();
+lod_system.update_lod(viewport_scale, data.len());
+let optimized_data = lod_system.sample_data(&data);
 ```
 
-**Browser Requirements:**
-- Chrome 113+ (stable WebGPU support)
-- Safari 17+ (WebGPU support)
-- Firefox 115+ (WebGPU support in development)
-
-### 2. WASM Compilation Errors
-
-**Symptoms:**
-- `cargo build` fails with WASM target
-- Missing `wasm32-unknown-unknown` target
-- Linker errors during WASM compilation
-
-**Solutions:**
-
-```bash
-# Install WASM target
-rustup target add wasm32-unknown-unknown
-
-# Install WASM tools
-cargo install trunk wasm-pack wasm-opt
-
-# Clean and rebuild
-cargo clean
-trunk build --release
-```
-
-**Common Fixes:**
-```toml
-# Cargo.toml - ensure proper configuration
-[profile.release]
-opt-level = "z"
-lto = true
-codegen-units = 1
-
-[dependencies]
-# Use compatible versions
-leptos = { version = "0.8", features = ["csr", "hydrate"] }
-polars = { version = "1.30", features = ["lazy"] }
-```
-
-### 3. Memory Issues with Large Datasets
-
-**Symptoms:**
-- Browser crashes or becomes unresponsive
-- High memory usage in task manager
-- "Out of memory" errors
-
-**Solutions:**
-
+2. **Use performance mode**:
 ```rust
-// Enable streaming for large datasets
-let chart = helios::chart! {
-    data: large_dataset,
-    mark: Point { size: Some(1.0) },
-    encoding: {
-        x: { field: "x", type: Quantitative },
-        y: { field: "y", type: Quantitative }
-    }
+let config = PerformanceConfig {
+    max_memory_mb: 100,
+    target_fps: 60.0,
+    enable_simd: true,
+    enable_lod: true,
+    batch_size: 1000,
 };
+```
 
-view! {
-    <HeliosChart
-        spec=chart
-        performance=PerformanceConfig::new()
-            .memory_limit(Some(100 * 1024 * 1024)) // 100MB limit
-            .quality_mode(QualityMode::Performance)
-    />
+3. **Check memory usage**:
+```rust
+let metrics = performance_manager.process_data(&data, 1.0)?;
+println!("Memory usage: {} bytes", metrics.memory_usage_bytes);
+```
+
+### Chart Not Rendering
+
+**Problem**: Chart appears blank or doesn't render.
+
+**Solutions**:
+
+1. **Check data format**:
+```rust
+// Ensure data points are valid
+let data = vec![
+    DataPoint { x: 1.0, y: 2.0 }, // Valid
+    DataPoint { x: f64::NAN, y: 2.0 }, // Invalid - will cause issues
+];
+```
+
+2. **Verify configuration**:
+```rust
+let config = LineChartConfig {
+    base_config: BaseChartConfig {
+        width: 800, // Must be > 0
+        height: 600, // Must be > 0
+        // ... other required fields
+    },
+    data: data, // Must not be empty
+    // ... other required fields
+};
+```
+
+3. **Check for errors**:
+```rust
+match renderer.render_chart(&config) {
+    Ok(_) => println!("Chart rendered successfully"),
+    Err(e) => println!("Rendering error: {}", e),
 }
 ```
 
-**Data Processing Optimization:**
+### Memory Issues
+
+**Problem**: High memory usage or memory leaks.
+
+**Solutions**:
+
+1. **Use memory pooling**:
 ```rust
-// Use lazy evaluation and limit data
-let processed_data = df
-    .lazy()
-    .filter(col("value").gt(0))
-    .limit(Some(100_000)) // Limit to 100K rows
-    .collect()
-    .unwrap();
+let mut memory_pool = AdvancedMemoryPool::new(1024 * 1024 * 100);
+memory_pool.create_pool("vertex_buffer".to_string(), 1024 * 1024, 10)?;
 ```
 
-### 4. Leptos Integration Issues
-
-**Symptoms:**
-- Components not rendering
-- Reactive updates not working
-- Server function errors
-
-**Solutions:**
-
+2. **Deallocate unused buffers**:
 ```rust
-// Ensure proper Leptos setup
-use leptos::*;
+memory_pool.deallocate_buffer("vertex_buffer", &buffer_id)?;
+```
 
-#[component]
-pub fn MyChart() -> impl IntoView {
-    let (data, set_data) = create_signal(DataFrame::empty());
+3. **Monitor memory usage**:
+```rust
+let metrics = performance_manager.process_data(&data, 1.0)?;
+if metrics.memory_usage_bytes > 100 * 1024 * 1024 { // 100MB
+    println!("High memory usage detected");
+}
+```
 
-    // Use create_memo for derived state
-    let chart_spec = create_memo(move |_| {
-        helios::chart! {
-            data: data.get(),
-            mark: Line,
-            encoding: {
-                x: { field: "x", type: Quantitative },
-                y: { field: "y", type: Quantitative }
-            }
+### Data Processing Errors
+
+**Problem**: Data processing fails or produces incorrect results.
+
+**Solutions**:
+
+1. **Validate input data**:
+```rust
+fn validate_data(data: &[DataPoint]) -> Result<(), String> {
+    for point in data {
+        if point.x.is_nan() || point.y.is_nan() {
+            return Err("Invalid data point: NaN values".to_string());
         }
-    });
-
-    view! {
-        <HeliosChart spec=chart_spec />
-    }
-}
-```
-
-**Server Function Issues:**
-```rust
-// Ensure proper server function configuration
-#[server(LoadData, "/api")]
-pub async fn load_data() -> Result<DataFrame, ServerFnError> {
-    // Implementation
-}
-
-// Check CORS and network configuration
-#[cfg(feature = "ssr")]
-pub fn configure_cors() -> CorsLayer {
-    CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods([Method::GET, Method::POST])
-        .allow_headers(Any)
-}
-```
-
-### 5. Data Processing Errors
-
-**Symptoms:**
-- DataFrame operations fail
-- Type mismatches in data
-- Performance issues with data transformations
-
-**Solutions:**
-
-```rust
-// Validate data before processing
-fn validate_dataframe(df: &DataFrame) -> Result<(), DataError> {
-    if df.is_empty() {
-        return Err(DataError::EmptyData);
-    }
-
-    // Check required columns
-    let required_columns = ["x", "y"];
-    for col in required_columns {
-        if !df.get_column_names().contains(&col) {
-            return Err(DataError::MissingColumn(col.to_string()));
+        if point.x.is_infinite() || point.y.is_infinite() {
+            return Err("Invalid data point: Infinite values".to_string());
         }
     }
-
     Ok(())
 }
-
-// Handle data type conversions
-let processed_df = df
-    .lazy()
-    .with_columns([
-        col("x").cast(DataType::Float64),
-        col("y").cast(DataType::Float64),
-    ])
-    .filter(col("x").is_not_null())
-    .filter(col("y").is_not_null())
-    .collect()
-    .unwrap();
 ```
 
-### 6. Performance Issues
-
-**Symptoms:**
-- Slow chart rendering
-- Poor frame rates
-- High CPU usage
-
-**Solutions:**
-
+2. **Handle empty datasets**:
 ```rust
-// Enable performance monitoring
-view! {
-    <HeliosChart
-        spec=chart_spec
-        debug=true  // Shows performance metrics
-        performance=PerformanceConfig::new()
-            .target_fps(Some(60))
-            .quality_mode(QualityMode::Adaptive {
-                target_frame_time: Duration::from_millis(16),
-                quality_range: (0.5, 1.0)
-            })
-    />
+if data.is_empty() {
+    return Err("Cannot render chart with empty data".into());
 }
 ```
 
-**Optimization Strategies:**
+3. **Check data ranges**:
 ```rust
-// Use appropriate chart types for data size
-let chart_type = match data_size {
-    size if size < 1_000 => MarkType::Point { size: Some(8.0) },
-    size if size < 10_000 => MarkType::Point { size: Some(4.0) },
-    size if size < 100_000 => MarkType::Point { size: Some(2.0) },
-    _ => MarkType::Point { size: Some(1.0) },
-};
+let x_min = data.iter().map(|p| p.x).fold(f64::INFINITY, f64::min);
+let x_max = data.iter().map(|p| p.x).fold(f64::NEG_INFINITY, f64::max);
+if x_min == x_max {
+    println!("Warning: All x values are the same");
+}
+```
 
-// Enable LOD for large datasets
-let chart = helios::chart! {
-    data: large_dataset,
-    mark: chart_type,
-    encoding: {
-        x: { field: "x", type: Quantitative },
-        y: { field: "y", type: Quantitative }
+## Error Handling
+
+### WebGpuError
+
+```rust
+use leptos_helios::webgpu_renderer::WebGpuError;
+
+match result {
+    Ok(data) => println!("Success: {:?}", data),
+    Err(WebGpuError::DeviceInit(msg)) => {
+        println!("Device initialization failed: {}", msg);
+        // Try fallback renderer
     },
-    config: {
-        lod: LODConfig {
-            enabled: true,
-            thresholds: vec![1000, 10000, 100000],
-        }
-    }
-};
+    Err(WebGpuError::ShaderCompilation(msg)) => {
+        println!("Shader compilation failed: {}", msg);
+        // Check shader syntax
+    },
+    Err(WebGpuError::BufferAllocation(msg)) => {
+        println!("Buffer allocation failed: {}", msg);
+        // Reduce memory usage
+    },
+    Err(e) => println!("Other error: {}", e),
+}
 ```
 
-### 7. Browser Compatibility Issues
-
-**Symptoms:**
-- Charts not rendering in certain browsers
-- Different behavior across browsers
-- Console errors about unsupported features
-
-**Solutions:**
+### HeliosError
 
 ```rust
-// Check browser capabilities
-pub async fn check_browser_support() -> BrowserSupport {
-    let webgpu_supported = webgpu::is_supported().await;
-    let webgl2_supported = webgl2::is_supported();
-    let canvas_supported = canvas2d::is_supported();
+use leptos_helios::HeliosError;
 
-    BrowserSupport {
-        webgpu: webgpu_supported,
-        webgl2: webgl2_supported,
-        canvas2d: canvas_supported,
-        recommended_backend: if webgpu_supported {
-            RenderBackend::WebGPU
-        } else if webgl2_supported {
-            RenderBackend::WebGL2
-        } else {
-            RenderBackend::Canvas2D
-        }
-    }
+match result {
+    Ok(data) => println!("Success: {:?}", data),
+    Err(HeliosError::DataProcessing(e)) => {
+        println!("Data processing error: {}", e);
+        println!("Suggested actions: {:?}", e.suggested_actions());
+    },
+    Err(HeliosError::Rendering(e)) => {
+        println!("Rendering error: {}", e);
+        println!("User message: {}", e.user_message());
+    },
+    Err(HeliosError::PerformanceBudget { details }) => {
+        println!("Performance budget exceeded: {}", details);
+        // Reduce data size or enable performance mode
+    },
+    Err(e) => println!("Other error: {}", e),
 }
-
-// Graceful degradation
-let render_config = match browser_support.recommended_backend {
-    RenderBackend::WebGPU => RenderConfig::high_performance(),
-    RenderBackend::WebGL2 => RenderConfig::medium_performance(),
-    RenderBackend::Canvas2D => RenderConfig::compatibility(),
-};
 ```
 
-### 8. Build and Deployment Issues
+## Debugging Tips
 
-**Symptoms:**
-- Build failures in CI/CD
-- Deployment errors
-- Asset loading issues
-
-**Solutions:**
-
-```bash
-# CI/CD configuration
-name: Build and Test
-
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: wasm32-unknown-unknown
-          override: true
-
-      - name: Install trunk
-        run: cargo install trunk
-
-      - name: Build
-        run: trunk build --release
-
-      - name: Test
-        run: cargo test
-```
-
-**Docker Configuration:**
-```dockerfile
-FROM rust:1.79-slim as builder
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    pkg-config libssl-dev curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js for WASM tools
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
-
-# Install Rust tools
-RUN rustup target add wasm32-unknown-unknown
-RUN cargo install trunk wasm-opt
-
-WORKDIR /app
-COPY . .
-
-# Build WASM
-RUN trunk build --release
-
-# Build server
-RUN cargo build --release --bin server
-```
-
-## Debugging Tools
-
-### 1. Performance Profiler
+### Enable Debug Logging
 
 ```rust
-// Enable detailed performance monitoring
-#[cfg(debug_assertions)]
-pub fn enable_performance_debugging() {
-    std::env::set_var("HELIOS_DEBUG_PERFORMANCE", "true");
-    std::env::set_var("HELIOS_DEBUG_MEMORY", "true");
-    std::env::set_var("HELIOS_DEBUG_GPU", "true");
-}
-
-// Performance metrics component
-#[component]
-pub fn PerformanceMonitor() -> impl IntoView {
-    let (metrics, set_metrics) = create_signal(PerformanceMetrics::default());
-
-    use_interval_fn(
-        move || {
-            if let Some(renderer) = get_renderer_instance() {
-                set_metrics.set(renderer.collect_metrics());
-            }
-        },
-        Duration::from_secs(1)
-    );
-
-    view! {
-        <div class="performance-monitor">
-            <div>"FPS: " {move || format!("{:.1}", metrics.get().fps())}</div>
-            <div>"Memory: " {move || format!("{:.1}MB", metrics.get().memory_usage().used as f64 / 1024.0 / 1024.0)}</div>
-            <div>"Frame Time: " {move || format!("{:.1}ms", metrics.get().frame_time().as_millis())}</div>
-        </div>
-    }
-}
+// Enable console logging in browser
+#[cfg(target_arch = "wasm32")]
+console_error_panic_hook::set_once();
 ```
 
-### 2. Data Inspector
+### Performance Profiling
 
 ```rust
-// Debug data processing
-pub fn debug_dataframe(df: &DataFrame, name: &str) {
-    #[cfg(debug_assertions)]
-    {
-        console::log_1(&format!("DataFrame '{}': {} rows, {} columns",
-            name, df.height(), df.width()).into());
-
-        for col_name in df.get_column_names() {
-            let series = df.column(col_name).unwrap();
-            console::log_1(&format!("  {}: {:?} ({} nulls)",
-                col_name, series.dtype(), series.null_count()).into());
-        }
-    }
-}
+let profiler = performance_manager.profiler();
+let timer = profiler.start_timer("operation".to_string());
+// ... perform operation ...
+let elapsed = timer.elapsed();
+println!("Operation took: {:?}", elapsed);
 ```
 
-### 3. Error Boundary
+### Memory Debugging
 
 ```rust
-// Catch and display errors gracefully
-#[component]
-pub fn ErrorBoundary<F, IV>(children: F) -> impl IntoView
-where
-    F: Fn() -> IV + 'static,
-    IV: IntoView,
-{
-    let (error, set_error) = create_signal(None::<String>);
+// Check memory usage before and after operations
+let initial_memory = get_memory_usage();
+// ... perform operations ...
+let final_memory = get_memory_usage();
+println!("Memory delta: {} bytes", final_memory - initial_memory);
+```
 
-    view! {
-        <div class="error-boundary">
-            <Show
-                when=move || error.get().is_some()
-                fallback=move || children()
-            >
-                <div class="error-display">
-                    <h3>"Something went wrong"</h3>
-                    <p>{move || error.get().unwrap_or_default()}</p>
-                    <button on:click=move |_| set_error.set(None)>
-                        "Try Again"
-                    </button>
-                </div>
-            </Show>
-        </div>
-    }
-}
+## Browser Compatibility
+
+### WebGPU Support
+
+- **Chrome/Edge**: Version 113+ (with flag enabled)
+- **Firefox**: Not yet supported
+- **Safari**: Not yet supported
+
+### WebGL2 Support
+
+- **Chrome/Edge**: Version 56+
+- **Firefox**: Version 51+
+- **Safari**: Version 15+
+
+### Canvas2D Support
+
+- **All modern browsers**: Full support
+
+## Performance Optimization
+
+### For Large Datasets
+
+1. **Use LOD system**:
+```rust
+let mut lod_system = LodSystem::new();
+lod_system.update_lod(viewport_scale, data.len());
+```
+
+2. **Enable SIMD processing**:
+```rust
+let processor = SimdDataProcessor::new(1000, true);
+```
+
+3. **Use background processing**:
+```rust
+let worker = WebWorkerProcessor::new("data_worker".to_string());
+```
+
+### For Real-time Updates
+
+1. **Use streaming**:
+```rust
+let streaming_manager = StreamingManager::new(StreamConfig {
+    buffer_size: 1000,
+    update_interval: Duration::from_millis(100),
+    max_data_points: 10000,
+});
+```
+
+2. **Optimize update frequency**:
+```rust
+// Update at most 60 times per second
+let update_interval = Duration::from_millis(16); // ~60fps
 ```
 
 ## Getting Help
 
-### 1. Check Documentation
-- [Getting Started Guide](getting-started.md)
-- [API Reference](api.md)
-- [Performance Guide](performance.md)
-- [Architecture Overview](architecture.md)
+### Common Resources
 
-### 2. Search Issues
-- [GitHub Issues](https://github.com/cloudshuttle/helios/issues)
-- [GitHub Discussions](https://github.com/cloudshuttle/helios/discussions)
+1. **Documentation**: Check the [API Reference](api-reference.md)
+2. **Examples**: See [Examples](examples.md) for usage patterns
+3. **Performance**: Review [Performance Guide](performance-guide.md)
 
-### 3. Community Support
-- **Discord**: [Real-time chat](https://discord.gg/helios)
-- **GitHub Discussions**: [General questions](https://github.com/cloudshuttle/helios/discussions)
-- **Stack Overflow**: Tag questions with `helios` and `rust`
+### Reporting Issues
 
-### 4. Report Issues
 When reporting issues, please include:
 
-1. **Environment**: OS, browser, Rust version
-2. **Reproduction Steps**: Clear steps to reproduce the issue
-3. **Expected Behavior**: What you expected to happen
-4. **Actual Behavior**: What actually happened
-5. **Error Messages**: Full error messages and stack traces
-6. **Code Sample**: Minimal code that reproduces the issue
+1. **Browser and version**
+2. **Helios version**
+3. **Error messages**
+4. **Code sample**
+5. **Expected vs actual behavior**
 
-### 5. Performance Issues
-For performance issues, include:
+### Community Support
 
-1. **Performance Metrics**: FPS, memory usage, frame times
-2. **Data Size**: Number of data points, columns, rows
-3. **Chart Configuration**: Chart type, encoding, interactions
-4. **Browser Information**: Version, WebGPU support, hardware
-5. **Performance Profile**: Screenshots of performance tools
+- **GitHub Issues**: For bug reports and feature requests
+- **Discussions**: For questions and community support
+- **Documentation**: For comprehensive guides and references
 
-## Prevention Tips
+## Next Steps
 
-### 1. Development Best Practices
-- Use TypeScript/strong typing where possible
-- Test with different data sizes and types
-- Monitor performance during development
-- Use debug mode for development
-
-### 2. Production Considerations
-- Enable performance monitoring
-- Set appropriate memory limits
-- Use streaming for large datasets
-- Implement error boundaries
-
-### 3. Testing Strategy
-- Test across different browsers
-- Test with various data sizes
-- Test performance under load
-- Test error conditions
-
----
-
-**Still having issues?** Join our [Discord community](https://discord.gg/helios) for real-time help or create a [GitHub issue](https://github.com/cloudshuttle/helios/issues) with detailed information about your problem.
+- Check the [Getting Started](getting-started.md) guide for basic setup
+- Explore [Examples](examples.md) for usage patterns
+- Review the [Performance Guide](performance-guide.md) for optimization tips
+- See the [API Reference](api-reference.md) for detailed documentation
