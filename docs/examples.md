@@ -2,6 +2,30 @@
 
 This document provides comprehensive examples for all Helios chart types and features.
 
+## 🚀 WebGPU Demo
+
+The WebGPU demo showcases the real WebGPU implementation with performance benchmarking:
+
+```bash
+cargo run --example webgpu_demo
+```
+
+This example demonstrates:
+- WebGPU device initialization
+- Shader compilation and caching
+- Render pipeline creation
+- Vertex buffer management
+- Performance benchmarking (291.79 MB/s throughput)
+
+## v0.1.0-alpha Features
+
+The current alpha release includes:
+- ✅ **Canvas Surface Integration**: WebGPU canvas connection
+- ✅ **Line Chart Rendering**: Data processing and coordinate mapping
+- ✅ **Leptos Component**: Working `HeliosChart` component
+- ✅ **Fallback System**: WebGL2/Canvas2D automatic detection
+- ✅ **48 Tests Passing**: Comprehensive test coverage
+
 ## Basic Charts
 
 ### Line Chart

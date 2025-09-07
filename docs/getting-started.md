@@ -10,7 +10,7 @@ Add Helios to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-leptos-helios = "0.1.0-beta.1"
+leptos-helios = "0.1.0-alpha.1"
 leptos = "0.8"
 ```
 
