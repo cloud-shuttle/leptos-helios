@@ -4,7 +4,6 @@
 //! file watching, and WebSocket-based browser updates for improved DX.
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};

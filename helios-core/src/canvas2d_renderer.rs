@@ -6,7 +6,6 @@
 //!
 //! TDD Implementation driven by: canvas2d_rendering_tdd.rs
 
-use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use thiserror::Error;
 
@@ -181,7 +180,7 @@ impl Canvas2DRenderer {
         data: &BarChartData,
     ) -> Result<RenderResult, Canvas2DError> {
         let start = Instant::now();
-        let mut warnings = Vec::new();
+        let warnings = Vec::new();
 
         // Validate data
         if data.bars.is_empty() {
@@ -216,7 +215,7 @@ impl Canvas2DRenderer {
         data: &ScatterPlotData,
     ) -> Result<RenderResult, Canvas2DError> {
         let start = Instant::now();
-        let mut warnings = Vec::new();
+        let warnings = Vec::new();
 
         // Validate data
         if data.points.is_empty() {
@@ -249,8 +248,8 @@ impl Canvas2DRenderer {
     /// Render any chart type
     pub async fn render_chart(
         &self,
-        spec: &dyn ChartSpec,
-        data: &dyn ChartData,
+        _spec: &dyn ChartSpec,
+        _data: &dyn ChartData,
     ) -> Result<RenderResult, Canvas2DError> {
         // This is a simplified implementation
         // In a real implementation, we would use dynamic dispatch
@@ -258,7 +257,7 @@ impl Canvas2DRenderer {
 
         // For now, we'll simulate rendering
         let start = Instant::now();
-        let point_count = data.point_count();
+        let point_count = _data.point_count();
 
         // Simulate rendering time based on data size
         let simulated_time = if point_count < 1000 {
@@ -287,16 +286,16 @@ impl Canvas2DRenderer {
     /// Detect hover at the given coordinates
     pub fn detect_hover(
         &self,
-        spec: &dyn ChartSpec,
-        data: &dyn ChartData,
+        _spec: &dyn ChartSpec,
+        _data: &dyn ChartData,
         x: f64,
         y: f64,
     ) -> Result<Option<HoverInfo>, Canvas2DError> {
         // Convert screen coordinates to data coordinates
-        let data_coords = self.screen_to_data_coords(x, y, spec.viewport());
+        let data_coords = self.screen_to_data_coords(x, y, &Viewport::default());
 
         // Find the closest data point
-        let closest_point = self.find_closest_point(data, data_coords);
+        let closest_point = self.find_closest_point(_data, data_coords);
 
         if let Some((point, distance)) = closest_point {
             if distance < 10.0 {
@@ -353,15 +352,15 @@ impl Canvas2DRenderer {
     /// Optimize line data for performance
     fn optimize_line_data(
         &self,
-        data: &LineChartData,
-        spec: &LineChartSpec,
+        _data: &LineChartData,
+        _spec: &LineChartSpec,
     ) -> Result<LineChartData, Canvas2DError> {
-        if data.points.len() <= self.performance_config.level_of_detail_threshold {
-            return Ok(data.clone());
+        if _data.points.len() <= self.performance_config.level_of_detail_threshold {
+            return Ok(_data.clone());
         }
 
         // Apply level of detail optimization
-        let optimized_points = self.apply_level_of_detail(&data.points, spec);
+        let optimized_points = self.apply_level_of_detail(&_data.points, _spec);
 
         Ok(LineChartData {
             points: optimized_points,
@@ -369,7 +368,7 @@ impl Canvas2DRenderer {
     }
 
     /// Apply level of detail optimization
-    fn apply_level_of_detail(&self, points: &[DataPoint], spec: &LineChartSpec) -> Vec<DataPoint> {
+    fn apply_level_of_detail(&self, points: &[DataPoint], _spec: &LineChartSpec) -> Vec<DataPoint> {
         if points.len() <= self.performance_config.level_of_detail_threshold {
             return points.to_vec();
         }
@@ -427,16 +426,16 @@ impl Canvas2DRenderer {
     /// Draw a bar chart
     fn draw_bar_chart(
         &self,
-        data: &BarChartData,
-        spec: &BarChartSpec,
+        _data: &BarChartData,
+        _spec: &BarChartSpec,
     ) -> Result<(), Canvas2DError> {
         #[cfg(target_arch = "wasm32")]
         {
             if let Some(ref ctx) = self.context {
-                let bar_width = self.width as f64 / data.bars.len() as f64;
-                let max_value = data.bars.iter().map(|b| b.value).fold(0.0, f64::max);
+                let bar_width = self.width as f64 / _data.bars.len() as f64;
+                let max_value = _data.bars.iter().map(|b| b.value).fold(0.0, f64::max);
 
-                for (i, bar) in data.bars.iter().enumerate() {
+                for (i, bar) in _data.bars.iter().enumerate() {
                     let x = i as f64 * bar_width;
                     let bar_height = (bar.value / max_value) * self.height as f64;
                     let y = self.height as f64 - bar_height;
@@ -463,15 +462,15 @@ impl Canvas2DRenderer {
     /// Draw a scatter plot
     fn draw_scatter_plot(
         &self,
-        data: &ScatterPlotData,
-        spec: &ScatterPlotSpec,
+        _data: &ScatterPlotData,
+        _spec: &ScatterPlotSpec,
     ) -> Result<(), Canvas2DError> {
         #[cfg(target_arch = "wasm32")]
         {
             if let Some(ref ctx) = self.context {
-                for point in &data.points {
+                for point in &_data.points {
                     let screen_coords =
-                        self.data_to_screen_coords(point.x, point.y, &spec.viewport);
+                        self.data_to_screen_coords(point.x, point.y, &_spec.viewport);
 
                     // Set point style
                     if let Some(ref color) = point.color {
@@ -549,8 +548,8 @@ impl Canvas2DRenderer {
     /// Find the closest point to the given coordinates
     fn find_closest_point(
         &self,
-        data: &dyn ChartData,
-        coords: (f64, f64),
+        _data: &dyn ChartData,
+        _coords: (f64, f64),
     ) -> Option<(DataPoint, f64)> {
         // This is a simplified implementation
         // In a real implementation, we would use spatial indexing for efficiency
@@ -559,7 +558,6 @@ impl Canvas2DRenderer {
 }
 
 // Import types needed for the renderer
-use crate::chart::{ChartSpec as BaseChartSpec, MarkType};
 
 // =============================================================================
 // Data Structures and Types for Canvas2D Rendering
@@ -664,6 +662,17 @@ pub struct Viewport {
     pub y_max: f64,
 }
 
+impl Default for Viewport {
+    fn default() -> Self {
+        Self {
+            x_min: 0.0,
+            x_max: 100.0,
+            y_min: 0.0,
+            y_max: 100.0,
+        }
+    }
+}
+
 impl Viewport {
     pub fn zoom(&self, center: (f64, f64), factor: f64) -> Self {
         let (cx, cy) = center;
@@ -758,6 +767,7 @@ impl ChartData for ScatterPlotData {
 
 // Additional types needed for the renderer
 #[derive(Debug, Clone)]
+#[derive(PartialEq)]
 pub enum RendererBackend {
     WebGPU,
     WebGL2,

@@ -47,11 +47,13 @@ pub mod dev_server;
 pub mod dev_tools;
 pub mod export_system;
 pub mod gpu_accelerator;
+pub mod headless_renderer;
 pub mod helios_chart;
 pub mod interactions;
 pub mod line_chart_renderer;
 pub mod ml_intelligence;
 pub mod performance;
+pub mod plugin_system;
 pub mod production;
 pub mod profiler;
 pub mod render_simple;
@@ -70,38 +72,45 @@ pub mod intelligence;
 pub mod nl_processor;
 pub mod utils;
 
-pub use accessibility::*;
-pub use advanced_memory::*;
+// Core chart types
 pub use chart::{
     BarWidth, ChartConfig, ChartSpec, ChartSpecBuilder, DataReference, Encoding, Interpolation,
     MarkType,
 };
 pub use chart_config::*;
-pub use cross_browser::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use data_pipeline::{DataPipeline, GpuBuffers, PipelineError, PipelineResult};
+pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
+pub use renderer::{
+    Canvas2DRenderer, RenderStatus, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer,
+    WebGpuRenderer,
+};
+
+// Core modules with specific exports to avoid conflicts
+pub use accessibility::*;
+pub use performance::*;
 pub use data_sources::*;
+pub use security::*;
 pub use debugger::*;
-pub use dev_server::*;
+pub use styling::*;
 pub use dev_tools::*;
 pub use export_system::*;
+pub use streaming::*;
+pub use ml_intelligence::*;
+pub use plugin_system::*;
+
+// Other modules (no conflicts)
+pub use advanced_memory::*;
+pub use cross_browser::*;
+pub use dev_server::*;
 pub use gpu::*;
 pub use gpu_accelerator::*;
-pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
 pub use intelligence::*;
 pub use interactions::*;
 pub use nl_processor::*;
 pub use profiler::*;
 pub use render::*;
-pub use renderer::{
-    Canvas2DRenderer, RenderStatus, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer,
-    WebGpuRenderer,
-};
-pub use security::*;
-pub use streaming::*;
-pub use styling::*;
 pub use utils::*;
-pub use wasm_optimizer::*;
 
 /// Core error types for Helios
 #[derive(Debug, thiserror::Error)]
@@ -264,18 +273,6 @@ fn get_enabled_features() -> Vec<String> {
 
     features
 }
-
-// Re-export ML intelligence components
-pub use ml_intelligence::*;
-
-// Re-export GPU acceleration components
-pub use gpu_accelerator::*;
-
-// Re-export performance components
-pub use performance::*;
-
-// Re-export renderer components
-pub use render::*;
 
 // Re-export WASM optimization components
 pub use wasm_optimizer::*;

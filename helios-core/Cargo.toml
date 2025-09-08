@@ -28,6 +28,10 @@ js-sys = { workspace = true }
 tokio = { workspace = true, optional = true }
 async-trait = "0.1"
 
+# Database connectivity
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid"], optional = true }
+clickhouse = { version = "0.11", optional = true }
+
 # Serialization
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -66,8 +70,6 @@ criterion = "0.5"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = { workspace = true }
 
-[target.'cfg(target_arch = "wasm32")'.features]
-default = ["webgpu"]
 
 [features]
 default = ["webgpu", "async"]
@@ -78,6 +80,7 @@ simd = []
 debug = []
 ml = []
 async = ["tokio"]
+database = ["sqlx", "clickhouse"]
 
 [[example]]
 name = "webgpu_demo"

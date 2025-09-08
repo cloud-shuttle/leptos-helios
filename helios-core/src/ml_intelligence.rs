@@ -86,12 +86,30 @@ impl MLForecaster {
             return vec![0.0; periods as usize];
         }
 
-        // Simple trend-based prediction for testing
+        // Check for extreme values in the series
+        let has_extreme_values = series.iter().any(|point| {
+            !point.value.is_finite() || point.value.abs() > 1e10
+        });
+
+        if has_extreme_values {
+            // For extreme values, return simple constant predictions
+            return vec![0.0; periods as usize];
+        }
+
+        // Simple trend-based prediction for normal values
         let last_value = series.last().unwrap().value;
         let trend = self.calculate_trend(series);
 
         (0..periods)
-            .map(|i| last_value + trend * (i as f64 + 1.0))
+            .map(|i| {
+                let prediction = last_value + trend * (i as f64 + 1.0);
+                // Ensure predictions are finite
+                if prediction.is_finite() {
+                    prediction.clamp(-1e10, 1e10)
+                } else {
+                    0.0
+                }
+            })
             .collect()
     }
 
@@ -105,8 +123,25 @@ impl MLForecaster {
         let last = series.last().unwrap().value;
         let time_span = series.last().unwrap().timestamp - series[0].timestamp;
 
+        // Handle extreme values that could cause overflow
+        if !first.is_finite() || !last.is_finite() || !time_span.is_finite() {
+            return 0.0;
+        }
+
+        // Check for extreme differences that could cause overflow
+        let diff = last - first;
+        if diff.abs() > 1e10 {
+            return 0.0;
+        }
+
         if time_span > 0.0 {
-            (last - first) / time_span
+            let trend = diff / time_span;
+            // Clamp extreme values to prevent overflow
+            if trend.is_finite() {
+                trend.clamp(-1e6, 1e6)
+            } else {
+                0.0
+            }
         } else {
             0.0
         }
@@ -204,7 +239,7 @@ impl ChartRecommendationEngine {
             suggestions.push("High variance detected - consider log scale".to_string());
         }
 
-        if analysis.data_points > 10000 {
+        if analysis.data_points >= 10000 {
             suggestions.push("Large dataset - consider data sampling or aggregation".to_string());
         }
 

@@ -3,7 +3,7 @@
 
 use crate::chart_config::*;
 use std::collections::VecDeque;
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 /// Pan delta for chart panning
 #[derive(Debug, Clone, Copy)]

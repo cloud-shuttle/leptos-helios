@@ -4,6 +4,7 @@
 //! including static exports (PNG, SVG, PDF), interactive exports, and headless rendering.
 
 use crate::chart::{ChartSpec, ChartSpecBuilder};
+use crate::headless_renderer::{HeadlessRenderer, HeadlessConfig, HeadlessError};
 use polars::prelude::DataFrame;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -26,6 +27,9 @@ pub enum ExportError {
 
     #[error("Headless browser error: {0}")]
     HeadlessBrowserError(String),
+
+    #[error("Headless rendering error: {0}")]
+    HeadlessRenderingError(#[from] HeadlessError),
 
     #[error("Template error: {0}")]
     TemplateError(String),
@@ -122,8 +126,9 @@ pub struct ExportSystem {
 impl ExportSystem {
     /// Create new export system
     pub fn new() -> Result<Self, ExportError> {
+        let headless_config = HeadlessConfig::default();
         Ok(Self {
-            headless_renderer: Some(HeadlessRenderer::new()?),
+            headless_renderer: Some(HeadlessRenderer::new(headless_config)?),
             template_engine: TemplateEngine::new(),
             file_writer: FileWriter::new(),
         })
@@ -240,9 +245,12 @@ impl ExportSystem {
         config: &ExportConfig,
         output_path: &Path,
     ) -> Result<InternalExportResult, ExportError> {
-        let renderer = self.headless_renderer.as_ref().ok_or_else(|| {
+        let mut renderer = self.headless_renderer.as_ref().ok_or_else(|| {
             ExportError::HeadlessBrowserError("Headless renderer not available".to_string())
-        })?;
+        })?.clone();
+
+        // Initialize renderer
+        renderer.initialize().await?;
 
         // Render chart to PNG
         let png_data = renderer
@@ -298,9 +306,12 @@ impl ExportSystem {
         config: &ExportConfig,
         output_path: &Path,
     ) -> Result<InternalExportResult, ExportError> {
-        let renderer = self.headless_renderer.as_ref().ok_or_else(|| {
+        let mut renderer = self.headless_renderer.as_ref().ok_or_else(|| {
             ExportError::HeadlessBrowserError("Headless renderer not available".to_string())
-        })?;
+        })?.clone();
+
+        // Initialize renderer
+        renderer.initialize().await?;
 
         // Convert units to points for PDF generation
         let (width_pts, height_pts) = match unit {
@@ -445,64 +456,6 @@ struct InternalExportResult {
     metadata: HashMap<String, String>,
 }
 
-/// Headless rendering system
-struct HeadlessRenderer {
-    browser_initialized: bool,
-}
-
-impl HeadlessRenderer {
-    fn new() -> Result<Self, ExportError> {
-        // Mock initialization - would initialize headless browser
-        Ok(Self {
-            browser_initialized: true,
-        })
-    }
-
-    async fn render_to_png(
-        &self,
-        _spec: &ChartSpec,
-        _data: &DataFrame,
-        width: u32,
-        height: u32,
-        _dpi: Option<u32>,
-        _config: &ExportConfig,
-    ) -> Result<Vec<u8>, ExportError> {
-        if !self.browser_initialized {
-            return Err(ExportError::HeadlessBrowserError(
-                "Browser not initialized".to_string(),
-            ));
-        }
-
-        // Mock PNG generation - would use headless browser to render and capture
-        let mut png_data = Vec::new();
-        png_data.extend_from_slice(b"\x89PNG\x0d\x0a\x1a\x0a"); // PNG signature
-        png_data.extend_from_slice(&(width * height * 4).to_be_bytes()); // Mock size
-
-        Ok(png_data)
-    }
-
-    async fn render_to_pdf(
-        &self,
-        _spec: &ChartSpec,
-        _data: &DataFrame,
-        width: f32,
-        height: f32,
-        _config: &ExportConfig,
-    ) -> Result<Vec<u8>, ExportError> {
-        if !self.browser_initialized {
-            return Err(ExportError::HeadlessBrowserError(
-                "Browser not initialized".to_string(),
-            ));
-        }
-
-        // Mock PDF generation - would use headless browser to render and capture
-        let mut pdf_data = Vec::new();
-        pdf_data.extend_from_slice(b"%PDF-1.4\n"); // PDF header
-        pdf_data.extend_from_slice(&(width as u32 * height as u32).to_be_bytes()); // Mock size
-
-        Ok(pdf_data)
-    }
-}
 
 /// Template rendering engine
 struct TemplateEngine;
@@ -804,7 +757,8 @@ impl ExportSystemBuilder {
     pub fn build(self) -> Result<ExportSystem, ExportError> {
         Ok(ExportSystem {
             headless_renderer: if self.enable_headless {
-                Some(HeadlessRenderer::new()?)
+                let headless_config = HeadlessConfig::default();
+                Some(HeadlessRenderer::new(headless_config)?)
             } else {
                 None
             },

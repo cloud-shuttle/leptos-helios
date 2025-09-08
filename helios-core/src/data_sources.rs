@@ -9,6 +9,11 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
+#[cfg(feature = "database")]
+use sqlx::{PgPool, Postgres, Row};
+#[cfg(feature = "database")]
+use clickhouse::Client as ClickHouseClient;
+
 /// Data source connection errors
 #[derive(Debug, thiserror::Error)]
 pub enum DataSourceError {
@@ -198,6 +203,9 @@ impl ToSql for f64 {
 /// PostgreSQL adapter
 pub struct PostgresAdapter {
     config: ConnectionConfig,
+    #[cfg(feature = "database")]
+    pool: Option<Arc<PgPool>>,
+    #[cfg(not(feature = "database"))]
     pool: Option<Arc<RwLock<MockConnectionPool>>>,
 }
 
@@ -207,8 +215,18 @@ impl PostgresAdapter {
     }
 
     pub async fn initialize(&mut self) -> Result<(), DataSourceError> {
-        let pool = MockConnectionPool::new(&self.config).await?;
-        self.pool = Some(Arc::new(RwLock::new(pool)));
+        #[cfg(feature = "database")]
+        {
+            let pool = PgPool::connect(&self.config.connection_string)
+                .await
+                .map_err(|e| DataSourceError::ConnectionFailed(e.to_string()))?;
+            self.pool = Some(Arc::new(pool));
+        }
+        #[cfg(not(feature = "database"))]
+        {
+            let pool = MockConnectionPool::new(&self.config).await?;
+            self.pool = Some(Arc::new(RwLock::new(pool)));
+        }
         Ok(())
     }
 }
@@ -339,6 +357,9 @@ impl DataSource for PostgresAdapter {
 /// ClickHouse adapter
 pub struct ClickHouseAdapter {
     config: ConnectionConfig,
+    #[cfg(feature = "database")]
+    client: Option<Arc<ClickHouseClient>>,
+    #[cfg(not(feature = "database"))]
     client: Option<Arc<MockClickHouseClient>>,
 }
 
@@ -351,8 +372,18 @@ impl ClickHouseAdapter {
     }
 
     pub async fn initialize(&mut self) -> Result<(), DataSourceError> {
-        let client = MockClickHouseClient::new(&self.config).await?;
-        self.client = Some(Arc::new(client));
+        #[cfg(feature = "database")]
+        {
+            let client = ClickHouseClient::default()
+                .with_url(&self.config.connection_string)
+                .map_err(|e| DataSourceError::ConnectionFailed(e.to_string()))?;
+            self.client = Some(Arc::new(client));
+        }
+        #[cfg(not(feature = "database"))]
+        {
+            let client = MockClickHouseClient::new(&self.config).await?;
+            self.client = Some(Arc::new(client));
+        }
         Ok(())
     }
 }
@@ -592,12 +623,21 @@ impl MockConnectionPool {
     }
 }
 
-/// Mock PostgreSQL connection
+/// PostgreSQL connection
 pub struct PostgresConnection {
+    #[cfg(feature = "database")]
+    pool: Arc<PgPool>,
+    #[cfg(not(feature = "database"))]
     _pool: Arc<RwLock<MockConnectionPool>>,
 }
 
 impl PostgresConnection {
+    #[cfg(feature = "database")]
+    async fn new(pool: Arc<PgPool>) -> Result<Self, DataSourceError> {
+        Ok(Self { pool })
+    }
+    
+    #[cfg(not(feature = "database"))]
     async fn new(pool: Arc<RwLock<MockConnectionPool>>) -> Result<Self, DataSourceError> {
         Ok(Self { _pool: pool })
     }
@@ -606,24 +646,70 @@ impl PostgresConnection {
 #[async_trait::async_trait]
 impl Connection for PostgresConnection {
     async fn query(&self, sql: &str) -> Result<DataFrame, DataSourceError> {
-        // Mock implementation - return empty DataFrame with appropriate schema
-        if sql.contains("information_schema") {
-            let df = df! {
-                "table_name" => ["users", "orders", "products"],
-                "table_schema" => ["public", "public", "public"],
-                "column_name" => ["id", "id", "id"],
-                "data_type" => ["integer", "integer", "integer"],
-                "is_nullable" => ["NO", "NO", "NO"],
-                "column_default" => [Some("nextval('users_id_seq')"), Some("nextval('orders_id_seq')"), Some("nextval('products_id_seq')")],
-                "character_maximum_length" => [None::<i32>, None::<i32>, None::<i32>],
-            }.map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
-            Ok(df)
-        } else {
-            let df = df! {
-                "health_check" => [1],
+        #[cfg(feature = "database")]
+        {
+            let rows = sqlx::query(sql)
+                .fetch_all(&*self.pool)
+                .await
+                .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
+
+            if rows.is_empty() {
+                return Ok(DataFrame::new(vec![]).map_err(|e| DataSourceError::QueryFailed(e.to_string()))?);
             }
-            .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
-            Ok(df)
+
+            // Convert SQLx rows to Polars DataFrame
+            let mut columns: HashMap<String, Vec<serde_json::Value>> = HashMap::new();
+            
+            for row in &rows {
+                for (i, column) in row.columns().iter().enumerate() {
+                    let column_name = column.name().to_string();
+                    let value = match row.try_get::<String, _>(i) {
+                        Ok(v) => serde_json::Value::String(v),
+                        Err(_) => match row.try_get::<i64, _>(i) {
+                            Ok(v) => serde_json::Value::Number(serde_json::Number::from(v)),
+                            Err(_) => match row.try_get::<f64, _>(i) {
+                                Ok(v) => serde_json::Value::Number(serde_json::Number::from_f64(v).unwrap_or(serde_json::Number::from(0))),
+                                Err(_) => match row.try_get::<bool, _>(i) {
+                                    Ok(v) => serde_json::Value::Bool(v),
+                                    Err(_) => serde_json::Value::Null,
+                                },
+                            },
+                        },
+                    };
+                    columns.entry(column_name).or_insert_with(Vec::new).push(value);
+                }
+            }
+
+            // Convert to Polars DataFrame
+            let mut series_vec = Vec::new();
+            for (name, values) in columns {
+                let series = Series::new(&name, &values);
+                series_vec.push(series);
+            }
+
+            DataFrame::new(series_vec).map_err(|e| DataSourceError::QueryFailed(e.to_string()))
+        }
+        #[cfg(not(feature = "database"))]
+        {
+            // Mock implementation - return empty DataFrame with appropriate schema
+            if sql.contains("information_schema") {
+                let df = df! {
+                    "table_name" => ["users", "orders", "products"],
+                    "table_schema" => ["public", "public", "public"],
+                    "column_name" => ["id", "id", "id"],
+                    "data_type" => ["integer", "integer", "integer"],
+                    "is_nullable" => ["NO", "NO", "NO"],
+                    "column_default" => [Some("nextval('users_id_seq')"), Some("nextval('orders_id_seq')"), Some("nextval('products_id_seq')")],
+                    "character_maximum_length" => [None::<i32>, None::<i32>, None::<i32>],
+                }.map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
+                Ok(df)
+            } else {
+                let df = df! {
+                    "health_check" => [1],
+                }
+                .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
+                Ok(df)
+            }
         }
     }
 
@@ -665,12 +751,21 @@ impl MockClickHouseClient {
     }
 }
 
-/// Mock ClickHouse connection
+/// ClickHouse connection
 pub struct ClickHouseConnection {
+    #[cfg(feature = "database")]
+    client: Arc<ClickHouseClient>,
+    #[cfg(not(feature = "database"))]
     _client: Arc<MockClickHouseClient>,
 }
 
 impl ClickHouseConnection {
+    #[cfg(feature = "database")]
+    async fn new(client: Arc<ClickHouseClient>) -> Result<Self, DataSourceError> {
+        Ok(Self { client })
+    }
+    
+    #[cfg(not(feature = "database"))]
     async fn new(client: Arc<MockClickHouseClient>) -> Result<Self, DataSourceError> {
         Ok(Self { _client: client })
     }
@@ -679,20 +774,68 @@ impl ClickHouseConnection {
 #[async_trait::async_trait]
 impl Connection for ClickHouseConnection {
     async fn query(&self, sql: &str) -> Result<DataFrame, DataSourceError> {
-        if sql.contains("system.tables") {
-            let df = df! {
-                "table_name" => ["events", "users", "sessions"],
-                "table_schema" => ["analytics", "analytics", "analytics"],
-                "engine" => ["MergeTree", "MergeTree", "MergeTree"],
+        #[cfg(feature = "database")]
+        {
+            let result = self.client
+                .query(sql)
+                .fetch_all()
+                .await
+                .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
+
+            if result.is_empty() {
+                return Ok(DataFrame::new(vec![]).map_err(|e| DataSourceError::QueryFailed(e.to_string()))?);
             }
-            .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
-            Ok(df)
-        } else {
-            let df = df! {
-                "health_check" => [1],
+
+            // Convert ClickHouse result to Polars DataFrame
+            let mut columns: HashMap<String, Vec<serde_json::Value>> = HashMap::new();
+            
+            for row in &result {
+                for (column_name, value) in row.iter() {
+                    let json_value = match value {
+                        clickhouse::types::Value::String(s) => serde_json::Value::String(s.clone()),
+                        clickhouse::types::Value::UInt8(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::UInt16(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::UInt32(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::UInt64(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::Int8(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::Int16(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::Int32(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::Int64(v) => serde_json::Value::Number(serde_json::Number::from(*v)),
+                        clickhouse::types::Value::Float32(v) => serde_json::Value::Number(serde_json::Number::from_f64(*v as f64).unwrap_or(serde_json::Number::from(0))),
+                        clickhouse::types::Value::Float64(v) => serde_json::Value::Number(serde_json::Number::from_f64(*v).unwrap_or(serde_json::Number::from(0))),
+                        clickhouse::types::Value::Bool(v) => serde_json::Value::Bool(*v),
+                        _ => serde_json::Value::String(format!("{:?}", value)),
+                    };
+                    columns.entry(column_name.clone()).or_insert_with(Vec::new).push(json_value);
+                }
             }
-            .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
-            Ok(df)
+
+            // Convert to Polars DataFrame
+            let mut series_vec = Vec::new();
+            for (name, values) in columns {
+                let series = Series::new(&name, &values);
+                series_vec.push(series);
+            }
+
+            DataFrame::new(series_vec).map_err(|e| DataSourceError::QueryFailed(e.to_string()))
+        }
+        #[cfg(not(feature = "database"))]
+        {
+            if sql.contains("system.tables") {
+                let df = df! {
+                    "table_name" => ["events", "users", "sessions"],
+                    "table_schema" => ["analytics", "analytics", "analytics"],
+                    "engine" => ["MergeTree", "MergeTree", "MergeTree"],
+                }
+                .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
+                Ok(df)
+            } else {
+                let df = df! {
+                    "health_check" => [1],
+                }
+                .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
+                Ok(df)
+            }
         }
     }
 

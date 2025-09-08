@@ -7,9 +7,9 @@ use crate::chart::{
     ChartSpec, ChartSpecBuilder, ColorEncoding, DataType, Encoding, Intelligence, MarkType,
     PositionEncoding, SizeEncoding,
 };
-use chrono::NaiveDate;
 use polars::prelude::*;
 use std::collections::HashMap;
+use chrono::NaiveDate;
 
 /// Natural Language Query Processing errors
 #[derive(Debug, thiserror::Error)]

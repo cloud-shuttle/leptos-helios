@@ -6,8 +6,6 @@
 //! - Feature flag optimization
 //! - Dynamic imports
 
-use std::collections::HashMap;
-use std::path::Path;
 
 /// WASM bundle size analyzer
 #[derive(Debug, Clone)]

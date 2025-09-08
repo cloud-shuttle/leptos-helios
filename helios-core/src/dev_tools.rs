@@ -12,8 +12,7 @@ pub use crate::dev_server::{
     HotReloadMessageType, MockBrowserClient, MockFileWatcher,
 };
 
-use crate::chart::{ChartSpec, MarkType};
-use polars::prelude::DataFrame;
+use crate::chart::MarkType;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};

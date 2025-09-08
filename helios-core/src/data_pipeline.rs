@@ -5,7 +5,6 @@
 //! - Optimization for rendering
 //! - GPU buffer creation
 
-use crate::chart::ChartSpec;
 use polars::prelude::*;
 use std::time::{Duration, Instant};
 

@@ -1,12 +1,7 @@
-use crate::canvas_surface::*;
 use crate::chart::ChartSpec;
 use crate::chart_config::*;
-use crate::line_chart_renderer::*;
-use crate::webgpu_real::*;
 use leptos::prelude::*;
-use leptos::*;
 use std::sync::{Arc, Mutex};
-use web_sys::*;
 
 /// Props for the HeliosChart component
 #[derive(Clone, PartialEq)]

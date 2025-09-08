@@ -4,10 +4,10 @@
 //! including breakpoints, step-through debugging, and state inspection.
 
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use tokio::sync::{broadcast, oneshot};
+use tokio::sync::broadcast;
 
 /// Debugger errors
 #[derive(Debug, thiserror::Error)]

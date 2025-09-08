@@ -173,14 +173,14 @@ impl CanvasSurface {
     async fn create_mock_surface(
         _instance: &Instance,
         _canvas_id: &str,
-        device: Arc<Device>,
-        queue: Arc<Queue>,
+        _device: Arc<Device>,
+        _queue: Arc<Queue>,
     ) -> Result<Self, CanvasSurfaceError> {
         // In a real implementation, this would create a surface from a canvas element
         // For now, we'll simulate the surface creation process
 
         // Create a mock surface configuration
-        let surface_config = SurfaceConfiguration {
+        let _surface_config = SurfaceConfiguration {
             usage: TextureUsages::RENDER_ATTACHMENT,
             format: TextureFormat::Rgba8UnormSrgb,
             width: 800,
