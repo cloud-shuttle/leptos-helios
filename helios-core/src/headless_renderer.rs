@@ -35,29 +35,29 @@ pub enum HeadlessError {
 pub struct HeadlessConfig {
     /// Browser executable path (e.g., Chrome, Chromium)
     pub browser_path: Option<String>,
-    
+
     /// Browser arguments
     pub browser_args: Vec<String>,
-    
+
     /// Viewport dimensions
     pub viewport_width: u32,
     pub viewport_height: u32,
-    
+
     /// Rendering timeout in milliseconds
     pub timeout_ms: u64,
-    
+
     /// Enable GPU acceleration
     pub enable_gpu: bool,
-    
+
     /// Memory limit in MB
     pub memory_limit_mb: u64,
-    
+
     /// Enable JavaScript
     pub enable_javascript: bool,
-    
+
     /// User agent string
     pub user_agent: Option<String>,
-    
+
     /// Additional headers
     pub headers: HashMap<String, String>,
 }
@@ -124,26 +124,28 @@ impl HeadlessRenderer {
         config: &ExportConfig,
     ) -> Result<Vec<u8>, HeadlessError> {
         if !self.browser_initialized {
-            return Err(HeadlessError::BrowserInitFailed("Browser not initialized".to_string()));
+            return Err(HeadlessError::BrowserInitFailed(
+                "Browser not initialized".to_string(),
+            ));
         }
 
         let start_time = Instant::now();
-        
+
         // Mock PNG generation - would use headless browser to render and capture
         let mut png_data = Vec::new();
         png_data.extend_from_slice(b"\x89PNG\x0d\x0a\x1a\x0a"); // PNG signature
-        
+
         // Add mock image data based on chart spec
         let image_size = (width * height * 4) as usize;
         let mut image_data = vec![0u8; image_size];
-        
+
         // Generate mock chart visualization
         self.generate_mock_chart_data(&mut image_data, width, height, spec, data);
-        
+
         // Compress to PNG (mock)
         png_data.extend_from_slice(&image_size.to_be_bytes());
         png_data.extend_from_slice(&image_data);
-        
+
         let render_time = start_time.elapsed();
         self.render_count += 1;
         self.total_render_time += render_time;
@@ -161,15 +163,17 @@ impl HeadlessRenderer {
         config: &ExportConfig,
     ) -> Result<Vec<u8>, HeadlessError> {
         if !self.browser_initialized {
-            return Err(HeadlessError::BrowserInitFailed("Browser not initialized".to_string()));
+            return Err(HeadlessError::BrowserInitFailed(
+                "Browser not initialized".to_string(),
+            ));
         }
 
         let start_time = Instant::now();
-        
+
         // Mock PDF generation
         let mut pdf_data = Vec::new();
         pdf_data.extend_from_slice(b"%PDF-1.4\n"); // PDF header
-        
+
         // Add mock PDF content
         let content = format!(
             r#"1 0 obj
@@ -211,11 +215,11 @@ endobj
 
 xref
 0 5
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000204 00000 n 
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000204 00000 n
 trailer
 <<
 /Size 5
@@ -226,9 +230,9 @@ startxref
 %%EOF"#,
             width, height, 50, 300
         );
-        
+
         pdf_data.extend_from_slice(content.as_bytes());
-        
+
         let render_time = start_time.elapsed();
         self.render_count += 1;
         self.total_render_time += render_time;
@@ -246,18 +250,20 @@ startxref
         config: &ExportConfig,
     ) -> Result<String, HeadlessError> {
         if !self.browser_initialized {
-            return Err(HeadlessError::BrowserInitFailed("Browser not initialized".to_string()));
+            return Err(HeadlessError::BrowserInitFailed(
+                "Browser not initialized".to_string(),
+            ));
         }
 
         let start_time = Instant::now();
-        
+
         let w = width.unwrap_or(800);
         let h = height.unwrap_or(600);
         let bg_color = config.background_color.as_deref().unwrap_or("#ffffff");
-        
+
         // Generate SVG content based on chart spec
         let svg_content = self.generate_svg_content(spec, data, w, h, bg_color);
-        
+
         let render_time = start_time.elapsed();
         self.render_count += 1;
         self.total_render_time += render_time;
@@ -275,17 +281,19 @@ startxref
         config: &ExportConfig,
     ) -> Result<String, HeadlessError> {
         if !self.browser_initialized {
-            return Err(HeadlessError::BrowserInitFailed("Browser not initialized".to_string()));
+            return Err(HeadlessError::BrowserInitFailed(
+                "Browser not initialized".to_string(),
+            ));
         }
 
         let start_time = Instant::now();
-        
+
         let html_content = if standalone {
             self.generate_standalone_html(spec, data, include_data, config)
         } else {
             self.generate_embedded_html(spec, data, include_data, config)
         };
-        
+
         let render_time = start_time.elapsed();
         self.render_count += 1;
         self.total_render_time += render_time;
@@ -325,10 +333,10 @@ startxref
     ) {
         // Mock chart data generation based on chart type
         // In real implementation, this would render the actual chart
-        
+
         let center_x = width / 2;
         let center_y = height / 2;
-        
+
         // Generate a simple pattern based on data
         for y in 0..height {
             for x in 0..width {
@@ -339,7 +347,7 @@ startxref
                     let g = ((y * 255) / height) as u8;
                     let b = 128;
                     let a = 255;
-                    
+
                     image_data[idx] = r;
                     image_data[idx + 1] = g;
                     image_data[idx + 2] = b;
@@ -368,7 +376,10 @@ startxref
     </text>
     <!-- Chart content would be rendered here based on spec -->
 </svg>"#,
-            width, height, bg_color, data.height()
+            width,
+            height,
+            bg_color,
+            data.height()
         )
     }
 
@@ -521,26 +532,46 @@ impl HeadlessService {
 
         let output = match request.format {
             HeadlessFormat::PNG { width, height, dpi } => {
-                let data = self.renderer
-                    .render_to_png(&request.spec, &request.data, width, height, dpi, &request.config)
+                let data = self
+                    .renderer
+                    .render_to_png(
+                        &request.spec,
+                        &request.data,
+                        width,
+                        height,
+                        dpi,
+                        &request.config,
+                    )
                     .await?;
                 HeadlessOutput::Png(data)
             }
             HeadlessFormat::SVG { width, height } => {
-                let data = self.renderer
+                let data = self
+                    .renderer
                     .render_to_svg(&request.spec, &request.data, width, height, &request.config)
                     .await?;
                 HeadlessOutput::Svg(data)
             }
             HeadlessFormat::PDF { width, height } => {
-                let data = self.renderer
+                let data = self
+                    .renderer
                     .render_to_pdf(&request.spec, &request.data, width, height, &request.config)
                     .await?;
                 HeadlessOutput::Pdf(data)
             }
-            HeadlessFormat::HTML { standalone, include_data } => {
-                let data = self.renderer
-                    .render_to_html(&request.spec, &request.data, standalone, include_data, &request.config)
+            HeadlessFormat::HTML {
+                standalone,
+                include_data,
+            } => {
+                let data = self
+                    .renderer
+                    .render_to_html(
+                        &request.spec,
+                        &request.data,
+                        standalone,
+                        include_data,
+                        &request.config,
+                    )
                     .await?;
                 HeadlessOutput::Html(data)
             }
@@ -579,10 +610,23 @@ pub struct HeadlessRenderRequest {
 /// Headless render format
 #[derive(Debug, Clone)]
 pub enum HeadlessFormat {
-    PNG { width: u32, height: u32, dpi: Option<u32> },
-    SVG { width: Option<u32>, height: Option<u32> },
-    PDF { width: f32, height: f32 },
-    HTML { standalone: bool, include_data: bool },
+    PNG {
+        width: u32,
+        height: u32,
+        dpi: Option<u32>,
+    },
+    SVG {
+        width: Option<u32>,
+        height: Option<u32>,
+    },
+    PDF {
+        width: f32,
+        height: f32,
+    },
+    HTML {
+        standalone: bool,
+        include_data: bool,
+    },
 }
 
 /// Headless render result
@@ -613,12 +657,12 @@ mod tests {
     async fn test_headless_renderer_initialization() {
         let config = HeadlessConfig::default();
         let mut renderer = HeadlessRenderer::new(config).unwrap();
-        
+
         assert!(!renderer.browser_initialized);
-        
+
         renderer.initialize().await.unwrap();
         assert!(renderer.browser_initialized);
-        
+
         renderer.close().await.unwrap();
         assert!(!renderer.browser_initialized);
     }
@@ -633,7 +677,8 @@ mod tests {
         let data = df! {
             "x" => [1, 2, 3],
             "y" => [10, 20, 15],
-        }.unwrap();
+        }
+        .unwrap();
 
         let export_config = ExportConfig::default();
 
@@ -660,7 +705,8 @@ mod tests {
         let data = df! {
             "category" => ["A", "B", "C"],
             "value" => [10, 20, 15],
-        }.unwrap();
+        }
+        .unwrap();
 
         let export_config = ExportConfig::default();
 
@@ -684,7 +730,8 @@ mod tests {
         let data = df! {
             "x" => [1, 2, 3],
             "y" => [5, 15, 10],
-        }.unwrap();
+        }
+        .unwrap();
 
         let export_config = ExportConfig {
             title: Some("Test Chart".to_string()),
@@ -716,13 +763,20 @@ mod tests {
             HeadlessRenderRequest {
                 spec: spec.clone(),
                 data: data.clone(),
-                format: HeadlessFormat::PNG { width: 400, height: 300, dpi: Some(96) },
+                format: HeadlessFormat::PNG {
+                    width: 400,
+                    height: 300,
+                    dpi: Some(96),
+                },
                 config: ExportConfig::default(),
             },
             HeadlessRenderRequest {
                 spec,
                 data,
-                format: HeadlessFormat::SVG { width: Some(500), height: Some(400) },
+                format: HeadlessFormat::SVG {
+                    width: Some(500),
+                    height: Some(400),
+                },
                 config: ExportConfig::default(),
             },
         ];

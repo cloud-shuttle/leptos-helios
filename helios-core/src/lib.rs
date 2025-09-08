@@ -88,16 +88,16 @@ pub use renderer::{
 
 // Core modules with specific exports to avoid conflicts
 pub use accessibility::*;
-pub use performance::*;
 pub use data_sources::*;
-pub use security::*;
 pub use debugger::*;
-pub use styling::*;
 pub use dev_tools::*;
 pub use export_system::*;
-pub use streaming::*;
 pub use ml_intelligence::*;
+pub use performance::*;
 pub use plugin_system::*;
+pub use security::*;
+pub use streaming::*;
+pub use styling::*;
 
 // Other modules (no conflicts)
 pub use advanced_memory::*;

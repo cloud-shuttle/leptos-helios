@@ -74,10 +74,10 @@ pub fn test_webgpu_support() -> String {
 fn check_webgpu_availability() -> Result<bool, JsValue> {
     // Use JavaScript to check for WebGPU support
     let window = web_sys::window().ok_or("No window object")?;
-    
+
     // Access navigator through JavaScript reflection
     let navigator = js_sys::Reflect::get(&window, &JsValue::from_str("navigator"))?;
-    
+
     if navigator.is_undefined() {
         return Ok(false);
     }

@@ -311,7 +311,6 @@ mod rbac_tests {
         assert!(removal_result.is_ok());
     }
 
-
     #[tokio::test]
     async fn test_rbac_authorization() {
         // RED: Test RBAC authorization
@@ -338,7 +337,9 @@ mod rbac_tests {
         };
 
         // Assign admin role to user in RBAC provider
-        rbac.assign_role_to_user("admin_user", "admin").await.unwrap();
+        rbac.assign_role_to_user("admin_user", "admin")
+            .await
+            .unwrap();
 
         let context = AuthorizationContext {
             resource: Resource::Chart {
@@ -357,8 +358,6 @@ mod rbac_tests {
         let is_authorized = authorized.unwrap();
         assert!(is_authorized); // Admin should have access
     }
-
-
 }
 
 /// Test suite for audit logging
@@ -380,11 +379,15 @@ mod audit_logging_tests {
         let logger = AuditLogger::new(true);
 
         // GREEN: Test authentication logging
-        let log_result = logger.log_authentication("user123", true, Some("192.168.1.1".to_string())).await;
+        let log_result = logger
+            .log_authentication("user123", true, Some("192.168.1.1".to_string()))
+            .await;
         assert!(log_result.is_ok());
 
         // Test failed authentication logging
-        let failed_log_result = logger.log_authentication("user456", false, Some("192.168.1.2".to_string())).await;
+        let failed_log_result = logger
+            .log_authentication("user456", false, Some("192.168.1.2".to_string()))
+            .await;
         assert!(failed_log_result.is_ok());
     }
 
@@ -400,11 +403,15 @@ mod audit_logging_tests {
         let action = Action::Read;
 
         // GREEN: Test authorization logging
-        let log_result = logger.log_authorization("user123", resource.clone(), action.clone(), true).await;
+        let log_result = logger
+            .log_authorization("user123", resource.clone(), action.clone(), true)
+            .await;
         assert!(log_result.is_ok());
 
         // Test failed authorization logging
-        let failed_log_result = logger.log_authorization("user456", resource, action, false).await;
+        let failed_log_result = logger
+            .log_authorization("user456", resource, action, false)
+            .await;
         assert!(failed_log_result.is_ok());
     }
 
@@ -414,8 +421,14 @@ mod audit_logging_tests {
         let logger = AuditLogger::new(true);
 
         // Log some events first
-        logger.log_authentication("user123", true, Some("192.168.1.1".to_string())).await.unwrap();
-        logger.log_authentication("user456", false, Some("192.168.1.2".to_string())).await.unwrap();
+        logger
+            .log_authentication("user123", true, Some("192.168.1.1".to_string()))
+            .await
+            .unwrap();
+        logger
+            .log_authentication("user456", false, Some("192.168.1.2".to_string()))
+            .await
+            .unwrap();
 
         // GREEN: Test log retrieval
         let logs = logger.get_audit_logs(Some(10)).await;
@@ -427,7 +440,10 @@ mod audit_logging_tests {
         // Verify log content
         let auth_log = &audit_logs[0]; // Most recent first
         assert_eq!(auth_log.user_id, Some("user456".to_string()));
-        assert!(matches!(auth_log.event_type, AuditEventType::Authentication));
+        assert!(matches!(
+            auth_log.event_type,
+            AuditEventType::Authentication
+        ));
         assert!(matches!(auth_log.result, AuditResult::Failure));
     }
 
@@ -437,7 +453,10 @@ mod audit_logging_tests {
         let logger = AuditLogger::new(true);
 
         let mut details = HashMap::new();
-        details.insert("custom_field".to_string(), serde_json::Value::String("custom_value".to_string()));
+        details.insert(
+            "custom_field".to_string(),
+            serde_json::Value::String("custom_value".to_string()),
+        );
 
         let event = AuditEvent {
             id: "custom_event_123".to_string(),
@@ -478,10 +497,9 @@ mod data_governance_tests {
         let governance = DataGovernance::new();
 
         // GREEN: Test data classification
-        let classification_result = governance.classify_data(
-            "dataset_123",
-            DataClassification::Confidential,
-        ).await;
+        let classification_result = governance
+            .classify_data("dataset_123", DataClassification::Confidential)
+            .await;
 
         assert!(classification_result.is_ok());
     }
@@ -492,7 +510,10 @@ mod data_governance_tests {
         let governance = DataGovernance::new();
 
         // First classify some data
-        governance.classify_data("sensitive_data", DataClassification::Confidential).await.unwrap();
+        governance
+            .classify_data("sensitive_data", DataClassification::Confidential)
+            .await
+            .unwrap();
 
         // Create a test user
         let user = User {
@@ -514,7 +535,9 @@ mod data_governance_tests {
         };
 
         // GREEN: Test export compliance check
-        let compliance_result = governance.check_export_compliance("sensitive_data", "png", &user).await;
+        let compliance_result = governance
+            .check_export_compliance("sensitive_data", "png", &user)
+            .await;
         assert!(compliance_result.is_ok());
     }
 }
@@ -538,10 +561,7 @@ mod security_config_tests {
         let rbac_provider = RBACProvider::new();
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
-        let _config = SecurityConfig::new(
-            Box::new(oauth2_provider),
-            Box::new(rbac_provider),
-        );
+        let _config = SecurityConfig::new(Box::new(oauth2_provider), Box::new(rbac_provider));
 
         // GREEN: Verify configuration is created
         // Note: We can't directly test internal state, but we can test operations
@@ -562,10 +582,7 @@ mod security_config_tests {
         let rbac_provider = RBACProvider::new();
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
-        let config = SecurityConfig::new(
-            Box::new(oauth2_provider),
-            Box::new(rbac_provider),
-        );
+        let config = SecurityConfig::new(Box::new(oauth2_provider), Box::new(rbac_provider));
 
         let credentials = Credentials {
             credential_type: CredentialType::OAuth2,
@@ -576,7 +593,9 @@ mod security_config_tests {
         };
 
         // GREEN: Test authentication through config
-        let result = config.authenticate_user(&credentials, Some("192.168.1.1".to_string())).await;
+        let result = config
+            .authenticate_user(&credentials, Some("192.168.1.1".to_string()))
+            .await;
         assert!(result.is_ok());
 
         let auth_result = result.unwrap();
@@ -600,12 +619,12 @@ mod security_config_tests {
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
         // Assign admin role to user in RBAC provider before moving it
-        rbac_provider.assign_role_to_user("admin_user", "admin").await.unwrap();
+        rbac_provider
+            .assign_role_to_user("admin_user", "admin")
+            .await
+            .unwrap();
 
-        let config = SecurityConfig::new(
-            Box::new(oauth2_provider),
-            Box::new(rbac_provider),
-        );
+        let config = SecurityConfig::new(Box::new(oauth2_provider), Box::new(rbac_provider));
 
         let user = User {
             id: "admin_user".to_string(),
@@ -658,10 +677,7 @@ mod security_config_tests {
         let rbac_provider = RBACProvider::new();
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
-        let config = SecurityConfig::new(
-            Box::new(oauth2_provider),
-            Box::new(rbac_provider),
-        );
+        let config = SecurityConfig::new(Box::new(oauth2_provider), Box::new(rbac_provider));
 
         // First authenticate to create a valid token
         let credentials = Credentials {
@@ -705,10 +721,7 @@ mod integration_tests {
         let rbac_provider = RBACProvider::new();
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
-        let config = SecurityConfig::new(
-            Box::new(oauth2_provider),
-            Box::new(rbac_provider),
-        );
+        let config = SecurityConfig::new(Box::new(oauth2_provider), Box::new(rbac_provider));
 
         // GREEN: Complete workflow
         // 1. Authenticate user
@@ -720,7 +733,10 @@ mod integration_tests {
             additional_data: HashMap::new(),
         };
 
-        let auth_result = config.authenticate_user(&credentials, Some("192.168.1.1".to_string())).await.unwrap();
+        let auth_result = config
+            .authenticate_user(&credentials, Some("192.168.1.1".to_string()))
+            .await
+            .unwrap();
         assert!(auth_result.success);
 
         let user = auth_result.user.unwrap();
@@ -759,16 +775,15 @@ mod integration_tests {
         );
 
         // Generate authn request before moving saml_provider
-        let authn_request = saml_provider.generate_saml_request(Some("test_relay_state")).unwrap();
+        let authn_request = saml_provider
+            .generate_saml_request(Some("test_relay_state"))
+            .unwrap();
         assert!(authn_request.contains("test_entity_id"));
 
         let rbac_provider = RBACProvider::new();
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
-        let config = SecurityConfig::new(
-            Box::new(saml_provider),
-            Box::new(rbac_provider),
-        );
+        let config = SecurityConfig::new(Box::new(saml_provider), Box::new(rbac_provider));
 
         // GREEN: Complete SAML workflow
 
@@ -781,7 +796,10 @@ mod integration_tests {
             additional_data: HashMap::new(),
         };
 
-        let auth_result = config.authenticate_user(&credentials, Some("192.168.1.1".to_string())).await.unwrap();
+        let auth_result = config
+            .authenticate_user(&credentials, Some("192.168.1.1".to_string()))
+            .await
+            .unwrap();
         assert!(auth_result.success);
 
         let user = auth_result.user.unwrap();
@@ -803,10 +821,7 @@ mod integration_tests {
         let rbac_provider = RBACProvider::new();
         sleep(Duration::from_millis(100)).await; // Wait for RBAC initialization
 
-        let config = SecurityConfig::new(
-            Box::new(oauth2_provider),
-            Box::new(rbac_provider),
-        );
+        let config = SecurityConfig::new(Box::new(oauth2_provider), Box::new(rbac_provider));
 
         // GREEN: Test audit trail
         // 1. Authenticate (should log authentication)
@@ -818,7 +833,10 @@ mod integration_tests {
             additional_data: HashMap::new(),
         };
 
-        let auth_result = config.authenticate_user(&credentials, Some("192.168.1.1".to_string())).await.unwrap();
+        let auth_result = config
+            .authenticate_user(&credentials, Some("192.168.1.1".to_string()))
+            .await
+            .unwrap();
         let user = auth_result.user.unwrap();
 
         // 2. Authorize (should log authorization)
@@ -839,10 +857,16 @@ mod integration_tests {
         assert!(audit_logs.len() >= 2); // Should have at least authentication and authorization logs
 
         // Verify audit log content
-        let auth_logs: Vec<_> = audit_logs.iter().filter(|log| matches!(log.event_type, AuditEventType::Authentication)).collect();
+        let auth_logs: Vec<_> = audit_logs
+            .iter()
+            .filter(|log| matches!(log.event_type, AuditEventType::Authentication))
+            .collect();
         assert!(!auth_logs.is_empty());
 
-        let authz_logs: Vec<_> = audit_logs.iter().filter(|log| matches!(log.event_type, AuditEventType::Authorization)).collect();
+        let authz_logs: Vec<_> = audit_logs
+            .iter()
+            .filter(|log| matches!(log.event_type, AuditEventType::Authorization))
+            .collect();
         assert!(!authz_logs.is_empty());
     }
 }

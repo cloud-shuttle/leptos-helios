@@ -6,7 +6,6 @@
 //! - Feature flag optimization
 //! - Dynamic imports
 
-
 /// WASM bundle size analyzer
 #[derive(Debug, Clone)]
 pub struct WasmBundleAnalyzer {

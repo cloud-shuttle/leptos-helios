@@ -21,12 +21,12 @@
 //! 2. **GREEN**: Implement minimal code to pass tests
 //! 3. **REFACTOR**: Improve code quality while maintaining test coverage
 
-use leptos_helios::plugin_system::*;
-use leptos_helios::chart::{ChartSpec, MarkType, PointShape, DataReference, Interpolation};
-use leptos_helios::data_sources::{DataSource, DataSourceError, Schema, ConnectionConfig};
-use leptos_helios::export_system::{ExportFormat, ExportResult};
-use leptos_helios::styling::Theme;
 use async_trait::async_trait;
+use leptos_helios::chart::{ChartSpec, DataReference, Interpolation, MarkType, PointShape};
+use leptos_helios::data_sources::{ConnectionConfig, DataSource, DataSourceError, Schema};
+use leptos_helios::export_system::{ExportFormat, ExportResult};
+use leptos_helios::plugin_system::*;
+use leptos_helios::styling::Theme;
 use std::any::TypeId;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -121,10 +121,10 @@ impl Plugin for TestChartPlugin {
 impl ChartPlugin for TestChartPlugin {
     fn supported_marks(&self) -> Vec<MarkType> {
         vec![
-            MarkType::Point { 
-                size: Some(5.0), 
-                opacity: Some(1.0), 
-                shape: Some(PointShape::Circle) 
+            MarkType::Point {
+                size: Some(5.0),
+                opacity: Some(1.0),
+                shape: Some(PointShape::Circle),
             },
             MarkType::Line {
                 interpolate: Some(Interpolation::Linear),
@@ -134,10 +134,14 @@ impl ChartPlugin for TestChartPlugin {
         ]
     }
 
-    fn render(&self, _spec: &ChartSpec, _context: &RenderContext) -> Result<RenderResult, PluginError> {
+    fn render(
+        &self,
+        _spec: &ChartSpec,
+        _context: &RenderContext,
+    ) -> Result<RenderResult, PluginError> {
         let mut count = self.render_count.lock().unwrap();
         *count += 1;
-        
+
         Ok(RenderResult {
             success: true,
             render_time_ms: 10,
@@ -149,7 +153,9 @@ impl ChartPlugin for TestChartPlugin {
 
     fn validate_spec(&self, spec: &ChartSpec) -> Result<(), PluginError> {
         if matches!(spec.data, DataReference::Static(_)) {
-            Err(PluginError::ValidationFailed("Static data not supported".to_string()))
+            Err(PluginError::ValidationFailed(
+                "Static data not supported".to_string(),
+            ))
         } else {
             Ok(())
         }
@@ -241,20 +247,28 @@ impl DataSourcePlugin for TestDataSourcePlugin {
         vec!["test-db".to_string(), "mock-api".to_string()]
     }
 
-    fn create_connection(&self, config: &DataSourceConfig) -> Result<Box<dyn DataSource>, PluginError> {
+    fn create_connection(
+        &self,
+        config: &DataSourceConfig,
+    ) -> Result<Box<dyn DataSource>, PluginError> {
         let mut count = self.connection_count.lock().unwrap();
         *count += 1;
-        
+
         if config.source_type == "test-db" {
             Ok(Box::new(MockDataSource::new()))
         } else {
-            Err(PluginError::ValidationFailed(format!("Unsupported source type: {}", config.source_type)))
+            Err(PluginError::ValidationFailed(format!(
+                "Unsupported source type: {}",
+                config.source_type
+            )))
         }
     }
 
     fn validate_config(&self, config: &DataSourceConfig) -> Result<(), PluginError> {
         if config.connection_string.is_empty() {
-            Err(PluginError::ValidationFailed("Empty connection string".to_string()))
+            Err(PluginError::ValidationFailed(
+                "Empty connection string".to_string(),
+            ))
         } else {
             Ok(())
         }
@@ -281,15 +295,24 @@ impl leptos_helios::data_sources::Connection for MockConnection {
         Ok(0)
     }
 
-    async fn query_with_params(&self, _sql: &str, _params: &[&(dyn leptos_helios::data_sources::ToSql)]) -> Result<polars::prelude::DataFrame, DataSourceError> {
+    async fn query_with_params(
+        &self,
+        _sql: &str,
+        _params: &[&(dyn leptos_helios::data_sources::ToSql)],
+    ) -> Result<polars::prelude::DataFrame, DataSourceError> {
         Ok(polars::prelude::DataFrame::new(vec![]).unwrap())
     }
 
-    async fn query_stream(&self, _sql: &str) -> Result<Box<dyn leptos_helios::data_sources::DataStream>, DataSourceError> {
+    async fn query_stream(
+        &self,
+        _sql: &str,
+    ) -> Result<Box<dyn leptos_helios::data_sources::DataStream>, DataSourceError> {
         Ok(Box::new(MockDataStream))
     }
 
-    async fn begin_transaction(&self) -> Result<Box<dyn leptos_helios::data_sources::Transaction>, DataSourceError> {
+    async fn begin_transaction(
+        &self,
+    ) -> Result<Box<dyn leptos_helios::data_sources::Transaction>, DataSourceError> {
         Ok(Box::new(MockTransaction) as Box<dyn leptos_helios::data_sources::Transaction>)
     }
 
@@ -349,7 +372,9 @@ impl MockDataSource {
 
 #[async_trait]
 impl DataSource for MockDataSource {
-    async fn connect(&self) -> Result<Box<dyn leptos_helios::data_sources::Connection>, DataSourceError> {
+    async fn connect(
+        &self,
+    ) -> Result<Box<dyn leptos_helios::data_sources::Connection>, DataSourceError> {
         Ok(Box::new(MockConnection) as Box<dyn leptos_helios::data_sources::Connection>)
     }
 
@@ -410,7 +435,7 @@ mod plugin_manager_tests {
     async fn test_plugin_manager_creation() {
         // RED: Test that plugin manager can be created
         let manager = PluginManager::new();
-        
+
         // GREEN: Verify initial state
         assert_eq!(manager.list_chart_plugins().await.len(), 0);
         assert!(manager.system_info().helios_version.len() > 0);
@@ -421,11 +446,11 @@ mod plugin_manager_tests {
         // RED: Test chart plugin registration
         let manager = PluginManager::new();
         let plugin = Box::new(TestChartPlugin::new("test-chart", "1.0.0"));
-        
+
         // GREEN: Register plugin and verify
         let result = manager.register_chart_plugin(plugin).await;
         assert!(result.is_ok());
-        
+
         let plugins = manager.list_chart_plugins().await;
         assert_eq!(plugins.len(), 1);
         assert_eq!(plugins[0], "test-chart");
@@ -436,13 +461,13 @@ mod plugin_manager_tests {
         // RED: Test plugin retrieval by name
         let manager = PluginManager::new();
         let plugin = Box::new(TestChartPlugin::new("test-chart", "1.0.0"));
-        
+
         manager.register_chart_plugin(plugin).await.unwrap();
-        
+
         // GREEN: Retrieve and verify plugin
         let retrieved_plugin = manager.get_chart_plugin("test-chart").await;
         assert!(retrieved_plugin.is_some());
-        
+
         let plugin = retrieved_plugin.unwrap();
         assert_eq!(plugin.metadata().name, "test-chart");
         assert_eq!(plugin.metadata().version, "1.0.0");
@@ -452,7 +477,7 @@ mod plugin_manager_tests {
     async fn test_plugin_not_found() {
         // RED: Test retrieval of non-existent plugin
         let manager = PluginManager::new();
-        
+
         // GREEN: Verify None is returned
         let plugin = manager.get_chart_plugin("nonexistent").await;
         assert!(plugin.is_none());
@@ -462,14 +487,14 @@ mod plugin_manager_tests {
     async fn test_multiple_plugin_registration() {
         // RED: Test registering multiple plugins
         let manager = PluginManager::new();
-        
+
         let plugin1 = Box::new(TestChartPlugin::new("plugin1", "1.0.0"));
         let plugin2 = Box::new(TestChartPlugin::new("plugin2", "2.0.0"));
-        
+
         // GREEN: Register both plugins
         manager.register_chart_plugin(plugin1).await.unwrap();
         manager.register_chart_plugin(plugin2).await.unwrap();
-        
+
         let plugins = manager.list_chart_plugins().await;
         assert_eq!(plugins.len(), 2);
         assert!(plugins.contains(&"plugin1".to_string()));
@@ -482,13 +507,13 @@ mod plugin_manager_tests {
         let manager = PluginManager::new();
         let plugin = TestChartPlugin::new("test-chart", "1.0.0");
         let was_initialized = plugin.was_initialized();
-        
+
         // GREEN: Register plugin and verify initialization
         assert!(!was_initialized);
-        
+
         let boxed_plugin = Box::new(plugin);
         manager.register_chart_plugin(boxed_plugin).await.unwrap();
-        
+
         // Note: We can't access the plugin after registration, but we can test
         // that registration succeeds, which means initialization succeeded
         let plugins = manager.list_chart_plugins().await;
@@ -500,7 +525,7 @@ mod plugin_manager_tests {
         // RED: Test data source plugin registration
         let manager = PluginManager::new();
         let plugin = Box::new(TestDataSourcePlugin::new("test-datasource"));
-        
+
         // GREEN: Register and verify
         let result = manager.register_data_source_plugin(plugin).await;
         assert!(result.is_ok());
@@ -510,14 +535,14 @@ mod plugin_manager_tests {
     async fn test_plugin_cleanup() {
         // RED: Test plugin cleanup functionality
         let manager = PluginManager::new();
-        
+
         // GREEN: Register plugins and cleanup
         let plugin1 = Box::new(TestChartPlugin::new("plugin1", "1.0.0"));
         let plugin2 = Box::new(TestDataSourcePlugin::new("plugin2"));
-        
+
         manager.register_chart_plugin(plugin1).await.unwrap();
         manager.register_data_source_plugin(plugin2).await.unwrap();
-        
+
         let result = manager.cleanup_all_plugins().await;
         assert!(result.is_ok());
     }
@@ -538,13 +563,11 @@ mod plugin_metadata_tests {
             license: "MIT".to_string(),
             homepage: Some("https://example.com".to_string()),
             repository: Some("https://github.com/example/test-plugin".to_string()),
-            dependencies: vec![
-                PluginDependency {
-                    name: "dependency1".to_string(),
-                    version: "1.0.0".to_string(),
-                    optional: false,
-                }
-            ],
+            dependencies: vec![PluginDependency {
+                name: "dependency1".to_string(),
+                version: "1.0.0".to_string(),
+                optional: false,
+            }],
             capabilities: PluginCapabilities {
                 capabilities: vec![PluginCapability::ChartRendering],
                 max_data_points: Some(10000),
@@ -589,9 +612,15 @@ mod plugin_metadata_tests {
         };
 
         // GREEN: Verify capabilities
-        assert!(capabilities.capabilities.contains(&PluginCapability::ChartRendering));
-        assert!(capabilities.capabilities.contains(&PluginCapability::DataSource));
-        assert!(capabilities.capabilities.contains(&PluginCapability::MLIntelligence));
+        assert!(capabilities
+            .capabilities
+            .contains(&PluginCapability::ChartRendering));
+        assert!(capabilities
+            .capabilities
+            .contains(&PluginCapability::DataSource));
+        assert!(capabilities
+            .capabilities
+            .contains(&PluginCapability::MLIntelligence));
         assert_eq!(capabilities.max_data_points, Some(1000000));
         assert_eq!(capabilities.supported_formats.len(), 3);
         assert!(capabilities.performance_requirements.requires_gpu);
@@ -635,12 +664,15 @@ mod plugin_rendering_tests {
         let manager = PluginManager::new();
         let plugin = TestChartPlugin::new("test-chart", "1.0.0");
         let render_count = plugin.get_render_count();
-        
-        manager.register_chart_plugin(Box::new(plugin)).await.unwrap();
-        
+
+        manager
+            .register_chart_plugin(Box::new(plugin))
+            .await
+            .unwrap();
+
         // GREEN: Get plugin and test rendering
         let retrieved_plugin = manager.get_chart_plugin("test-chart").await.unwrap();
-        
+
         let spec = ChartSpec::new();
         let context = RenderContext {
             viewport: Viewport {
@@ -669,7 +701,7 @@ mod plugin_rendering_tests {
 
         let result = retrieved_plugin.render(&spec, &context);
         assert!(result.is_ok());
-        
+
         let render_result = result.unwrap();
         assert!(render_result.success);
         assert_eq!(render_result.render_time_ms, 10);
@@ -681,15 +713,18 @@ mod plugin_rendering_tests {
         // RED: Test chart specification validation
         let manager = PluginManager::new();
         let plugin = TestChartPlugin::new("test-chart", "1.0.0");
-        
-        manager.register_chart_plugin(Box::new(plugin)).await.unwrap();
-        
+
+        manager
+            .register_chart_plugin(Box::new(plugin))
+            .await
+            .unwrap();
+
         // GREEN: Test validation
         let retrieved_plugin = manager.get_chart_plugin("test-chart").await.unwrap();
-        
+
         let spec = ChartSpec::new();
         let validation_result = retrieved_plugin.validate_spec(&spec);
-        
+
         // Should fail because spec has empty data
         assert!(validation_result.is_err());
         if let Err(PluginError::ValidationFailed(msg)) = validation_result {
@@ -702,15 +737,18 @@ mod plugin_rendering_tests {
         // RED: Test performance estimation
         let manager = PluginManager::new();
         let plugin = TestChartPlugin::new("test-chart", "1.0.0");
-        
-        manager.register_chart_plugin(Box::new(plugin)).await.unwrap();
-        
+
+        manager
+            .register_chart_plugin(Box::new(plugin))
+            .await
+            .unwrap();
+
         // GREEN: Test performance estimation
         let retrieved_plugin = manager.get_chart_plugin("test-chart").await.unwrap();
-        
+
         let spec = ChartSpec::new();
         let estimate = retrieved_plugin.estimate_performance(&spec);
-        
+
         assert_eq!(estimate.estimated_time_ms, 10);
         assert_eq!(estimate.estimated_memory_mb, 5);
         assert_eq!(estimate.complexity_score, 1.0);
@@ -721,20 +759,23 @@ mod plugin_rendering_tests {
         // RED: Test supported mark types
         let manager = PluginManager::new();
         let plugin = TestChartPlugin::new("test-chart", "1.0.0");
-        
-        manager.register_chart_plugin(Box::new(plugin)).await.unwrap();
-        
+
+        manager
+            .register_chart_plugin(Box::new(plugin))
+            .await
+            .unwrap();
+
         // GREEN: Test supported marks
         let retrieved_plugin = manager.get_chart_plugin("test-chart").await.unwrap();
         let supported_marks = retrieved_plugin.supported_marks();
-        
+
         assert_eq!(supported_marks.len(), 2);
-        assert!(supported_marks.contains(&MarkType::Point { 
-            size: Some(5.0), 
-            opacity: Some(1.0), 
-            shape: Some(PointShape::Circle) 
+        assert!(supported_marks.contains(&MarkType::Point {
+            size: Some(5.0),
+            opacity: Some(1.0),
+            shape: Some(PointShape::Circle)
         }));
-        assert!(supported_marks.contains(&MarkType::Line { 
+        assert!(supported_marks.contains(&MarkType::Line {
             interpolate: Some(Interpolation::Linear),
             stroke_width: Some(2.0),
             stroke_dash: None,
@@ -752,12 +793,15 @@ mod data_source_plugin_tests {
         let manager = PluginManager::new();
         let plugin = TestDataSourcePlugin::new("test-datasource");
         let connection_count = plugin.get_connection_count();
-        
-        manager.register_data_source_plugin(Box::new(plugin)).await.unwrap();
-        
+
+        manager
+            .register_data_source_plugin(Box::new(plugin))
+            .await
+            .unwrap();
+
         // GREEN: Test connection creation
         assert_eq!(connection_count, 0);
-        
+
         // Note: We can't directly access the plugin after registration,
         // but we can test that registration succeeds
         // In a real implementation, we'd have methods to access registered plugins
@@ -767,7 +811,7 @@ mod data_source_plugin_tests {
     fn test_data_source_plugin_supported_sources() {
         // RED: Test supported data source types
         let plugin = TestDataSourcePlugin::new("test-datasource");
-        
+
         // GREEN: Test supported sources
         let supported_sources = plugin.supported_sources();
         assert_eq!(supported_sources.len(), 2);
@@ -779,7 +823,7 @@ mod data_source_plugin_tests {
     fn test_data_source_plugin_config_validation() {
         // RED: Test configuration validation
         let plugin = TestDataSourcePlugin::new("test-datasource");
-        
+
         // GREEN: Test valid configuration
         let valid_config = DataSourceConfig {
             source_type: "test-db".to_string(),
@@ -787,10 +831,10 @@ mod data_source_plugin_tests {
             credentials: None,
             options: HashMap::new(),
         };
-        
+
         let result = plugin.validate_config(&valid_config);
         assert!(result.is_ok());
-        
+
         // Test invalid configuration
         let invalid_config = DataSourceConfig {
             source_type: "test-db".to_string(),
@@ -798,7 +842,7 @@ mod data_source_plugin_tests {
             credentials: None,
             options: HashMap::new(),
         };
-        
+
         let result = plugin.validate_config(&invalid_config);
         assert!(result.is_err());
         if let Err(PluginError::ValidationFailed(msg)) = result {
@@ -816,19 +860,19 @@ mod plugin_event_tests {
         // RED: Test plugin event handling
         let manager = PluginManager::new();
         let event_handler = TestEventHandler::new();
-        
+
         manager.add_event_handler(Box::new(event_handler.clone()));
-        
+
         // GREEN: Register plugin and verify event
         let plugin = Box::new(TestChartPlugin::new("test-chart", "1.0.0"));
         manager.register_chart_plugin(plugin).await.unwrap();
-        
+
         // Give some time for event processing
         sleep(Duration::from_millis(10)).await;
-        
+
         let events = event_handler.get_events();
         assert_eq!(events.len(), 1);
-        
+
         if let PluginEvent::Registered { name, version } = &events[0] {
             assert_eq!(name, "test-chart");
             assert_eq!(version, "1.0.0");
@@ -843,19 +887,19 @@ mod plugin_event_tests {
         let manager = PluginManager::new();
         let handler1 = TestEventHandler::new();
         let handler2 = TestEventHandler::new();
-        
+
         manager.add_event_handler(Box::new(handler1.clone()));
         manager.add_event_handler(Box::new(handler2.clone()));
-        
+
         // GREEN: Register plugin and verify both handlers receive events
         let plugin = Box::new(TestChartPlugin::new("test-chart", "1.0.0"));
         manager.register_chart_plugin(plugin).await.unwrap();
-        
+
         sleep(Duration::from_millis(10)).await;
-        
+
         let events1 = handler1.get_events();
         let events2 = handler2.get_events();
-        
+
         assert_eq!(events1.len(), 1);
         assert_eq!(events2.len(), 1);
     }
@@ -869,7 +913,7 @@ mod plugin_registry_tests {
     fn test_plugin_registry_creation() {
         // RED: Test plugin registry creation
         let registry = PluginRegistry::new();
-        
+
         // GREEN: Verify initial state
         let plugins = registry.list_plugins();
         assert_eq!(plugins.len(), 0);
@@ -902,9 +946,11 @@ mod plugin_registry_tests {
             security_level: SecurityLevel::Sandboxed,
             performance_impact: PerformanceImpact::Minimal,
         };
-        
-        registry.register(metadata.clone(), || Box::new(TestChartPlugin::new("test-plugin", "1.0.0")));
-        
+
+        registry.register(metadata.clone(), || {
+            Box::new(TestChartPlugin::new("test-plugin", "1.0.0"))
+        });
+
         // GREEN: Verify registration
         let plugins = registry.list_plugins();
         assert_eq!(plugins.len(), 1);
@@ -938,13 +984,15 @@ mod plugin_registry_tests {
             security_level: SecurityLevel::Sandboxed,
             performance_impact: PerformanceImpact::Minimal,
         };
-        
-        registry.register(metadata, || Box::new(TestChartPlugin::new("test-plugin", "1.0.0")));
-        
+
+        registry.register(metadata, || {
+            Box::new(TestChartPlugin::new("test-plugin", "1.0.0"))
+        });
+
         // GREEN: Test factory retrieval
         let factory = registry.get_factory("test-plugin");
         assert!(factory.is_some());
-        
+
         let plugin = factory.unwrap()();
         assert_eq!(plugin.metadata().name, "test-plugin");
     }
@@ -953,7 +1001,7 @@ mod plugin_registry_tests {
     fn test_plugin_registry_nonexistent_plugin() {
         // RED: Test retrieval of non-existent plugin
         let registry = PluginRegistry::new();
-        
+
         // GREEN: Verify None is returned
         let factory = registry.get_factory("nonexistent");
         assert!(factory.is_none());
@@ -968,7 +1016,7 @@ mod system_compatibility_tests {
     fn test_system_info_creation() {
         // RED: Test system information creation
         let system_info = SystemInfo::current();
-        
+
         // GREEN: Verify system info fields
         assert!(!system_info.helios_version.is_empty());
         assert!(!system_info.platform.is_empty());
@@ -980,7 +1028,7 @@ mod system_compatibility_tests {
         // RED: Test plugin compatibility checking
         let plugin = TestChartPlugin::new("test-chart", "1.0.0");
         let system_info = SystemInfo::current();
-        
+
         // GREEN: Test compatibility
         let is_compatible = plugin.is_compatible(&system_info);
         assert!(is_compatible);
@@ -1024,7 +1072,10 @@ mod render_context_tests {
         assert_eq!(context.viewport.height, 1080);
         assert_eq!(context.device_info.memory_mb, 8192);
         assert_eq!(context.performance_budget.max_render_time_ms, 16);
-        assert_eq!(context.security_context.security_level, SecurityLevel::Sandboxed);
+        assert_eq!(
+            context.security_context.security_level,
+            SecurityLevel::Sandboxed
+        );
     }
 
     #[test]
@@ -1032,7 +1083,7 @@ mod render_context_tests {
         // RED: Test render result creation
         let success_result = RenderResult::success();
         let error_result = RenderResult::error("Test error".to_string());
-        
+
         // GREEN: Verify results
         assert!(success_result.success);
         assert!(success_result.error.is_none());
@@ -1065,28 +1116,31 @@ mod integration_tests {
         // RED: Test complete plugin workflow
         let manager = PluginManager::new();
         let event_handler = TestEventHandler::new();
-        
+
         manager.add_event_handler(Box::new(event_handler.clone()));
-        
+
         // GREEN: Complete workflow
         // 1. Register chart plugin
         let chart_plugin = Box::new(TestChartPlugin::new("chart-plugin", "1.0.0"));
         manager.register_chart_plugin(chart_plugin).await.unwrap();
-        
+
         // 2. Register data source plugin
         let data_source_plugin = Box::new(TestDataSourcePlugin::new("datasource-plugin"));
-        manager.register_data_source_plugin(data_source_plugin).await.unwrap();
-        
+        manager
+            .register_data_source_plugin(data_source_plugin)
+            .await
+            .unwrap();
+
         // 3. Verify plugins are registered
         let chart_plugins = manager.list_chart_plugins().await;
         assert_eq!(chart_plugins.len(), 1);
         assert_eq!(chart_plugins[0], "chart-plugin");
-        
+
         // 4. Verify events were emitted
         sleep(Duration::from_millis(10)).await;
         let events = event_handler.get_events();
         assert_eq!(events.len(), 2);
-        
+
         // 5. Test plugin functionality
         let retrieved_chart_plugin = manager.get_chart_plugin("chart-plugin").await.unwrap();
         let spec = ChartSpec::new();
@@ -1114,10 +1168,10 @@ mod integration_tests {
                 sandbox_mode: true,
             },
         };
-        
+
         let render_result = retrieved_chart_plugin.render(&spec, &context);
         assert!(render_result.is_ok());
-        
+
         // 6. Cleanup
         let cleanup_result = manager.cleanup_all_plugins().await;
         assert!(cleanup_result.is_ok());
@@ -1128,12 +1182,12 @@ mod integration_tests {
         // RED: Test plugin performance monitoring
         let manager = PluginManager::new();
         let plugin = Box::new(TestChartPlugin::new("perf-plugin", "1.0.0"));
-        
+
         manager.register_chart_plugin(plugin).await.unwrap();
-        
+
         // GREEN: Test performance monitoring
         let retrieved_plugin = manager.get_chart_plugin("perf-plugin").await.unwrap();
-        
+
         let spec = ChartSpec::new();
         let context = RenderContext {
             viewport: Viewport {
@@ -1159,12 +1213,12 @@ mod integration_tests {
                 sandbox_mode: true,
             },
         };
-        
+
         // Test multiple renders to verify performance tracking
         for _ in 0..5 {
             let result = retrieved_plugin.render(&spec, &context);
             assert!(result.is_ok());
-            
+
             let render_result = result.unwrap();
             assert!(render_result.success);
             assert!(render_result.render_time_ms <= 1000); // Within budget

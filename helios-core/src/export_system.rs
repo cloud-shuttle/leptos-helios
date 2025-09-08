@@ -4,7 +4,7 @@
 //! including static exports (PNG, SVG, PDF), interactive exports, and headless rendering.
 
 use crate::chart::{ChartSpec, ChartSpecBuilder};
-use crate::headless_renderer::{HeadlessRenderer, HeadlessConfig, HeadlessError};
+use crate::headless_renderer::{HeadlessConfig, HeadlessError, HeadlessRenderer};
 use polars::prelude::DataFrame;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -245,9 +245,13 @@ impl ExportSystem {
         config: &ExportConfig,
         output_path: &Path,
     ) -> Result<InternalExportResult, ExportError> {
-        let mut renderer = self.headless_renderer.as_ref().ok_or_else(|| {
-            ExportError::HeadlessBrowserError("Headless renderer not available".to_string())
-        })?.clone();
+        let mut renderer = self
+            .headless_renderer
+            .as_ref()
+            .ok_or_else(|| {
+                ExportError::HeadlessBrowserError("Headless renderer not available".to_string())
+            })?
+            .clone();
 
         // Initialize renderer
         renderer.initialize().await?;
@@ -306,9 +310,13 @@ impl ExportSystem {
         config: &ExportConfig,
         output_path: &Path,
     ) -> Result<InternalExportResult, ExportError> {
-        let mut renderer = self.headless_renderer.as_ref().ok_or_else(|| {
-            ExportError::HeadlessBrowserError("Headless renderer not available".to_string())
-        })?.clone();
+        let mut renderer = self
+            .headless_renderer
+            .as_ref()
+            .ok_or_else(|| {
+                ExportError::HeadlessBrowserError("Headless renderer not available".to_string())
+            })?
+            .clone();
 
         // Initialize renderer
         renderer.initialize().await?;
@@ -455,7 +463,6 @@ struct InternalExportResult {
     height: Option<u32>,
     metadata: HashMap<String, String>,
 }
-
 
 /// Template rendering engine
 struct TemplateEngine;

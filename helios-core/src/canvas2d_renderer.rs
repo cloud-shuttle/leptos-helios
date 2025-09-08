@@ -766,8 +766,7 @@ impl ChartData for ScatterPlotData {
 }
 
 // Additional types needed for the renderer
-#[derive(Debug, Clone)]
-#[derive(PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum RendererBackend {
     WebGPU,
     WebGL2,

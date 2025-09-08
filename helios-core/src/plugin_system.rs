@@ -229,7 +229,11 @@ pub trait ChartPlugin: Plugin {
     fn supported_marks(&self) -> Vec<MarkType>;
 
     /// Render a chart with the plugin
-    fn render(&self, spec: &ChartSpec, context: &RenderContext) -> Result<RenderResult, PluginError>;
+    fn render(
+        &self,
+        spec: &ChartSpec,
+        context: &RenderContext,
+    ) -> Result<RenderResult, PluginError>;
 
     /// Validate chart specification for this plugin
     fn validate_spec(&self, spec: &ChartSpec) -> Result<(), PluginError>;
@@ -244,7 +248,10 @@ pub trait DataSourcePlugin: Plugin {
     fn supported_sources(&self) -> Vec<String>;
 
     /// Create a data source connection
-    fn create_connection(&self, config: &DataSourceConfig) -> Result<Box<dyn DataSource>, PluginError>;
+    fn create_connection(
+        &self,
+        config: &DataSourceConfig,
+    ) -> Result<Box<dyn DataSource>, PluginError>;
 
     /// Validate data source configuration
     fn validate_config(&self, config: &DataSourceConfig) -> Result<(), PluginError>;
@@ -256,10 +263,19 @@ pub trait TransformPlugin: Plugin {
     fn supported_transforms(&self) -> Vec<String>;
 
     /// Apply transformation to data
-    fn apply_transform(&self, data: &[u8], transform_type: &str, params: &TransformParams) -> Result<Vec<u8>, PluginError>;
+    fn apply_transform(
+        &self,
+        data: &[u8],
+        transform_type: &str,
+        params: &TransformParams,
+    ) -> Result<Vec<u8>, PluginError>;
 
     /// Validate transform parameters
-    fn validate_params(&self, transform_type: &str, params: &TransformParams) -> Result<(), PluginError>;
+    fn validate_params(
+        &self,
+        transform_type: &str,
+        params: &TransformParams,
+    ) -> Result<(), PluginError>;
 }
 
 /// Export plugin trait for custom export formats
@@ -268,10 +284,19 @@ pub trait ExportPlugin: Plugin {
     fn supported_formats(&self) -> Vec<ExportFormat>;
 
     /// Export chart to format
-    fn export(&self, chart_data: &ChartData, format: &ExportFormat, options: &ExportOptions) -> Result<ExportResult, PluginError>;
+    fn export(
+        &self,
+        chart_data: &ChartData,
+        format: &ExportFormat,
+        options: &ExportOptions,
+    ) -> Result<ExportResult, PluginError>;
 
     /// Validate export options
-    fn validate_options(&self, format: &ExportFormat, options: &ExportOptions) -> Result<(), PluginError>;
+    fn validate_options(
+        &self,
+        format: &ExportFormat,
+        options: &ExportOptions,
+    ) -> Result<(), PluginError>;
 }
 
 /// ML Intelligence plugin trait
@@ -280,7 +305,12 @@ pub trait MLPlugin: Plugin {
     fn supported_capabilities(&self) -> Vec<String>;
 
     /// Execute ML operation
-    fn execute_ml(&self, capability: &str, data: &MLData, params: &MLParams) -> Result<Vec<u8>, PluginError>;
+    fn execute_ml(
+        &self,
+        capability: &str,
+        data: &MLData,
+        params: &MLParams,
+    ) -> Result<Vec<u8>, PluginError>;
 
     /// Validate ML parameters
     fn validate_ml_params(&self, capability: &str, params: &MLParams) -> Result<(), PluginError>;
@@ -292,10 +322,18 @@ pub trait ThemePlugin: Plugin {
     fn supported_themes(&self) -> Vec<String>;
 
     /// Apply theme to chart
-    fn apply_theme(&self, theme_name: &str, config: &HashMap<String, String>) -> Result<Theme, PluginError>;
+    fn apply_theme(
+        &self,
+        theme_name: &str,
+        config: &HashMap<String, String>,
+    ) -> Result<Theme, PluginError>;
 
     /// Validate theme configuration
-    fn validate_theme_config(&self, theme_name: &str, config: &HashMap<String, String>) -> Result<(), PluginError>;
+    fn validate_theme_config(
+        &self,
+        theme_name: &str,
+        config: &HashMap<String, String>,
+    ) -> Result<(), PluginError>;
 }
 
 /// Render context for chart plugins
@@ -455,13 +493,19 @@ impl PluginManager {
     }
 
     /// Register a chart plugin
-    pub async fn register_chart_plugin(&self, plugin: Box<dyn ChartPlugin>) -> Result<(), PluginError> {
+    pub async fn register_chart_plugin(
+        &self,
+        plugin: Box<dyn ChartPlugin>,
+    ) -> Result<(), PluginError> {
         let metadata = plugin.metadata().clone();
         let name = metadata.name.clone();
-        
+
         // Validate plugin compatibility
         if !plugin.is_compatible(&self.system_info) {
-            return Err(PluginError::CompatibilityError(format!("Plugin {} is not compatible with current system", name)));
+            return Err(PluginError::CompatibilityError(format!(
+                "Plugin {} is not compatible with current system",
+                name
+            )));
         }
 
         // Initialize plugin
@@ -482,12 +526,18 @@ impl PluginManager {
     }
 
     /// Register a data source plugin
-    pub async fn register_data_source_plugin(&self, plugin: Box<dyn DataSourcePlugin>) -> Result<(), PluginError> {
+    pub async fn register_data_source_plugin(
+        &self,
+        plugin: Box<dyn DataSourcePlugin>,
+    ) -> Result<(), PluginError> {
         let metadata = plugin.metadata().clone();
         let name = metadata.name.clone();
-        
+
         if !plugin.is_compatible(&self.system_info) {
-            return Err(PluginError::CompatibilityError(format!("Plugin {} is not compatible with current system", name)));
+            return Err(PluginError::CompatibilityError(format!(
+                "Plugin {} is not compatible with current system",
+                name
+            )));
         }
 
         let mut plugin = plugin;
@@ -505,12 +555,18 @@ impl PluginManager {
     }
 
     /// Register a transform plugin
-    pub async fn register_transform_plugin(&self, plugin: Box<dyn TransformPlugin>) -> Result<(), PluginError> {
+    pub async fn register_transform_plugin(
+        &self,
+        plugin: Box<dyn TransformPlugin>,
+    ) -> Result<(), PluginError> {
         let metadata = plugin.metadata().clone();
         let name = metadata.name.clone();
-        
+
         if !plugin.is_compatible(&self.system_info) {
-            return Err(PluginError::CompatibilityError(format!("Plugin {} is not compatible with current system", name)));
+            return Err(PluginError::CompatibilityError(format!(
+                "Plugin {} is not compatible with current system",
+                name
+            )));
         }
 
         let mut plugin = plugin;
@@ -528,12 +584,18 @@ impl PluginManager {
     }
 
     /// Register an export plugin
-    pub async fn register_export_plugin(&self, plugin: Box<dyn ExportPlugin>) -> Result<(), PluginError> {
+    pub async fn register_export_plugin(
+        &self,
+        plugin: Box<dyn ExportPlugin>,
+    ) -> Result<(), PluginError> {
         let metadata = plugin.metadata().clone();
         let name = metadata.name.clone();
-        
+
         if !plugin.is_compatible(&self.system_info) {
-            return Err(PluginError::CompatibilityError(format!("Plugin {} is not compatible with current system", name)));
+            return Err(PluginError::CompatibilityError(format!(
+                "Plugin {} is not compatible with current system",
+                name
+            )));
         }
 
         let mut plugin = plugin;
@@ -554,9 +616,12 @@ impl PluginManager {
     pub async fn register_ml_plugin(&self, plugin: Box<dyn MLPlugin>) -> Result<(), PluginError> {
         let metadata = plugin.metadata().clone();
         let name = metadata.name.clone();
-        
+
         if !plugin.is_compatible(&self.system_info) {
-            return Err(PluginError::CompatibilityError(format!("Plugin {} is not compatible with current system", name)));
+            return Err(PluginError::CompatibilityError(format!(
+                "Plugin {} is not compatible with current system",
+                name
+            )));
         }
 
         let mut plugin = plugin;
@@ -574,12 +639,18 @@ impl PluginManager {
     }
 
     /// Register a theme plugin
-    pub async fn register_theme_plugin(&self, plugin: Box<dyn ThemePlugin>) -> Result<(), PluginError> {
+    pub async fn register_theme_plugin(
+        &self,
+        plugin: Box<dyn ThemePlugin>,
+    ) -> Result<(), PluginError> {
         let metadata = plugin.metadata().clone();
         let name = metadata.name.clone();
-        
+
         if !plugin.is_compatible(&self.system_info) {
-            return Err(PluginError::CompatibilityError(format!("Plugin {} is not compatible with current system", name)));
+            return Err(PluginError::CompatibilityError(format!(
+                "Plugin {} is not compatible with current system",
+                name
+            )));
         }
 
         let mut plugin = plugin;
@@ -635,7 +706,10 @@ impl PluginManager {
         let chart_plugins = self.chart_plugins.read().await;
         for (name, plugin) in chart_plugins.iter() {
             if !plugin.is_compatible(&self.system_info) {
-                return Err(PluginError::CompatibilityError(format!("Chart plugin {} is not compatible", name)));
+                return Err(PluginError::CompatibilityError(format!(
+                    "Chart plugin {} is not compatible",
+                    name
+                )));
             }
         }
 
@@ -651,7 +725,10 @@ impl PluginManager {
         let mut chart_plugins = self.chart_plugins.write().await;
         for (name, plugin) in chart_plugins.iter_mut() {
             if let Err(e) = plugin.cleanup() {
-                return Err(PluginError::ExecutionFailed(format!("Failed to cleanup chart plugin {}: {}", name, e)));
+                return Err(PluginError::ExecutionFailed(format!(
+                    "Failed to cleanup chart plugin {}: {}",
+                    name, e
+                )));
             }
         }
 
@@ -669,9 +746,9 @@ impl SystemInfo {
             helios_version: env!("CARGO_PKG_VERSION").to_string(),
             rust_version: "1.70.0".to_string(), // Default version
             platform: std::env::consts::OS.to_string(),
-            features: vec![], // TODO: Get actual features
+            features: vec![],          // TODO: Get actual features
             available_memory_mb: 1024, // TODO: Get actual memory
-            gpu_available: true, // TODO: Detect GPU availability
+            gpu_available: true,       // TODO: Detect GPU availability
         }
     }
 }
@@ -707,10 +784,13 @@ impl PluginRegistry {
         F: Fn() -> Box<dyn Plugin> + Send + Sync + 'static,
     {
         let name = metadata.name.clone();
-        self.plugins.insert(name, PluginRegistration {
-            metadata,
-            factory: Box::new(factory),
-        });
+        self.plugins.insert(
+            name,
+            PluginRegistration {
+                metadata,
+                factory: Box::new(factory),
+            },
+        );
     }
 
     /// Get plugin factory by name
@@ -801,15 +881,19 @@ mod tests {
     }
 
     impl ChartPlugin for MockChartPlugin {
-    fn supported_marks(&self) -> Vec<MarkType> {
-        vec![MarkType::Point { 
-            size: Some(5.0), 
-            opacity: Some(1.0), 
-            shape: Some(PointShape::Circle) 
-        }]
-    }
+        fn supported_marks(&self) -> Vec<MarkType> {
+            vec![MarkType::Point {
+                size: Some(5.0),
+                opacity: Some(1.0),
+                shape: Some(PointShape::Circle),
+            }]
+        }
 
-        fn render(&self, _spec: &ChartSpec, _context: &RenderContext) -> Result<RenderResult, PluginError> {
+        fn render(
+            &self,
+            _spec: &ChartSpec,
+            _context: &RenderContext,
+        ) -> Result<RenderResult, PluginError> {
             Ok(RenderResult::success())
         }
 
@@ -836,10 +920,10 @@ mod tests {
     async fn test_chart_plugin_registration() {
         let manager = PluginManager::new();
         let plugin = Box::new(MockChartPlugin::new());
-        
+
         let result = manager.register_chart_plugin(plugin).await;
         assert!(result.is_ok());
-        
+
         let plugins = manager.list_chart_plugins().await;
         assert_eq!(plugins.len(), 1);
         assert_eq!(plugins[0], "mock-chart");
@@ -849,14 +933,14 @@ mod tests {
     async fn test_chart_plugin_retrieval() {
         let manager = PluginManager::new();
         let plugin = Box::new(MockChartPlugin::new());
-        
+
         manager.register_chart_plugin(plugin).await.unwrap();
-        
+
         // Verify plugin is registered
         let plugins = manager.list_chart_plugins().await;
         assert_eq!(plugins.len(), 1);
         assert_eq!(plugins[0], "mock-chart");
-        
+
         // Note: get_chart_plugin currently returns None due to trait object downcasting limitations
         // In a real implementation, we'd need a different approach for type-safe plugin retrieval
         let retrieved_plugin = manager.get_chart_plugin("mock-chart").await;
@@ -874,7 +958,7 @@ mod tests {
     fn test_plugin_metadata() {
         let plugin = MockChartPlugin::new();
         let metadata = plugin.metadata();
-        
+
         assert_eq!(metadata.name, "mock-chart");
         assert_eq!(metadata.version, "1.0.0");
         assert_eq!(metadata.security_level, SecurityLevel::Sandboxed);
@@ -885,8 +969,10 @@ mod tests {
     fn test_plugin_capabilities() {
         let plugin = MockChartPlugin::new();
         let capabilities = &plugin.metadata().capabilities;
-        
-        assert!(capabilities.capabilities.contains(&PluginCapability::ChartRendering));
+
+        assert!(capabilities
+            .capabilities
+            .contains(&PluginCapability::ChartRendering));
         assert_eq!(capabilities.max_data_points, Some(10000));
         assert!(capabilities.supported_formats.contains(&"svg".to_string()));
     }
@@ -894,7 +980,7 @@ mod tests {
     #[test]
     fn test_system_info() {
         let system_info = SystemInfo::current();
-        
+
         assert!(!system_info.helios_version.is_empty());
         assert!(!system_info.platform.is_empty());
     }
@@ -904,13 +990,13 @@ mod tests {
         let mut registry = PluginRegistry::new();
         let plugin = MockChartPlugin::new();
         let metadata = plugin.metadata().clone();
-        
+
         registry.register(metadata.clone(), || Box::new(MockChartPlugin::new()));
-        
+
         let plugins = registry.list_plugins();
         assert_eq!(plugins.len(), 1);
         assert_eq!(plugins[0].name, "mock-chart");
-        
+
         let factory = registry.get_factory("mock-chart");
         assert!(factory.is_some());
     }
@@ -920,7 +1006,7 @@ mod tests {
         let success_result = RenderResult::success();
         assert!(success_result.success);
         assert!(success_result.error.is_none());
-        
+
         let error_result = RenderResult::error("Test error".to_string());
         assert!(!error_result.success);
         assert_eq!(error_result.error, Some("Test error".to_string()));
@@ -933,7 +1019,7 @@ mod tests {
             estimated_memory_mb: 50,
             complexity_score: 2.5,
         };
-        
+
         assert_eq!(estimate.estimated_time_ms, 100);
         assert_eq!(estimate.estimated_memory_mb, 50);
         assert_eq!(estimate.complexity_score, 2.5);

@@ -103,9 +103,9 @@ impl MLForecaster {
         }
 
         // Check for extreme values in the series
-        let has_extreme_values = series.iter().any(|point| {
-            !point.value.is_finite() || point.value.abs() > 1e10
-        });
+        let has_extreme_values = series
+            .iter()
+            .any(|point| !point.value.is_finite() || point.value.abs() > 1e10);
 
         if has_extreme_values {
             // For extreme values, return simple constant predictions

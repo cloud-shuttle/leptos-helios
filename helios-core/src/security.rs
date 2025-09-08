@@ -334,10 +334,10 @@ impl AuthProvider for OAuth2Provider {
         // Mock refresh token implementation
         let new_access_token = format!("refreshed_access_token_{}", refresh_token);
         let new_refresh_token = format!("refreshed_refresh_token_{}", refresh_token);
-        
+
         // Get user info with new token
         let user = self.get_user_info(&new_access_token).await?;
-        
+
         // Cache new token
         let expires_at = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -839,7 +839,7 @@ impl AuthorizationProvider for RBACProvider {
     ) -> Result<bool, SecurityError> {
         // Check user permissions from roles
         let user_permissions = self.get_user_permissions(&user.id).await;
-        
+
         // Also check direct permissions on the user object
         let mut all_permissions = user_permissions;
         all_permissions.extend(user.permissions.clone());
@@ -965,10 +965,15 @@ impl RBACProvider {
     }
 }
 
-/// Audit logging system
+/// Comprehensive audit logging system
 pub struct AuditLogger {
     log_storage: Arc<Mutex<Vec<AuditEvent>>>,
     enabled: bool,
+    retention_days: u32,
+    max_log_size: usize,
+    real_time_alerts: bool,
+    alert_thresholds: HashMap<AuditEventType, u32>,
+    export_formats: Vec<String>,
 }
 
 /// Audit event for security logging
@@ -987,7 +992,7 @@ pub struct AuditEvent {
     pub details: HashMap<String, serde_json::Value>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AuditEventType {
     Authentication,
     Authorization,
@@ -995,22 +1000,69 @@ pub enum AuditEventType {
     SystemChange,
     Export,
     SecurityViolation,
+    DataGovernance,
+    Performance,
+    Error,
+    Configuration,
     Custom(String),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum AuditResult {
     Success,
     Failure,
     Warning,
 }
 
+/// Audit statistics for reporting and analysis
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuditStatistics {
+    pub total_events: usize,
+    pub events_by_type: HashMap<AuditEventType, usize>,
+    pub events_by_result: HashMap<AuditResult, usize>,
+    pub events_by_hour: HashMap<u64, usize>,
+    pub unique_users: HashSet<String>,
+    pub security_violations: usize,
+    pub failed_authentications: usize,
+}
+
 impl AuditLogger {
     pub fn new(enabled: bool) -> Self {
+        let mut alert_thresholds = HashMap::new();
+        alert_thresholds.insert(AuditEventType::SecurityViolation, 5);
+        alert_thresholds.insert(AuditEventType::Authentication, 10);
+        alert_thresholds.insert(AuditEventType::Authorization, 20);
+        alert_thresholds.insert(AuditEventType::DataAccess, 50);
+
         Self {
             log_storage: Arc::new(Mutex::new(Vec::new())),
             enabled,
+            retention_days: 90,
+            max_log_size: 100_000,
+            real_time_alerts: true,
+            alert_thresholds,
+            export_formats: vec!["json".to_string(), "csv".to_string(), "xml".to_string()],
         }
+    }
+
+    pub fn with_retention_days(mut self, days: u32) -> Self {
+        self.retention_days = days;
+        self
+    }
+
+    pub fn with_max_log_size(mut self, size: usize) -> Self {
+        self.max_log_size = size;
+        self
+    }
+
+    pub fn with_real_time_alerts(mut self, enabled: bool) -> Self {
+        self.real_time_alerts = enabled;
+        self
+    }
+
+    pub fn with_alert_threshold(mut self, event_type: AuditEventType, threshold: u32) -> Self {
+        self.alert_thresholds.insert(event_type, threshold);
+        self
     }
 
     pub async fn log_event(&self, event: AuditEvent) -> Result<(), SecurityError> {
@@ -1019,9 +1071,46 @@ impl AuditLogger {
         }
 
         let mut storage = self.log_storage.lock().await;
-        storage.push(event);
 
-        // In production, would write to persistent storage
+        // Check log size limits
+        if storage.len() >= self.max_log_size {
+            // Remove oldest entries (keep last 90% of max size)
+            let keep_count = (self.max_log_size as f64 * 0.9) as usize;
+            let current_len = storage.len();
+            if current_len > keep_count {
+                storage.drain(0..current_len - keep_count);
+            }
+        }
+
+        storage.push(event.clone());
+
+        // Check for real-time alerts
+        if self.real_time_alerts {
+            self.check_alert_thresholds(&event).await?;
+        }
+
+        // In production, would write to persistent storage (database, file, etc.)
+        Ok(())
+    }
+
+    async fn check_alert_thresholds(&self, event: &AuditEvent) -> Result<(), SecurityError> {
+        if let Some(threshold) = self.alert_thresholds.get(&event.event_type) {
+            let storage = self.log_storage.lock().await;
+            let recent_count = storage
+                .iter()
+                .rev()
+                .take(100) // Check last 100 events
+                .filter(|e| e.event_type == event.event_type)
+                .count();
+
+            if recent_count >= *threshold as usize {
+                // In production, would send alert (email, webhook, etc.)
+                eprintln!(
+                    "ALERT: {} events of type {:?} detected in recent activity",
+                    recent_count, event.event_type
+                );
+            }
+        }
         Ok(())
     }
 
@@ -1086,6 +1175,124 @@ impl AuditLogger {
         self.log_event(event).await
     }
 
+    pub async fn log_data_access(
+        &self,
+        user_id: &str,
+        resource: Resource,
+        action: Action,
+        success: bool,
+        data_classification: Option<DataClassification>,
+    ) -> Result<(), SecurityError> {
+        let mut details = HashMap::new();
+        if let Some(classification) = data_classification {
+            details.insert(
+                "data_classification".to_string(),
+                serde_json::Value::String(format!("{:?}", classification)),
+            );
+        }
+
+        let event = AuditEvent {
+            id: uuid::Uuid::new_v4().to_string(),
+            timestamp: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            event_type: AuditEventType::DataAccess,
+            user_id: Some(user_id.to_string()),
+            session_id: None,
+            resource: Some(resource),
+            action: Some(action),
+            result: if success {
+                AuditResult::Success
+            } else {
+                AuditResult::Failure
+            },
+            ip_address: None,
+            user_agent: None,
+            details,
+        };
+
+        self.log_event(event).await
+    }
+
+    pub async fn log_performance_event(
+        &self,
+        operation: &str,
+        duration_ms: u64,
+        success: bool,
+        metadata: HashMap<String, serde_json::Value>,
+    ) -> Result<(), SecurityError> {
+        let mut details = metadata;
+        details.insert(
+            "operation".to_string(),
+            serde_json::Value::String(operation.to_string()),
+        );
+        details.insert(
+            "duration_ms".to_string(),
+            serde_json::Value::Number(duration_ms.into()),
+        );
+
+        let event = AuditEvent {
+            id: uuid::Uuid::new_v4().to_string(),
+            timestamp: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            event_type: AuditEventType::Performance,
+            user_id: None,
+            session_id: None,
+            resource: None,
+            action: None,
+            result: if success {
+                AuditResult::Success
+            } else {
+                AuditResult::Failure
+            },
+            ip_address: None,
+            user_agent: None,
+            details,
+        };
+
+        self.log_event(event).await
+    }
+
+    pub async fn log_security_violation(
+        &self,
+        user_id: Option<String>,
+        violation_type: &str,
+        severity: &str,
+        details: HashMap<String, serde_json::Value>,
+    ) -> Result<(), SecurityError> {
+        let mut event_details = details;
+        event_details.insert(
+            "violation_type".to_string(),
+            serde_json::Value::String(violation_type.to_string()),
+        );
+        event_details.insert(
+            "severity".to_string(),
+            serde_json::Value::String(severity.to_string()),
+        );
+
+        let event = AuditEvent {
+            id: uuid::Uuid::new_v4().to_string(),
+            timestamp: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            event_type: AuditEventType::SecurityViolation,
+            user_id,
+            session_id: None,
+            resource: None,
+            action: None,
+            result: AuditResult::Failure,
+            ip_address: None,
+            user_agent: None,
+            details: event_details,
+        };
+
+        self.log_event(event).await
+    }
+
     pub async fn get_audit_logs(
         &self,
         limit: Option<usize>,
@@ -1098,12 +1305,182 @@ impl AuditLogger {
         };
         Ok(logs)
     }
+
+    pub async fn get_audit_logs_by_type(
+        &self,
+        event_type: &AuditEventType,
+        limit: Option<usize>,
+    ) -> Result<Vec<AuditEvent>, SecurityError> {
+        let storage = self.log_storage.lock().await;
+        let mut filtered_logs: Vec<AuditEvent> = storage
+            .iter()
+            .rev()
+            .filter(|event| event.event_type == *event_type)
+            .cloned()
+            .collect();
+
+        if let Some(limit) = limit {
+            filtered_logs.truncate(limit);
+        }
+
+        Ok(filtered_logs)
+    }
+
+    pub async fn get_audit_logs_by_user(
+        &self,
+        user_id: &str,
+        limit: Option<usize>,
+    ) -> Result<Vec<AuditEvent>, SecurityError> {
+        let storage = self.log_storage.lock().await;
+        let mut filtered_logs: Vec<AuditEvent> = storage
+            .iter()
+            .rev()
+            .filter(|event| event.user_id.as_ref().map_or(false, |id| id == user_id))
+            .cloned()
+            .collect();
+
+        if let Some(limit) = limit {
+            filtered_logs.truncate(limit);
+        }
+
+        Ok(filtered_logs)
+    }
+
+    pub async fn export_audit_logs(
+        &self,
+        format: &str,
+        start_time: Option<u64>,
+        end_time: Option<u64>,
+    ) -> Result<String, SecurityError> {
+        let storage = self.log_storage.lock().await;
+        let mut logs: Vec<&AuditEvent> = storage.iter().collect();
+
+        // Filter by time range if provided
+        if let Some(start) = start_time {
+            logs.retain(|event| event.timestamp >= start);
+        }
+        if let Some(end) = end_time {
+            logs.retain(|event| event.timestamp <= end);
+        }
+
+        match format {
+            "json" => serde_json::to_string(&logs)
+                .map_err(|e| SecurityError::AuditError(format!("JSON export failed: {}", e))),
+            "csv" => {
+                let mut csv = String::from("id,timestamp,event_type,user_id,result,ip_address\n");
+                for event in logs {
+                    csv.push_str(&format!(
+                        "{},{},{:?},{},{:?},{}\n",
+                        event.id,
+                        event.timestamp,
+                        event.event_type,
+                        event.user_id.as_deref().unwrap_or(""),
+                        event.result,
+                        event.ip_address.as_deref().unwrap_or("")
+                    ));
+                }
+                Ok(csv)
+            }
+            "xml" => {
+                let mut xml =
+                    String::from("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<audit_logs>\n");
+                for event in logs {
+                    xml.push_str(&format!(
+                        "  <event id=\"{}\" timestamp=\"{}\" type=\"{:?}\" result=\"{:?}\">\n",
+                        event.id, event.timestamp, event.event_type, event.result
+                    ));
+                    if let Some(user_id) = &event.user_id {
+                        xml.push_str(&format!("    <user_id>{}</user_id>\n", user_id));
+                    }
+                    if let Some(ip) = &event.ip_address {
+                        xml.push_str(&format!("    <ip_address>{}</ip_address>\n", ip));
+                    }
+                    xml.push_str("  </event>\n");
+                }
+                xml.push_str("</audit_logs>");
+                Ok(xml)
+            }
+            _ => Err(SecurityError::AuditError(format!(
+                "Unsupported export format: {}",
+                format
+            ))),
+        }
+    }
+
+    pub async fn cleanup_old_logs(&self) -> Result<usize, SecurityError> {
+        let cutoff_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs()
+            - (self.retention_days as u64 * 24 * 60 * 60);
+
+        let mut storage = self.log_storage.lock().await;
+        let initial_count = storage.len();
+        storage.retain(|event| event.timestamp >= cutoff_time);
+        let removed_count = initial_count - storage.len();
+
+        Ok(removed_count)
+    }
+
+    pub async fn get_audit_statistics(&self) -> Result<AuditStatistics, SecurityError> {
+        let storage = self.log_storage.lock().await;
+        let mut stats = AuditStatistics {
+            total_events: storage.len(),
+            events_by_type: HashMap::new(),
+            events_by_result: HashMap::new(),
+            events_by_hour: HashMap::new(),
+            unique_users: HashSet::new(),
+            security_violations: 0,
+            failed_authentications: 0,
+        };
+
+        for event in storage.iter() {
+            // Count by event type
+            *stats
+                .events_by_type
+                .entry(event.event_type.clone())
+                .or_insert(0) += 1;
+
+            // Count by result
+            *stats
+                .events_by_result
+                .entry(event.result.clone())
+                .or_insert(0) += 1;
+
+            // Count by hour
+            let hour = (event.timestamp / 3600) % 24;
+            *stats.events_by_hour.entry(hour).or_insert(0) += 1;
+
+            // Track unique users
+            if let Some(user_id) = &event.user_id {
+                stats.unique_users.insert(user_id.clone());
+            }
+
+            // Count security violations
+            if matches!(event.event_type, AuditEventType::SecurityViolation) {
+                stats.security_violations += 1;
+            }
+
+            // Count failed authentications
+            if matches!(event.event_type, AuditEventType::Authentication)
+                && matches!(event.result, AuditResult::Failure)
+            {
+                stats.failed_authentications += 1;
+            }
+        }
+
+        Ok(stats)
+    }
 }
 
-/// Data governance and classification system
+/// Comprehensive data governance and classification system
 pub struct DataGovernance {
     classifications: Arc<RwLock<HashMap<String, DataClassification>>>,
     policies: Arc<RwLock<Vec<DataPolicy>>>,
+    data_lineage: Arc<RwLock<HashMap<String, DataLineage>>>,
+    privacy_rules: Arc<RwLock<Vec<PrivacyRule>>>,
+    compliance_frameworks: Arc<RwLock<Vec<ComplianceFramework>>>,
+    risk_assessments: Arc<RwLock<HashMap<String, RiskAssessment>>>,
 }
 
 /// Data sensitivity classification
@@ -1126,6 +1503,209 @@ pub struct DataPolicy {
     pub geographic_restrictions: Vec<String>,
     pub allowed_exports: Vec<String>,
     pub required_approvals: Vec<String>,
+    pub encryption_required: bool,
+    pub anonymization_required: bool,
+    pub access_controls: Vec<String>,
+    pub audit_required: bool,
+}
+
+/// Data lineage tracking
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DataLineage {
+    pub data_id: String,
+    pub source: String,
+    pub transformations: Vec<DataTransformation>,
+    pub dependencies: Vec<String>,
+    pub created_at: u64,
+    pub last_modified: u64,
+    pub version: String,
+}
+
+/// Data transformation record
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DataTransformation {
+    pub id: String,
+    pub operation: String,
+    pub parameters: HashMap<String, serde_json::Value>,
+    pub timestamp: u64,
+    pub user_id: String,
+    pub impact_level: TransformationImpact,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum TransformationImpact {
+    Low,
+    Medium,
+    High,
+    Critical,
+}
+
+/// Privacy rule for data protection
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PrivacyRule {
+    pub id: String,
+    pub name: String,
+    pub rule_type: PrivacyRuleType,
+    pub conditions: Vec<PrivacyCondition>,
+    pub actions: Vec<PrivacyAction>,
+    pub jurisdiction: String,
+    pub framework: String, // GDPR, CCPA, etc.
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum PrivacyRuleType {
+    DataMinimization,
+    PurposeLimitation,
+    StorageLimitation,
+    ConsentManagement,
+    RightToErasure,
+    DataPortability,
+    Anonymization,
+    Pseudonymization,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PrivacyCondition {
+    pub field: String,
+    pub operator: ConditionOperator,
+    pub value: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum PrivacyAction {
+    Block,
+    Anonymize,
+    Encrypt,
+    RequireConsent,
+    LogAccess,
+    NotifyDataOwner,
+    AutoDelete,
+}
+
+/// Compliance framework
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComplianceFramework {
+    pub id: String,
+    pub name: String,
+    pub version: String,
+    pub jurisdiction: String,
+    pub requirements: Vec<ComplianceRequirement>,
+    pub controls: Vec<ComplianceControl>,
+    pub assessment_criteria: Vec<AssessmentCriteria>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComplianceRequirement {
+    pub id: String,
+    pub title: String,
+    pub description: String,
+    pub category: String,
+    pub mandatory: bool,
+    pub evidence_required: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComplianceControl {
+    pub id: String,
+    pub requirement_id: String,
+    pub name: String,
+    pub control_type: ControlType,
+    pub implementation: String,
+    pub frequency: AssessmentFrequency,
+    pub owner: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ControlType {
+    Preventive,
+    Detective,
+    Corrective,
+    Compensating,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum AssessmentFrequency {
+    Continuous,
+    Daily,
+    Weekly,
+    Monthly,
+    Quarterly,
+    Annually,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssessmentCriteria {
+    pub id: String,
+    pub control_id: String,
+    pub criteria: String,
+    pub measurement_method: String,
+    pub target_value: serde_json::Value,
+    pub acceptable_deviation: f64,
+}
+
+/// Risk assessment for data
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskAssessment {
+    pub data_id: String,
+    pub assessment_date: u64,
+    pub risk_level: RiskLevel,
+    pub identified_risks: Vec<IdentifiedRisk>,
+    pub mitigation_measures: Vec<MitigationMeasure>,
+    pub residual_risk: RiskLevel,
+    pub next_assessment: u64,
+    pub assessor: String,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum RiskLevel {
+    Low,
+    Medium,
+    High,
+    Critical,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IdentifiedRisk {
+    pub id: String,
+    pub risk_type: RiskType,
+    pub description: String,
+    pub likelihood: RiskLevel,
+    pub impact: RiskLevel,
+    pub inherent_risk: RiskLevel,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum RiskType {
+    DataBreach,
+    UnauthorizedAccess,
+    DataLoss,
+    ComplianceViolation,
+    PrivacyViolation,
+    DataCorruption,
+    SystemFailure,
+    InsiderThreat,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MitigationMeasure {
+    pub id: String,
+    pub risk_id: String,
+    pub measure: String,
+    pub implementation_status: ImplementationStatus,
+    pub effectiveness: f64,
+    pub cost: Option<f64>,
+    pub owner: String,
+    pub due_date: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ImplementationStatus {
+    Planned,
+    InProgress,
+    Implemented,
+    Tested,
+    Validated,
+    NotApplicable,
 }
 
 impl DataGovernance {
@@ -1133,6 +1713,10 @@ impl DataGovernance {
         Self {
             classifications: Arc::new(RwLock::new(HashMap::new())),
             policies: Arc::new(RwLock::new(Vec::new())),
+            data_lineage: Arc::new(RwLock::new(HashMap::new())),
+            privacy_rules: Arc::new(RwLock::new(Vec::new())),
+            compliance_frameworks: Arc::new(RwLock::new(Vec::new())),
+            risk_assessments: Arc::new(RwLock::new(HashMap::new())),
         }
     }
 
@@ -1176,12 +1760,310 @@ impl DataGovernance {
                             )));
                         }
                     }
+
+                    // Check encryption requirements
+                    if policy.encryption_required && !self.is_encrypted_export(export_format) {
+                        return Err(SecurityError::DataGovernanceViolation(format!(
+                            "Encryption required for {} data exports",
+                            format!("{:?}", classification)
+                        )));
+                    }
+
+                    // Check anonymization requirements
+                    if policy.anonymization_required && !self.is_anonymized_export(export_format) {
+                        return Err(SecurityError::DataGovernanceViolation(format!(
+                            "Anonymization required for {} data exports",
+                            format!("{:?}", classification)
+                        )));
+                    }
                 }
             }
         }
 
         Ok(true)
     }
+
+    pub async fn add_data_policy(&self, policy: DataPolicy) -> Result<(), SecurityError> {
+        let mut policies = self.policies.write().await;
+        policies.push(policy);
+        Ok(())
+    }
+
+    pub async fn get_data_policies(&self) -> Result<Vec<DataPolicy>, SecurityError> {
+        let policies = self.policies.read().await;
+        Ok(policies.clone())
+    }
+
+    pub async fn track_data_lineage(
+        &self,
+        data_id: String,
+        source: String,
+        transformation: DataTransformation,
+    ) -> Result<(), SecurityError> {
+        let mut lineage_map = self.data_lineage.write().await;
+
+        let lineage = lineage_map.entry(data_id.clone()).or_insert(DataLineage {
+            data_id: data_id.clone(),
+            source: source.clone(),
+            transformations: Vec::new(),
+            dependencies: Vec::new(),
+            created_at: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            last_modified: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            version: "1.0".to_string(),
+        });
+
+        lineage.transformations.push(transformation);
+        lineage.last_modified = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+
+        Ok(())
+    }
+
+    pub async fn get_data_lineage(
+        &self,
+        data_id: &str,
+    ) -> Result<Option<DataLineage>, SecurityError> {
+        let lineage_map = self.data_lineage.read().await;
+        Ok(lineage_map.get(data_id).cloned())
+    }
+
+    pub async fn add_privacy_rule(&self, rule: PrivacyRule) -> Result<(), SecurityError> {
+        let mut rules = self.privacy_rules.write().await;
+        rules.push(rule);
+        Ok(())
+    }
+
+    pub async fn evaluate_privacy_rules(
+        &self,
+        data_classification: &DataClassification,
+        user: &User,
+        action: &str,
+    ) -> Result<Vec<PrivacyAction>, SecurityError> {
+        let rules = self.privacy_rules.read().await;
+        let mut applicable_actions = Vec::new();
+
+        for rule in rules.iter() {
+            if self.privacy_rule_applies(rule, data_classification, user, action) {
+                applicable_actions.extend(rule.actions.clone());
+            }
+        }
+
+        Ok(applicable_actions)
+    }
+
+    fn privacy_rule_applies(
+        &self,
+        rule: &PrivacyRule,
+        _classification: &DataClassification,
+        _user: &User,
+        _action: &str,
+    ) -> bool {
+        // Simplified rule evaluation - in production would implement full condition logic
+        match rule.rule_type {
+            PrivacyRuleType::DataMinimization => true,
+            PrivacyRuleType::PurposeLimitation => true,
+            PrivacyRuleType::StorageLimitation => true,
+            _ => false,
+        }
+    }
+
+    pub async fn add_compliance_framework(
+        &self,
+        framework: ComplianceFramework,
+    ) -> Result<(), SecurityError> {
+        let mut frameworks = self.compliance_frameworks.write().await;
+        frameworks.push(framework);
+        Ok(())
+    }
+
+    pub async fn assess_compliance(
+        &self,
+        framework_id: &str,
+        data_id: &str,
+    ) -> Result<ComplianceAssessment, SecurityError> {
+        let frameworks = self.compliance_frameworks.read().await;
+        let framework = frameworks
+            .iter()
+            .find(|f| f.id == framework_id)
+            .ok_or_else(|| {
+                SecurityError::DataGovernanceViolation("Framework not found".to_string())
+            })?;
+
+        let mut assessment = ComplianceAssessment {
+            framework_id: framework_id.to_string(),
+            data_id: data_id.to_string(),
+            assessment_date: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            overall_compliance: ComplianceLevel::Compliant,
+            requirement_assessments: Vec::new(),
+            gaps: Vec::new(),
+            recommendations: Vec::new(),
+        };
+
+        // Assess each requirement
+        for requirement in &framework.requirements {
+            let req_assessment = RequirementAssessment {
+                requirement_id: requirement.id.clone(),
+                status: if requirement.mandatory {
+                    ComplianceStatus::Compliant
+                } else {
+                    ComplianceStatus::NotApplicable
+                },
+                evidence: Vec::new(),
+                notes: "Mock assessment".to_string(),
+            };
+            assessment.requirement_assessments.push(req_assessment);
+        }
+
+        Ok(assessment)
+    }
+
+    pub async fn conduct_risk_assessment(
+        &self,
+        data_id: String,
+        assessor: String,
+    ) -> Result<RiskAssessment, SecurityError> {
+        let classification = self
+            .classifications
+            .read()
+            .await
+            .get(&data_id)
+            .cloned()
+            .unwrap_or(DataClassification::Internal);
+
+        let risk_level = match classification {
+            DataClassification::Public => RiskLevel::Low,
+            DataClassification::Internal => RiskLevel::Medium,
+            DataClassification::Confidential => RiskLevel::High,
+            DataClassification::Restricted => RiskLevel::High,
+            DataClassification::TopSecret => RiskLevel::Critical,
+        };
+
+        let assessment = RiskAssessment {
+            data_id: data_id.clone(),
+            assessment_date: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            risk_level: risk_level.clone(),
+            identified_risks: vec![IdentifiedRisk {
+                id: "risk_1".to_string(),
+                risk_type: RiskType::DataBreach,
+                description: "Potential unauthorized access to sensitive data".to_string(),
+                likelihood: RiskLevel::Medium,
+                impact: risk_level,
+                inherent_risk: risk_level,
+            }],
+            mitigation_measures: vec![MitigationMeasure {
+                id: "mit_1".to_string(),
+                risk_id: "risk_1".to_string(),
+                measure: "Implement encryption at rest and in transit".to_string(),
+                implementation_status: ImplementationStatus::Implemented,
+                effectiveness: 0.8,
+                cost: Some(10000.0),
+                owner: "Security Team".to_string(),
+                due_date: None,
+            }],
+            residual_risk: RiskLevel::Low,
+            next_assessment: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs()
+                + (365 * 24 * 60 * 60), // 1 year from now
+            assessor,
+        };
+
+        let mut assessments = self.risk_assessments.write().await;
+        assessments.insert(data_id, assessment.clone());
+
+        Ok(assessment)
+    }
+
+    pub async fn get_risk_assessment(
+        &self,
+        data_id: &str,
+    ) -> Result<Option<RiskAssessment>, SecurityError> {
+        let assessments = self.risk_assessments.read().await;
+        Ok(assessments.get(data_id).cloned())
+    }
+
+    fn is_encrypted_export(&self, format: &str) -> bool {
+        matches!(
+            format,
+            "encrypted_pdf" | "encrypted_excel" | "encrypted_csv"
+        )
+    }
+
+    fn is_anonymized_export(&self, format: &str) -> bool {
+        matches!(
+            format,
+            "anonymized_csv" | "anonymized_json" | "aggregated_data"
+        )
+    }
+}
+
+/// Compliance assessment result
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComplianceAssessment {
+    pub framework_id: String,
+    pub data_id: String,
+    pub assessment_date: u64,
+    pub overall_compliance: ComplianceLevel,
+    pub requirement_assessments: Vec<RequirementAssessment>,
+    pub gaps: Vec<ComplianceGap>,
+    pub recommendations: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ComplianceLevel {
+    Compliant,
+    PartiallyCompliant,
+    NonCompliant,
+    NotApplicable,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RequirementAssessment {
+    pub requirement_id: String,
+    pub status: ComplianceStatus,
+    pub evidence: Vec<String>,
+    pub notes: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ComplianceStatus {
+    Compliant,
+    NonCompliant,
+    PartiallyCompliant,
+    NotApplicable,
+    UnderReview,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComplianceGap {
+    pub requirement_id: String,
+    pub gap_description: String,
+    pub severity: GapSeverity,
+    pub remediation_plan: String,
+    pub target_date: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum GapSeverity {
+    Low,
+    Medium,
+    High,
+    Critical,
 }
 
 /// Main security configuration

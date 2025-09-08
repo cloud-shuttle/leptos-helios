@@ -973,7 +973,10 @@ mod tests {
     #[tokio::test]
     async fn test_wcag_compliance_validation() {
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Bar { width: None, corner_radius: None };
+        spec.mark = MarkType::Bar {
+            width: None,
+            corner_radius: None,
+        };
         let data = df! {
             "category" => ["A", "B", "C"],
             "value" => [10, 20, 15],
@@ -994,7 +997,11 @@ mod tests {
     #[test]
     fn test_alt_text_generation() {
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Line { interpolate: None, stroke_width: None, stroke_dash: None };
+        spec.mark = MarkType::Line {
+            interpolate: None,
+            stroke_width: None,
+            stroke_dash: None,
+        };
         let data = df! {
             "date" => ["2023-01", "2023-02", "2023-03"],
             "revenue" => [100, 120, 110],
@@ -1015,7 +1022,11 @@ mod tests {
     #[test]
     fn test_data_table_creation() {
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Point { size: None, shape: None, opacity: None };
+        spec.mark = MarkType::Point {
+            size: None,
+            shape: None,
+            opacity: None,
+        };
         let data = df! {
             "x" => [1, 2, 3],
             "y" => [10, 20, 15],
@@ -1037,7 +1048,10 @@ mod tests {
     #[test]
     fn test_keyboard_navigation_map() {
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Bar { width: None, corner_radius: None };
+        spec.mark = MarkType::Bar {
+            width: None,
+            corner_radius: None,
+        };
         let config = AccessibilityConfig::default();
         let perf_config = PerformanceConfig::default();
         let system = AccessibilitySystem::new(config, perf_config);
@@ -1053,7 +1067,10 @@ mod tests {
     #[test]
     fn test_accessibility_html_generation() {
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Area { interpolate: None, opacity: None };
+        spec.mark = MarkType::Area {
+            interpolate: None,
+            opacity: None,
+        };
         let data = df! {
             "time" => [1, 2, 3, 4],
             "value" => [10, 15, 12, 18],
@@ -1093,7 +1110,11 @@ mod tests {
     #[test]
     fn test_compliance_violations() {
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Point { size: None, shape: None, opacity: None };
+        spec.mark = MarkType::Point {
+            size: None,
+            shape: None,
+            opacity: None,
+        };
         let data = df! {
             "x" => [1, 2],
             "y" => [1, 2],
@@ -1138,7 +1159,11 @@ mod tests {
         config.color_vision.minimum_contrast_ratio = 3.0; // Below WCAG AA standard
 
         let mut spec = ChartSpec::new();
-        spec.mark = MarkType::Point { size: None, shape: None, opacity: None };
+        spec.mark = MarkType::Point {
+            size: None,
+            shape: None,
+            opacity: None,
+        };
         let data = df! { "x" => [1], "y" => [1] }.unwrap();
         let perf_config = PerformanceConfig::default();
         let system = AccessibilitySystem::new(config, perf_config);
