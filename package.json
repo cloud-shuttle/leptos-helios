@@ -17,10 +17,18 @@
     "build:node": "wasm-pack build --target nodejs --out-dir pkg",
     "test": "cargo test",
     "test:wasm": "wasm-pack test --headless --firefox",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "pnpm run test && pnpm run test:wasm && pnpm run test:e2e",
     "lint": "cargo clippy --all-targets --all-features -- -D warnings",
     "fmt": "cargo fmt --all",
     "docs": "cargo doc --no-deps --open",
-    "clean": "cargo clean && rm -rf helios-wasm-core/pkg helios-wasm/pkg"
+    "clean": "cargo clean && rm -rf helios-wasm-core/pkg helios-wasm/pkg",
+    "install:playwright": "pnpm exec playwright install",
+    "install": "pnpm install",
+    "dev": "python3 demo-server.py"
   },
   "keywords": [
     "rust",
@@ -43,14 +51,13 @@
   },
   "homepage": "https://github.com/your-org/leptos-helios#readme",
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
     "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "webpack": "^5.88.0",
     "webpack-cli": "^5.1.0",
     "webpack-dev-server": "^4.15.0"
   },
-  "dependencies": {
-    "leptos": "^0.8.0"
-  },
+  "dependencies": {},
   "engines": {
     "node": ">=16.0.0"
   },
