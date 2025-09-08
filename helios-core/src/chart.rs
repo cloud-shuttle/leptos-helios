@@ -81,6 +81,13 @@ impl ChartSpec {
             MarkType::Sankey { .. } => 4.0,
             MarkType::Treemap { .. } => 3.0,
             MarkType::Composite(ref marks) => marks.iter().map(|m| m.complexity()).sum(),
+            // Phase 3 Advanced Chart Types
+            MarkType::Point3D { .. } => 4.0,
+            MarkType::Surface3D { .. } => 5.0,
+            MarkType::Choropleth { .. } => 3.5,
+            MarkType::NetworkGraph { .. } => 4.5,
+            MarkType::DotMap { .. } => 3.0,
+            MarkType::FlowMap { .. } => 4.0,
         };
 
         let encoding_complexity = self.encoding.complexity();
@@ -304,6 +311,51 @@ pub enum MarkType {
 
     /// Composite marks
     Composite(Vec<MarkType>),
+
+    // Phase 3 Advanced Chart Types
+    /// 3D Point marks for 3D scatter plots
+    Point3D {
+        size: Option<f32>,
+        shape: Option<Point3DShape>,
+        opacity: Option<f32>,
+        z_index: Option<f32>,
+    },
+
+    /// 3D Surface plot for continuous 3D data
+    Surface3D {
+        opacity: Option<f32>,
+        color_scheme: Option<String>,
+        wireframe: Option<bool>,
+    },
+
+    /// Geographic choropleth maps
+    Choropleth {
+        projection: Option<MapProjection>,
+        stroke_width: Option<f32>,
+        stroke_color: Option<crate::Color>,
+    },
+
+    /// Network graph with force-directed layout
+    NetworkGraph {
+        node_size: Option<f32>,
+        edge_width: Option<f32>,
+        layout_algorithm: Option<NetworkLayout>,
+        physics_enabled: Option<bool>,
+    },
+
+    /// Dot density map for geographic data
+    DotMap {
+        dot_size: Option<f32>,
+        density_scale: Option<f32>,
+        clustering: Option<bool>,
+    },
+
+    /// Flow map for movement data
+    FlowMap {
+        arrow_size: Option<f32>,
+        curve_tension: Option<f32>,
+        animation: Option<bool>,
+    },
 }
 
 impl MarkType {
@@ -326,6 +378,13 @@ impl MarkType {
             MarkType::Sankey { .. } => 4.0,
             MarkType::Treemap { .. } => 3.0,
             MarkType::Composite(marks) => marks.iter().map(|m| m.complexity()).sum(),
+            // Phase 3 Advanced Chart Types
+            MarkType::Point3D { .. } => 4.0,
+            MarkType::Surface3D { .. } => 5.0,
+            MarkType::Choropleth { .. } => 3.5,
+            MarkType::NetworkGraph { .. } => 4.5,
+            MarkType::DotMap { .. } => 3.0,
+            MarkType::FlowMap { .. } => 4.0,
         }
     }
 }
@@ -380,6 +439,36 @@ pub enum KernelType {
     Cosine,
 }
 
+// Phase 3 Advanced Chart Type Support
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum Point3DShape {
+    Sphere,
+    Cube,
+    Pyramid,
+    Cylinder,
+    Octahedron,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum MapProjection {
+    Mercator,
+    Albers,
+    Equirectangular,
+    Robinson,
+    Stereographic,
+    OrthographicAzimuth,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum NetworkLayout {
+    ForceDirected,
+    Hierarchical,
+    Circular,
+    Grid,
+    Random,
+    SpringEmbedder,
+}
+
 /// Maps data fields to visual properties
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Encoding {
@@ -395,6 +484,11 @@ pub struct Encoding {
     pub detail: Option<DetailEncoding>,
     pub order: Option<OrderEncoding>,
     pub facet: Option<FacetEncoding>,
+    // Phase 3 Advanced Encodings
+    pub z: Option<PositionEncoding>,
+    pub geographic_region: Option<GeographicEncoding>,
+    pub source: Option<NetworkEncoding>,
+    pub target: Option<NetworkEncoding>,
 }
 
 impl Encoding {
@@ -588,6 +682,22 @@ pub struct FacetEncoding {
     pub data_type: DataType,
     pub columns: Option<u32>,
     pub rows: Option<u32>,
+}
+
+// Phase 3 Advanced Encoding Types
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GeographicEncoding {
+    pub field: String,
+    pub data_type: DataType,
+    pub projection: Option<MapProjection>,
+    pub scale: Option<Scale>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct NetworkEncoding {
+    pub field: String,
+    pub data_type: DataType,
+    pub scale: Option<Scale>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

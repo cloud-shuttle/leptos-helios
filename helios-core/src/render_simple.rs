@@ -388,6 +388,13 @@ pub enum ChartType {
     Sankey,
     Treemap,
     Composite,
+    // Phase 3 Advanced Chart Types
+    Point3D,
+    Surface3D,
+    Choropleth,
+    NetworkGraph,
+    DotMap,
+    FlowMap,
 }
 
 impl ChartType {
@@ -410,6 +417,13 @@ impl ChartType {
             crate::chart::MarkType::Sankey { .. } => ChartType::Sankey,
             crate::chart::MarkType::Treemap { .. } => ChartType::Treemap,
             crate::chart::MarkType::Composite(_) => ChartType::Composite,
+            // Phase 3 Advanced Chart Types
+            crate::chart::MarkType::Point3D { .. } => ChartType::Point3D,
+            crate::chart::MarkType::Surface3D { .. } => ChartType::Surface3D,
+            crate::chart::MarkType::Choropleth { .. } => ChartType::Choropleth,
+            crate::chart::MarkType::NetworkGraph { .. } => ChartType::NetworkGraph,
+            crate::chart::MarkType::DotMap { .. } => ChartType::DotMap,
+            crate::chart::MarkType::FlowMap { .. } => ChartType::FlowMap,
         }
     }
 }
@@ -557,6 +571,13 @@ impl RenderPipeline {
             ChartType::Sankey => include_str!("shaders/sankey.wgsl"),
             ChartType::Treemap => include_str!("shaders/treemap.wgsl"),
             ChartType::Composite => include_str!("shaders/composite.wgsl"),
+            // Phase 3 Advanced Chart Types - using basic shaders for now
+            ChartType::Point3D => include_str!("shaders/point.wgsl"),
+            ChartType::Surface3D => include_str!("shaders/area.wgsl"),
+            ChartType::Choropleth => include_str!("shaders/area.wgsl"),
+            ChartType::NetworkGraph => include_str!("shaders/line.wgsl"),
+            ChartType::DotMap => include_str!("shaders/point.wgsl"),
+            ChartType::FlowMap => include_str!("shaders/line.wgsl"),
         }
     }
 
@@ -649,6 +670,13 @@ impl RenderPipeline {
             ChartType::Sankey => PrimitiveTopology::TriangleList,
             ChartType::Text => PrimitiveTopology::TriangleList,
             ChartType::Composite => PrimitiveTopology::TriangleList,
+            // Phase 3 Advanced Chart Types
+            ChartType::Point3D => PrimitiveTopology::PointList,
+            ChartType::Surface3D => PrimitiveTopology::TriangleList,
+            ChartType::Choropleth => PrimitiveTopology::TriangleList,
+            ChartType::NetworkGraph => PrimitiveTopology::LineList,
+            ChartType::DotMap => PrimitiveTopology::PointList,
+            ChartType::FlowMap => PrimitiveTopology::LineList,
         }
     }
 }
@@ -673,6 +701,13 @@ impl ChartType {
             ChartType::Sankey => "sankey",
             ChartType::Treemap => "treemap",
             ChartType::Composite => "composite",
+            // Phase 3 Advanced Chart Types
+            ChartType::Point3D => "point3d",
+            ChartType::Surface3D => "surface3d",
+            ChartType::Choropleth => "choropleth",
+            ChartType::NetworkGraph => "network",
+            ChartType::DotMap => "dotmap",
+            ChartType::FlowMap => "flowmap",
         }
     }
 }

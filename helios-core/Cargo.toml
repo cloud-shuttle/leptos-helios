@@ -25,6 +25,7 @@ js-sys = { workspace = true }
 
 # Async and networking
 tokio = { workspace = true, optional = true }
+async-trait = "0.1"
 
 # Serialization
 serde = { workspace = true }
@@ -38,6 +39,7 @@ anyhow = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
 rand = { workspace = true }
+hex = "0.4"
 num_cpus = "1.0"
 bytemuck = "1.14"
 

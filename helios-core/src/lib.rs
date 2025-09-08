@@ -14,14 +14,21 @@ pub mod chart_config;
 pub mod cross_browser;
 pub mod data_minimal;
 pub mod data_pipeline;
+pub mod data_sources;
+pub mod debugger;
+pub mod dev_server;
+pub mod export_system;
 pub mod gpu_accelerator;
 pub mod helios_chart;
 pub mod interactions;
 pub mod line_chart_renderer;
+pub mod ml_intelligence;
 pub mod performance;
 pub mod production;
+pub mod profiler;
 pub mod render_simple;
 pub mod renderer;
+pub mod security;
 pub mod streaming;
 pub mod styling;
 pub mod wasm_optimizer;
@@ -32,6 +39,7 @@ pub use data_minimal as data;
 pub use render_simple as render;
 pub mod gpu;
 pub mod intelligence;
+pub mod nl_processor;
 pub mod utils;
 
 pub use advanced_memory::*;
@@ -43,16 +51,23 @@ pub use chart_config::*;
 pub use cross_browser::*;
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use data_pipeline::{DataPipeline, GpuBuffers, PipelineError, PipelineResult};
+pub use data_sources::*;
+pub use debugger::*;
+pub use dev_server::*;
+pub use export_system::*;
 pub use gpu::*;
 pub use gpu_accelerator::*;
 pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
 pub use intelligence::*;
 pub use interactions::*;
+pub use nl_processor::*;
+pub use profiler::*;
 pub use render::*;
 pub use renderer::{
     Canvas2DRenderer, RenderStatus, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer,
     WebGpuRenderer,
 };
+pub use security::*;
 pub use streaming::*;
 pub use styling::*;
 pub use utils::*;
@@ -213,7 +228,12 @@ fn get_enabled_features() -> Vec<String> {
         "simd".to_string(),
         #[cfg(feature = "debug")]
         "debug".to_string(),
+        #[cfg(feature = "ml")]
+        "ml".to_string(),
     ];
 
     features
 }
+
+// Re-export ML intelligence components
+pub use ml_intelligence::*;
