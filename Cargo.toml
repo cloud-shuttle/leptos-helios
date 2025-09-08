@@ -63,7 +63,7 @@ tarpaulin = "0.31"           # Code coverage measurement
 cargo-mutants = "24.11"      # Mutation testing
 
 [workspace.package]
-version = "0.2.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["CloudShuttle <contact@cloudshuttle.com>"]
 license = "MIT"
