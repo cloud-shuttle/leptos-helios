@@ -2,6 +2,7 @@
 //!
 //! Following RED-GREEN-REFACTOR cycle for data processing functionality
 
+use leptos_helios::chart::DataType;
 use leptos_helios::*;
 use std::time::Duration;
 

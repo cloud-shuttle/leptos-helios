@@ -1,8 +1,9 @@
 //! Enhanced Styling Tests
 //! Tests for visual customization options and theming support
 
+use leptos_helios::export_system::ExportFormat;
+use leptos_helios::styling::Breakpoint;
 use leptos_helios::*;
-use std::collections::HashMap;
 use std::time::Duration;
 
 /// Helper function to create a base chart config

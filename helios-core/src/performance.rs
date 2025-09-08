@@ -363,7 +363,6 @@ impl PerformanceMetrics {
             self.fps = 1000.0 / self.render_time_ms;
         }
     }
-
 }
 
 /// Rendering pipeline optimizer for 100K+ points at 60fps

@@ -270,10 +270,15 @@ impl GpuAccelerationEngine {
     }
 
     /// Create optimized GPU buffer
-    pub fn create_optimized_buffer(&mut self, buffer_id: &str, size: usize) -> Result<OptimizedGpuBuffer, String> {
+    pub fn create_optimized_buffer(
+        &mut self,
+        buffer_id: &str,
+        size: usize,
+    ) -> Result<OptimizedGpuBuffer, String> {
         let used_size = (size as f64 * 0.9) as usize; // 90% efficiency
         let buffer = OptimizedGpuBuffer::new(size, used_size);
-        self.buffer_pool.insert(buffer_id.to_string(), buffer.clone());
+        self.buffer_pool
+            .insert(buffer_id.to_string(), buffer.clone());
         self.memory_usage.used_bytes += size;
         Ok(buffer)
     }
@@ -310,16 +315,18 @@ impl GpuAccelerationEngine {
     }
 
     /// Process large dataset with GPU acceleration
-    pub fn process_large_dataset(&mut self, data: &[f64], viewport_scale: f64) -> Result<PerformanceMetrics, String> {
+    pub fn process_large_dataset(
+        &mut self,
+        data: &[f64],
+        viewport_scale: f64,
+    ) -> Result<PerformanceMetrics, String> {
         let start = std::time::Instant::now();
-        
+
         // Simulate GPU processing
-        let processed_data: Vec<f64> = data.iter()
-            .map(|&x| x * viewport_scale)
-            .collect();
-        
+        let processed_data: Vec<f64> = data.iter().map(|&x| x * viewport_scale).collect();
+
         let processing_time = start.elapsed();
-        
+
         // Create performance metrics
         let metrics = PerformanceMetrics {
             render_time_ms: processing_time.as_secs_f64() * 1000.0,
@@ -333,7 +340,7 @@ impl GpuAccelerationEngine {
                 .unwrap()
                 .as_secs(),
         };
-        
+
         Ok(metrics)
     }
 }

@@ -6,7 +6,7 @@
 //! - Auto-Recommendation System
 //! - Smart Chart Suggestions
 
-use helios_core::*;
+use leptos_helios::*;
 use polars::prelude::*;
 use std::collections::HashMap;
 

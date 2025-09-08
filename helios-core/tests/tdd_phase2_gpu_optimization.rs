@@ -8,8 +8,8 @@
 //! - Performance regression testing
 
 use leptos_helios::*;
-use std::time::{Duration, Instant};
 use proptest::prelude::*;
+use std::time::{Duration, Instant};
 
 /// Test GPU memory management and leak prevention
 #[cfg(test)]
@@ -27,14 +27,18 @@ mod gpu_memory_tests {
 
         // Verify memory usage is within acceptable bounds
         let memory_usage = engine.memory_usage.used_bytes;
-        assert!(memory_usage < 10 * 1024 * 1024, "Memory usage should be <10MB after {} iterations", iterations);
+        assert!(
+            memory_usage < 10 * 1024 * 1024,
+            "Memory usage should be <10MB after {} iterations",
+            iterations
+        );
     }
 
     #[test]
     fn test_gpu_buffer_pooling() {
         // TDD: Should efficiently reuse GPU buffers
         let mut engine = GpuAccelerationEngine::new();
-        
+
         // Create multiple buffers
         let buffer1 = engine.create_optimized_buffer("test_data_1", 1000).unwrap();
         let buffer2 = engine.create_optimized_buffer("test_data_2", 2000).unwrap();
@@ -80,9 +84,12 @@ mod gpu_memory_tests {
         engine.cleanup_resources();
 
         let final_memory = engine.memory_usage.used_bytes;
-        
+
         // Memory should be cleaned up (allowing for some overhead)
-        assert!(final_memory <= initial_memory + 1024, "Memory should be cleaned up after resource cleanup");
+        assert!(
+            final_memory <= initial_memory + 1024,
+            "Memory should be cleaned up after resource cleanup"
+        );
     }
 }
 
@@ -98,14 +105,18 @@ mod compute_shader_tests {
         let point_count = 100_000;
 
         let result = engine.execute_compute_shader(point_count);
-        assert!(result.is_ok(), "Compute shader should execute successfully for {} points", point_count);
+        assert!(
+            result.is_ok(),
+            "Compute shader should execute successfully for {} points",
+            point_count
+        );
     }
 
     #[test]
     fn test_compute_shader_scaling() {
         // TDD: Compute shader performance should scale reasonably
         let engine = GpuAccelerationEngine::new();
-        
+
         let test_cases = vec![
             (10_000, Duration::from_millis(1)),
             (100_000, Duration::from_millis(3)),
@@ -117,9 +128,18 @@ mod compute_shader_tests {
             let result = engine.execute_compute_shader(point_count);
             let duration = start.elapsed();
 
-            assert!(result.is_ok(), "Compute shader should handle {} points", point_count);
-            assert!(duration <= max_duration, "Compute shader took {:?}, expected <= {:?} for {} points", 
-                   duration, max_duration, point_count);
+            assert!(
+                result.is_ok(),
+                "Compute shader should handle {} points",
+                point_count
+            );
+            assert!(
+                duration <= max_duration,
+                "Compute shader took {:?}, expected <= {:?} for {} points",
+                duration,
+                max_duration,
+                point_count
+            );
         }
     }
 
@@ -137,9 +157,12 @@ mod compute_shader_tests {
 
         assert!(result1.is_ok());
         assert!(result2.is_ok());
-        
+
         // Parallel execution should be faster than sequential
-        assert!(duration < Duration::from_millis(6), "Parallel execution should be faster than sequential");
+        assert!(
+            duration < Duration::from_millis(6),
+            "Parallel execution should be faster than sequential"
+        );
     }
 }
 
@@ -164,7 +187,11 @@ mod rendering_pipeline_tests {
 
         for chart_type in chart_types {
             let pipeline = renderer.get_or_create_pipeline(chart_type);
-            assert!(pipeline.is_optimized(), "Pipeline for {:?} should be optimized", chart_type);
+            assert!(
+                pipeline.is_optimized(),
+                "Pipeline for {:?} should be optimized",
+                chart_type
+            );
         }
     }
 
@@ -188,9 +215,15 @@ mod rendering_pipeline_tests {
 
             // Quality should adapt to frame timing
             if frame_time > Duration::from_millis(16) {
-                assert!(config.quality_level < 1.0, "Quality should be reduced for slow frames");
+                assert!(
+                    config.quality_level < 1.0,
+                    "Quality should be reduced for slow frames"
+                );
             } else {
-                assert!(config.quality_level >= 0.8, "Quality should be maintained for fast frames");
+                assert!(
+                    config.quality_level >= 0.8,
+                    "Quality should be maintained for fast frames"
+                );
             }
         }
     }
@@ -215,7 +248,10 @@ mod rendering_pipeline_tests {
 
         // Verify pool statistics
         let stats = buffer_pool.get_stats();
-        assert!(stats.available_buffers >= 3, "Pool should have available buffers for reuse");
+        assert!(
+            stats.available_buffers >= 3,
+            "Pool should have available buffers for reuse"
+        );
         assert!(stats.reuse_count > 0, "Pool should track buffer reuse");
     }
 
@@ -226,13 +262,16 @@ mod rendering_pipeline_tests {
         let spec = ChartSpec::new().mark(MarkType::Line);
         let budget = PerformanceBudget {
             max_frame_time: Duration::from_millis(16), // 60 FPS
-            max_memory: 100 * 1024 * 1024, // 100MB
-            max_gpu_utilization: 0.9, // 90%
+            max_memory: 100 * 1024 * 1024,             // 100MB
+            max_gpu_utilization: 0.9,                  // 90%
         };
 
         let stats = renderer.render(&spec);
-        
-        assert!(stats.is_within_budget(&budget), "Rendering should meet performance budget");
+
+        assert!(
+            stats.is_within_budget(&budget),
+            "Rendering should meet performance budget"
+        );
         assert!(stats.fps() >= 50.0, "Should maintain at least 50 FPS");
     }
 }
@@ -253,10 +292,14 @@ mod performance_regression_tests {
         let duration = start.elapsed();
 
         assert!(result.is_ok());
-        
+
         // Performance regression test: should complete within 3ms
-        assert!(duration < Duration::from_millis(3), 
-               "GPU performance regression detected: {:?} for {} points", duration, point_count);
+        assert!(
+            duration < Duration::from_millis(3),
+            "GPU performance regression detected: {:?} for {} points",
+            duration,
+            point_count
+        );
     }
 
     #[test]
@@ -270,11 +313,14 @@ mod performance_regression_tests {
         let final_memory = engine.memory_usage.used_bytes;
 
         assert!(result.is_ok());
-        
+
         // Memory regression test: growth should be <1MB
         let memory_growth = final_memory - initial_memory;
-        assert!(memory_growth < 1024 * 1024, 
-               "Memory usage regression detected: {} bytes growth", memory_growth);
+        assert!(
+            memory_growth < 1024 * 1024,
+            "Memory usage regression detected: {} bytes growth",
+            memory_growth
+        );
     }
 
     #[test]
@@ -288,12 +334,18 @@ mod performance_regression_tests {
         let duration = start.elapsed();
 
         // Performance regression test: frame time should be <16ms (60 FPS)
-        assert!(duration < Duration::from_millis(16), 
-               "Rendering performance regression detected: {:?}", duration);
-        
+        assert!(
+            duration < Duration::from_millis(16),
+            "Rendering performance regression detected: {:?}",
+            duration
+        );
+
         // FPS regression test: should maintain at least 50 FPS
-        assert!(stats.fps() >= 50.0, 
-               "FPS regression detected: {:.1} FPS", stats.fps());
+        assert!(
+            stats.fps() >= 50.0,
+            "FPS regression detected: {:.1} FPS",
+            stats.fps()
+        );
     }
 }
 
@@ -326,7 +378,7 @@ mod property_based_tests {
             let tolerance = expected_growth / 10; // 10% tolerance
 
             assert!(memory_growth <= expected_growth + tolerance,
-                   "Memory growth {} should be <= expected {} + tolerance {}", 
+                   "Memory growth {} should be <= expected {} + tolerance {}",
                    memory_growth, expected_growth, tolerance);
         }
 
@@ -340,11 +392,11 @@ mod property_based_tests {
             let duration = start.elapsed();
 
             assert!(result.is_ok());
-            
+
             // Performance should scale sub-linearly
             let max_duration_ms = (point_count as f64 / 10000.0).ceil() as u64;
             let max_duration = Duration::from_millis(max_duration_ms.max(1));
-            
+
             assert!(duration <= max_duration,
                    "Compute shader duration {:?} should be <= {:?} for {} points",
                    duration, max_duration, point_count);
@@ -370,10 +422,10 @@ mod property_based_tests {
             }
 
             let final_stats = buffer_pool.get_stats();
-            
+
             // Pool should have available buffers for reuse
             assert!(final_stats.available_buffers >= buffer_sizes.len());
-            
+
             // Total allocations should be reasonable
             assert!(final_stats.total_allocations <= buffer_sizes.len() * 2);
         }
@@ -390,19 +442,25 @@ mod integration_tests {
         // TDD: End-to-end GPU optimization should work
         let mut renderer = Renderer::new().await.unwrap();
         let mut gpu_engine = GpuAccelerationEngine::new();
-        
+
         // Create a complex chart specification
         let spec = ChartSpec::new()
             .mark(MarkType::Line)
-            .add_encoding(Encoding::X { field: "time".to_string() })
-            .add_encoding(Encoding::Y { field: "value".to_string() });
+            .add_encoding(Encoding::X {
+                field: "time".to_string(),
+            })
+            .add_encoding(Encoding::Y {
+                field: "value".to_string(),
+            });
 
         // Process large dataset with GPU acceleration
         let large_dataset: Vec<f64> = (0..100_000).map(|i| (i as f64 * 0.01).sin()).collect();
         let viewport_scale = 1.0;
 
         let start = Instant::now();
-        let metrics = gpu_engine.process_large_dataset(&large_dataset, viewport_scale).unwrap();
+        let metrics = gpu_engine
+            .process_large_dataset(&large_dataset, viewport_scale)
+            .unwrap();
         let gpu_duration = start.elapsed();
 
         // Render the chart
@@ -411,13 +469,25 @@ mod integration_tests {
         let render_duration = render_start.elapsed();
 
         // Verify performance targets
-        assert!(gpu_duration < Duration::from_millis(50), "GPU processing should be <50ms");
-        assert!(render_duration < Duration::from_millis(16), "Rendering should be <16ms");
-        assert!(metrics.is_performance_target_met(), "Performance targets should be met");
+        assert!(
+            gpu_duration < Duration::from_millis(50),
+            "GPU processing should be <50ms"
+        );
+        assert!(
+            render_duration < Duration::from_millis(16),
+            "Rendering should be <16ms"
+        );
+        assert!(
+            metrics.is_performance_target_met(),
+            "Performance targets should be met"
+        );
 
         // Verify memory usage
         let memory_usage = gpu_engine.get_memory_usage();
-        assert!(memory_usage < 100 * 1024 * 1024, "Memory usage should be <100MB");
+        assert!(
+            memory_usage < 100 * 1024 * 1024,
+            "Memory usage should be <100MB"
+        );
     }
 
     #[tokio::test]
@@ -432,7 +502,13 @@ mod integration_tests {
         let duration = start.elapsed();
 
         // Even with fallback, should maintain reasonable performance
-        assert!(duration < Duration::from_millis(33), "Fallback rendering should be <33ms (30 FPS)");
-        assert!(stats.fps() >= 25.0, "Fallback should maintain at least 25 FPS");
+        assert!(
+            duration < Duration::from_millis(33),
+            "Fallback rendering should be <33ms (30 FPS)"
+        );
+        assert!(
+            stats.fps() >= 25.0,
+            "Fallback should maintain at least 25 FPS"
+        );
     }
 }
