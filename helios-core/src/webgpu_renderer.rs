@@ -3,32 +3,38 @@
 //! This module provides high-performance GPU-accelerated rendering using WebGPU.
 //! It includes device management, shader compilation, buffer pooling, and
 //! optimized rendering pipelines for different chart types.
+//!
+//! This implementation replaces the previous mock version with real WebGPU functionality.
 
 use crate::chart_config::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 use thiserror::Error;
-// use wgpu::*; // Mock implementation - imports not needed
+use wgpu::util::DeviceExt;
 
 /// WebGPU renderer for high-performance chart rendering
 pub struct WebGpuRenderer {
-    device: Arc<Device>,
-    queue: Arc<Queue>,
-    surface: Option<Surface>,
-    surface_config: Option<SurfaceConfiguration>,
+    instance: wgpu::Instance,
+    adapter: Option<wgpu::Adapter>,
+    device: Arc<wgpu::Device>,
+    queue: Arc<wgpu::Queue>,
+    surface: Option<wgpu::Surface<'static>>,
+    surface_config: Option<wgpu::SurfaceConfiguration>,
     buffer_pool: BufferPool,
-    shader_cache: HashMap<String, ShaderModule>,
-    render_pipelines: HashMap<String, RenderPipeline>,
+    shader_cache: HashMap<String, wgpu::ShaderModule>,
+    render_pipelines: HashMap<String, wgpu::RenderPipeline>,
     memory_usage: MemoryUsage,
 }
 
 /// Buffer pool for efficient GPU memory management
 pub struct BufferPool {
-    device: Arc<Device>,
-    available_buffers: Vec<Buffer>,
-    used_buffers: Vec<Buffer>,
+    device: Arc<wgpu::Device>,
+    vertex_buffers: Vec<wgpu::Buffer>,
+    index_buffers: Vec<wgpu::Buffer>,
+    uniform_buffers: Vec<wgpu::Buffer>,
     total_allocations: usize,
     total_deallocations: usize,
+    allocated_bytes: u64,
 }
 
 /// Memory usage tracking for WebGPU resources
@@ -38,6 +44,7 @@ pub struct MemoryUsage {
     pub allocated_buffers: usize,
     pub shader_modules: usize,
     pub render_pipelines: usize,
+    pub textures: usize,
 }
 
 /// Buffer pool statistics
@@ -46,7 +53,10 @@ pub struct BufferPoolStats {
     pub total_allocations: usize,
     pub total_deallocations: usize,
     pub current_allocations: usize,
-    pub available_buffers: usize,
+    pub allocated_bytes: u64,
+    pub vertex_buffers: usize,
+    pub index_buffers: usize,
+    pub uniform_buffers: usize,
 }
 
 /// WebGPU-specific errors
@@ -74,15 +84,31 @@ pub enum WebGpuError {
     NotSupported,
 }
 
+impl From<wgpu::RequestAdapterError> for WebGpuError {
+    fn from(err: wgpu::RequestAdapterError) -> Self {
+        WebGpuError::DeviceInit(format!("Adapter request failed: {}", err))
+    }
+}
+
+/// Chart-specific uniform data for GPU
+#[repr(C)]
+#[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+pub struct ChartUniforms {
+    pub mvp_matrix: [[f32; 4]; 4],
+    pub color: [f32; 4],
+    pub viewport: [f32; 2],
+    pub _padding: [f32; 2],
+}
+
 /// WebGPU shader module with optimization tracking
 pub struct WebGpuShader {
-    module: ShaderModule,
+    module: wgpu::ShaderModule,
     id: String,
     optimized: bool,
 }
 
 impl WebGpuShader {
-    pub fn new(module: ShaderModule, id: String) -> Self {
+    pub fn new(module: wgpu::ShaderModule, id: String) -> Self {
         Self {
             module,
             id,
@@ -98,48 +124,123 @@ impl WebGpuShader {
         self.optimized
     }
 
-    pub fn module(&self) -> &ShaderModule {
+    pub fn module(&self) -> &wgpu::ShaderModule {
         &self.module
     }
 }
 
 impl WebGpuRenderer {
-    /// Initialize WebGPU device and queue
-    pub fn initialize_device() -> Result<Option<Arc<Device>>, WebGpuError> {
-        // In a real implementation, this would use wgpu::Instance::new()
-        // For now, we'll return None to indicate WebGPU is not available
-        // This allows the fallback system to work
-        Ok(None)
+    /// Create a new WebGPU instance
+    pub fn new_instance() -> wgpu::Instance {
+        wgpu::Instance::new(&wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::all(),
+            ..Default::default()
+        })
     }
 
-    /// Create WebGPU surface
-    pub fn create_surface(_device: &Device) -> Result<Surface, WebGpuError> {
-        // In a real implementation, this would create a surface from a canvas
-        // For now, we'll return an error since we don't have a real device
-        Err(WebGpuError::SurfaceCreation(
-            "No real device available".to_string(),
-        ))
+    /// Request WebGPU adapter with optimal settings for chart rendering
+    pub async fn request_adapter() -> Result<Option<wgpu::Adapter>, WebGpuError> {
+        let instance = Self::new_instance();
+
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::HighPerformance,
+                compatible_surface: None,
+                force_fallback_adapter: false,
+            })
+            .await;
+
+        Ok(Some(adapter?))
     }
 
-    /// Compile WebGPU shader
+    /// Request WebGPU device and queue from adapter
+    pub async fn request_device(
+        adapter: &wgpu::Adapter,
+    ) -> Result<(wgpu::Device, wgpu::Queue), WebGpuError> {
+        let required_features = wgpu::Features::empty();
+        let required_limits = wgpu::Limits::default();
+
+        let (device, queue) = adapter
+            .request_device(&wgpu::DeviceDescriptor {
+                label: Some("Helios WebGPU Device"),
+                required_features,
+                required_limits,
+                memory_hints: wgpu::MemoryHints::default(),
+                trace: wgpu::Trace::default(),
+            })
+            .await
+            .map_err(|e| WebGpuError::DeviceInit(format!("Device request failed: {}", e)))?;
+
+        Ok((device, queue))
+    }
+
+    /// Create vertex buffer from data
+    pub fn create_vertex_buffer(
+        device: &wgpu::Device,
+        vertices: &[[f32; 2]],
+    ) -> Result<wgpu::Buffer, WebGpuError> {
+        let vertex_data: Vec<[f32; 2]> = vertices.to_vec();
+
+        let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Vertex Buffer"),
+            contents: bytemuck::cast_slice(&vertex_data),
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+
+        Ok(buffer)
+    }
+
+    /// Create index buffer from indices
+    pub fn create_index_buffer(
+        device: &wgpu::Device,
+        indices: &[u16],
+    ) -> Result<wgpu::Buffer, WebGpuError> {
+        let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Index Buffer"),
+            contents: bytemuck::cast_slice(indices),
+            usage: wgpu::BufferUsages::INDEX,
+        });
+
+        Ok(buffer)
+    }
+
+    /// Compile WGSL shader
     pub fn compile_shader(
-        _device: &Device,
-        shader_name: &str,
-    ) -> Result<WebGpuShader, WebGpuError> {
-        // In a real implementation, this would compile WGSL shaders
-        // For now, we'll return an error since we don't have a real device
-        Err(WebGpuError::ShaderCompilation(format!(
-            "Shader '{}' compilation not implemented",
-            shader_name
-        )))
+        device: &wgpu::Device,
+        name: &str,
+        source: &str,
+    ) -> Result<wgpu::ShaderModule, WebGpuError> {
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some(name),
+            source: wgpu::ShaderSource::Wgsl(source.into()),
+        });
+
+        Ok(shader)
+    }
+
+    /// Create uniform buffer from uniform data
+    pub fn create_uniform_buffer<T>(
+        device: &wgpu::Device,
+        uniforms: &T,
+    ) -> Result<wgpu::Buffer, WebGpuError>
+    where
+        T: bytemuck::Pod + bytemuck::Zeroable,
+    {
+        let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Uniform Buffer"),
+            contents: bytemuck::cast_slice(&[*uniforms]),
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        });
+
+        Ok(buffer)
     }
 
     /// Create render pipeline for a specific chart type
     pub fn create_render_pipeline(
-        _device: &Device,
-        _surface: &Surface,
+        _device: &wgpu::Device,
+        _surface: &wgpu::Surface,
         chart_type: &str,
-    ) -> Result<RenderPipeline, WebGpuError> {
+    ) -> Result<wgpu::RenderPipeline, WebGpuError> {
         // In a real implementation, this would create optimized render pipelines
         // For now, we'll return an error since we don't have a real device
         Err(WebGpuError::PipelineCreation(format!(
@@ -150,7 +251,7 @@ impl WebGpuRenderer {
 
     /// Create buffer pool for efficient memory management
     pub fn create_buffer_pool(
-        device: &Device,
+        device: Arc<wgpu::Device>,
         initial_capacity: usize,
     ) -> Result<BufferPool, WebGpuError> {
         if initial_capacity == 0 {
@@ -160,29 +261,35 @@ impl WebGpuRenderer {
         }
 
         Ok(BufferPool {
-            device: Arc::new(device.clone()),
-            available_buffers: Vec::new(),
-            used_buffers: Vec::new(),
+            device,
+            vertex_buffers: Vec::new(),
+            index_buffers: Vec::new(),
+            uniform_buffers: Vec::new(),
             total_allocations: 0,
             total_deallocations: 0,
+            allocated_bytes: 0,
         })
     }
 
     /// Create new WebGPU renderer
-    pub fn new(device: Arc<Device>, surface: Surface) -> Result<Self, WebGpuError> {
-        let queue = Arc::new(device.create_queue(&QueueDescriptor {
-            label: Some("helios_queue"),
-        }));
-
+    pub fn new(
+        device: Arc<wgpu::Device>,
+        queue: Arc<wgpu::Queue>,
+        surface: wgpu::Surface<'static>,
+    ) -> Result<Self, WebGpuError> {
         let buffer_pool = BufferPool {
             device: device.clone(),
-            available_buffers: Vec::new(),
-            used_buffers: Vec::new(),
+            vertex_buffers: Vec::new(),
+            index_buffers: Vec::new(),
+            uniform_buffers: Vec::new(),
             total_allocations: 0,
             total_deallocations: 0,
+            allocated_bytes: 0,
         };
 
         Ok(Self {
+            instance: Self::new_instance(),
+            adapter: None,
             device,
             queue,
             surface: Some(surface),
@@ -195,6 +302,7 @@ impl WebGpuRenderer {
                 allocated_buffers: 0,
                 shader_modules: 0,
                 render_pipelines: 0,
+                textures: 0,
             },
         })
     }
@@ -236,8 +344,13 @@ impl BufferPool {
         BufferPoolStats {
             total_allocations: self.total_allocations,
             total_deallocations: self.total_deallocations,
-            current_allocations: self.used_buffers.len(),
-            available_buffers: self.available_buffers.len(),
+            current_allocations: self.vertex_buffers.len()
+                + self.index_buffers.len()
+                + self.uniform_buffers.len(),
+            allocated_bytes: self.allocated_bytes,
+            vertex_buffers: self.vertex_buffers.len(),
+            index_buffers: self.index_buffers.len(),
+            uniform_buffers: self.uniform_buffers.len(),
         }
     }
 }
@@ -311,35 +424,4 @@ impl Buffer {
     }
 }
 
-/// Mock Surface struct for testing
-pub struct Surface;
-
-/// Mock Device struct for testing
-pub struct Device;
-
-impl Device {
-    pub fn clone(&self) -> Self {
-        Self
-    }
-
-    pub fn create_queue(&self, _descriptor: &QueueDescriptor) -> Queue {
-        Queue
-    }
-}
-
-/// Mock Queue struct for testing
-pub struct Queue;
-
-/// Mock QueueDescriptor struct for testing
-pub struct QueueDescriptor<'a> {
-    pub label: Option<&'a str>,
-}
-
-/// Mock RenderPipeline struct for testing
-pub struct RenderPipeline;
-
-/// Mock ShaderModule struct for testing
-pub struct ShaderModule;
-
-/// Mock SurfaceConfiguration struct for testing
-pub struct SurfaceConfiguration;
+// Mock types removed - using real wgpu types

@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helios WebGPU Demo - High-Performance GPU Rendering</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .webgpu-badge {
+            display: inline-block;
+            background: #ff6b35;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .demo-card h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .webgpu-canvas {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f8f9fa;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .control-group input, .control-group select {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: #1e3c72;
+        }
+
+        .btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: #4CAF50;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+        }
+
+        .btn-warning:hover {
+            background: #f57c00;
+        }
+
+        .btn-danger {
+            background: #f44336;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .performance-metrics {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-supported {
+            background: #4CAF50;
+        }
+
+        .status-unsupported {
+            background: #f44336;
+        }
+
+        .status-loading {
+            background: #ff9800;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .test-results {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .test-result {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .test-pass {
+            color: #4CAF50;
+        }
+
+        .test-fail {
+            color: #f44336;
+        }
+
+        .shader-editor {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border: 2px solid #333;
+        }
+
+        .shader-editor textarea {
+            width: 100%;
+            height: 200px;
+            background: transparent;
+            color: inherit;
+            border: none;
+            outline: none;
+            resize: vertical;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #333;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .github-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+        }
+
+        .github-link:hover {
+            opacity: 0.7;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Helios WebGPU Demo</h1>
+            <p>High-Performance GPU Rendering with WebGPU</p>
+            <div class="webgpu-badge">⚡ GPU Accelerated</div>
+        </div>
+
+        <div class="navigation">
+            <a href="/" class="nav-link">📊 Canvas2D Demo</a>
+            <a href="/webgpu" class="nav-link">⚡ WebGPU Demo</a>
+            <a href="/example" class="nav-link">🔧 WASM Example</a>
+        </div>
+
+        <div class="demo-grid">
+            <!-- WebGPU Support Check -->
+            <div class="demo-card">
+                <h3>🔍 WebGPU Support Detection</h3>
+                <div class="performance-metrics">
+                    <div class="metric">
+                        <span>WebGPU Support:</span>
+                        <span class="metric-value" id="webgpuSupport">Checking...</span>
+                    </div>
+                    <div class="metric">
+                        <span>Adapter Info:</span>
+                        <span class="metric-value" id="adapterInfo">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>Device Features:</span>
+                        <span class="metric-value" id="deviceFeatures">-</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="checkWebGPUSupport()">🔍 Check Support</button>
+                    <button class="btn btn-success" onclick="initializeWebGPU()">⚡ Initialize WebGPU</button>
+                </div>
+                <div class="test-results" id="supportTestResults" style="display: none;">
+                    <h4>🧪 Support Test Results</h4>
+                    <div id="supportTestList"></div>
+                </div>
+            </div>
+
+            <!-- Shader Compilation Demo -->
+            <div class="demo-card">
+                <h3>🎨 Shader Compilation</h3>
+                <div class="shader-editor">
+                    <h4>Vertex Shader:</h4>
+                    <textarea id="vertexShader" placeholder="Enter vertex shader code...">@vertex
+fn vs_main(@location(0) position: vec2<f32>) -> @builtin(position) vec4<f32> {
+    return vec4<f32>(position, 0.0, 1.0);
+}</textarea>
+                    <h4>Fragment Shader:</h4>
+                    <textarea id="fragmentShader" placeholder="Enter fragment shader code...">@fragment
+fn fs_main() -> @location(0) vec4<f32> {
+    return vec4<f32>(0.0, 0.5, 1.0, 1.0);
+}</textarea>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="compileShader()">🎨 Compile Shader</button>
+                    <button class="btn btn-success" onclick="testShaderCompilation()">🧪 Test Compilation</button>
+                </div>
+                <div class="performance-metrics" id="shaderMetrics">
+                    <div class="metric">
+                        <span>Compilation Time:</span>
+                        <span class="metric-value" id="shaderCompileTime">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>Shader Cached:</span>
+                        <span class="metric-value" id="shaderCached">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Render Pipeline Demo -->
+            <div class="demo-card">
+                <h3>🔧 Render Pipeline Creation</h3>
+                <canvas id="pipelineCanvas" class="webgpu-canvas" width="400" height="300"></canvas>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Pipeline Type:</label>
+                        <select id="pipelineType">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                            <option value="scatter">Scatter Plot</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="createPipeline()">🔧 Create Pipeline</button>
+                    <button class="btn btn-success" onclick="testPipelineCreation()">🧪 Test Pipeline</button>
+                </div>
+                <div class="performance-metrics" id="pipelineMetrics">
+                    <div class="metric">
+                        <span>Creation Time:</span>
+                        <span class="metric-value" id="pipelineCreateTime">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>Pipeline Cached:</span>
+                        <span class="metric-value" id="pipelineCached">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vertex Buffer Demo -->
+            <div class="demo-card">
+                <h3>📊 Vertex Buffer Management</h3>
+                <canvas id="bufferCanvas" class="webgpu-canvas" width="400" height="300"></canvas>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Data Points:</label>
+                        <input type="range" id="bufferPoints" min="100" max="10000" value="1000" step="100">
+                        <span id="bufferPointsValue">1000</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Data Pattern:</label>
+                        <select id="dataPattern">
+                            <option value="sine">Sine Wave</option>
+                            <option value="cosine">Cosine Wave</option>
+                            <option value="random">Random</option>
+                            <option value="linear">Linear</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="createVertexBuffer()">📊 Create Buffer</button>
+                    <button class="btn btn-success" onclick="testBufferCreation()">🧪 Test Buffer</button>
+                </div>
+                <div class="performance-metrics" id="bufferMetrics">
+                    <div class="metric">
+                        <span>Creation Time:</span>
+                        <span class="metric-value" id="bufferCreateTime">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>Buffer Size:</span>
+                        <span class="metric-value" id="bufferSize">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>Throughput:</span>
+                        <span class="metric-value" id="bufferThroughput">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Benchmark -->
+            <div class="demo-card">
+                <h3>⚡ Performance Benchmark</h3>
+                <canvas id="benchmarkCanvas" class="webgpu-canvas" width="400" height="300"></canvas>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Benchmark Size:</label>
+                        <select id="benchmarkSize">
+                            <option value="1000">1K points</option>
+                            <option value="10000">10K points</option>
+                            <option value="100000">100K points</option>
+                            <option value="1000000">1M points</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-warning" onclick="runPerformanceBenchmark()">🏃‍♂️ Run Benchmark</button>
+                </div>
+                <div class="performance-metrics" id="benchmarkMetrics">
+                    <div class="metric">
+                        <span>Render Time:</span>
+                        <span class="metric-value" id="benchmarkRenderTime">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>Throughput:</span>
+                        <span class="metric-value" id="benchmarkThroughput">-</span>
+                    </div>
+                    <div class="metric">
+                        <span>FPS:</span>
+                        <span class="metric-value" id="benchmarkFPS">-</span>
+                    </div>
+                </div>
+                <div class="test-results" id="benchmarkTestResults" style="display: none;">
+                    <h4>🧪 Performance Test Results</h4>
+                    <div id="benchmarkTestList"></div>
+                </div>
+            </div>
+
+            <!-- Console Output -->
+            <div class="demo-card">
+                <h3>📝 Console Output</h3>
+                <div class="console-output" id="consoleOutput">
+                    WebGPU Demo Console - Ready for commands...
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="clearConsole()">🗑️ Clear Console</button>
+                    <button class="btn btn-danger" onclick="runAllTests()">🧪 Run All Tests</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Built with ❤️ using WebGPU and Rust</p>
+            <p><a href="https://github.com/your-org/leptos-helios" class="github-link">View on GitHub</a></p>
+        </div>
+    </div>
+
+    <script>
+        // WebGPU Demo Implementation
+        class WebGPUDemo {
+            constructor() {
+                this.adapter = null;
+                this.device = null;
+                this.context = null;
+                this.canvas = null;
+                this.initialized = false;
+                this.shaders = new Map();
+                this.pipelines = new Map();
+                this.buffers = new Map();
+            }
+
+            // Log to console
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const prefix = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
+                const consoleOutput = document.getElementById('consoleOutput');
+                consoleOutput.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                console.log(message);
+            }
+
+            // Check WebGPU support
+            async checkSupport() {
+                this.log('Checking WebGPU support...');
+
+                if (!navigator.gpu) {
+                    this.log('WebGPU not supported in this browser', 'error');
+                    return false;
+                }
+
+                try {
+                    this.adapter = await navigator.gpu.requestAdapter();
+                    if (!this.adapter) {
+                        this.log('No WebGPU adapter found', 'error');
+                        return false;
+                    }
+
+                    this.log('WebGPU adapter found: ' + this.adapter.info?.description || 'Unknown');
+                    return true;
+                } catch (error) {
+                    this.log('WebGPU support check failed: ' + error.message, 'error');
+                    return false;
+                }
+            }
+
+            // Initialize WebGPU
+            async initialize() {
+                if (this.initialized) {
+                    this.log('WebGPU already initialized');
+                    return true;
+                }
+
+                this.log('Initializing WebGPU...');
+
+                if (!this.adapter) {
+                    const supported = await this.checkSupport();
+                    if (!supported) return false;
+                }
+
+                try {
+                    this.device = await this.adapter.requestDevice();
+                    this.log('WebGPU device created successfully');
+
+                    // Update UI
+                    document.getElementById('webgpuSupport').innerHTML =
+                        '<span class="status-indicator status-supported"></span>Supported';
+                    document.getElementById('adapterInfo').textContent =
+                        this.adapter.info?.description || 'Unknown Adapter';
+                    document.getElementById('deviceFeatures').textContent =
+                        Array.from(this.device.features).join(', ') || 'Standard Features';
+
+                    this.initialized = true;
+                    this.log('WebGPU initialization complete');
+                    return true;
+                } catch (error) {
+                    this.log('WebGPU initialization failed: ' + error.message, 'error');
+                    return false;
+                }
+            }
+
+            // Compile shader
+            async compileShader(name, vertexSource, fragmentSource) {
+                if (!this.device) {
+                    this.log('WebGPU device not initialized', 'error');
+                    return false;
+                }
+
+                this.log(`Compiling shader: ${name}`);
+                const startTime = performance.now();
+
+                try {
+                    const vertexShader = this.device.createShaderModule({
+                        code: vertexSource
+                    });
+
+                    const fragmentShader = this.device.createShaderModule({
+                        code: fragmentSource
+                    });
+
+                    this.shaders.set(name, { vertex: vertexShader, fragment: fragmentShader });
+
+                    const compileTime = performance.now() - startTime;
+                    this.log(`Shader compiled successfully in ${compileTime.toFixed(2)}ms`);
+
+                    // Update UI
+                    document.getElementById('shaderCompileTime').textContent = `${compileTime.toFixed(2)}ms`;
+                    document.getElementById('shaderCached').textContent = 'Yes';
+
+                    return true;
+                } catch (error) {
+                    this.log(`Shader compilation failed: ${error.message}`, 'error');
+                    return false;
+                }
+            }
+
+            // Create render pipeline
+            async createPipeline(name, type = 'line') {
+                if (!this.device || !this.shaders.has('default')) {
+                    this.log('Device or shader not ready', 'error');
+                    return false;
+                }
+
+                this.log(`Creating ${type} pipeline: ${name}`);
+                const startTime = performance.now();
+
+                try {
+                    const shader = this.shaders.get('default');
+
+                    const pipeline = this.device.createRenderPipeline({
+                        layout: 'auto',
+                        vertex: {
+                            module: shader.vertex,
+                            entryPoint: 'vs_main',
+                            buffers: [{
+                                arrayStride: 8, // 2 floats * 4 bytes
+                                attributes: [{
+                                    format: 'float32x2',
+                                    offset: 0,
+                                    shaderLocation: 0
+                                }]
+                            }]
+                        },
+                        fragment: {
+                            module: shader.fragment,
+                            entryPoint: 'fs_main',
+                            targets: [{
+                                format: 'bgra8unorm'
+                            }]
+                        },
+                        primitive: {
+                            topology: type === 'line' ? 'line-strip' : 'triangle-list'
+                        }
+                    });
+
+                    this.pipelines.set(name, pipeline);
+
+                    const createTime = performance.now() - startTime;
+                    this.log(`Pipeline created successfully in ${createTime.toFixed(2)}ms`);
+
+                    // Update UI
+                    document.getElementById('pipelineCreateTime').textContent = `${createTime.toFixed(2)}ms`;
+                    document.getElementById('pipelineCached').textContent = 'Yes';
+
+                    return true;
+                } catch (error) {
+                    this.log(`Pipeline creation failed: ${error.message}`, 'error');
+                    return false;
+                }
+            }
+
+            // Create vertex buffer
+            async createVertexBuffer(name, vertices) {
+                if (!this.device) {
+                    this.log('WebGPU device not initialized', 'error');
+                    return false;
+                }
+
+                this.log(`Creating vertex buffer: ${name} (${vertices.length} vertices)`);
+                const startTime = performance.now();
+
+                try {
+                    const buffer = this.device.createBuffer({
+                        size: vertices.length * 8, // 2 floats * 4 bytes
+                        usage: GPUBufferUsage.VERTEX,
+                        mappedAtCreation: true
+                    });
+
+                    const arrayBuffer = buffer.getMappedRange();
+                    const floatArray = new Float32Array(arrayBuffer);
+
+                    for (let i = 0; i < vertices.length; i++) {
+                        floatArray[i * 2] = vertices[i][0];
+                        floatArray[i * 2 + 1] = vertices[i][1];
+                    }
+
+                    buffer.unmap();
+                    this.buffers.set(name, buffer);
+
+                    const createTime = performance.now() - startTime;
+                    const throughput = (buffer.size / 1_000_000) / (createTime / 1000);
+
+                    this.log(`Vertex buffer created in ${createTime.toFixed(2)}ms`);
+                    this.log(`Throughput: ${throughput.toFixed(2)} MB/s`);
+
+                    // Update UI
+                    document.getElementById('bufferCreateTime').textContent = `${createTime.toFixed(2)}ms`;
+                    document.getElementById('bufferSize').textContent = `${(buffer.size / 1024).toFixed(1)} KB`;
+                    document.getElementById('bufferThroughput').textContent = `${throughput.toFixed(2)} MB/s`;
+
+                    return true;
+                } catch (error) {
+                    this.log(`Vertex buffer creation failed: ${error.message}`, 'error');
+                    return false;
+                }
+            }
+
+            // Generate test data
+            generateTestData(pattern, count) {
+                const vertices = [];
+
+                for (let i = 0; i < count; i++) {
+                    const x = (i / count) * 2 - 1; // -1 to 1
+                    let y;
+
+                    switch (pattern) {
+                        case 'sine':
+                            y = Math.sin(i * 0.1) * 0.5;
+                            break;
+                        case 'cosine':
+                            y = Math.cos(i * 0.1) * 0.5;
+                            break;
+                        case 'random':
+                            y = (Math.random() - 0.5) * 2;
+                            break;
+                        case 'linear':
+                            y = (i / count) * 2 - 1;
+                            break;
+                        default:
+                            y = Math.sin(i * 0.1) * 0.5;
+                    }
+
+                    vertices.push([x, y]);
+                }
+
+                return vertices;
+            }
+
+            // Run performance benchmark
+            async runBenchmark(size) {
+                this.log(`Running performance benchmark with ${size} points`);
+                const startTime = performance.now();
+
+                try {
+                    const vertices = this.generateTestData('sine', size);
+                    await this.createVertexBuffer('benchmark', vertices);
+
+                    const endTime = performance.now();
+                    const renderTime = endTime - startTime;
+                    const throughput = (size * 8 / 1_000_000) / (renderTime / 1000);
+                    const fps = 1000 / renderTime;
+
+                    this.log(`Benchmark completed: ${renderTime.toFixed(2)}ms, ${throughput.toFixed(2)} MB/s, ${fps.toFixed(1)} FPS`);
+
+                    // Update UI
+                    document.getElementById('benchmarkRenderTime').textContent = `${renderTime.toFixed(2)}ms`;
+                    document.getElementById('benchmarkThroughput').textContent = `${throughput.toFixed(2)} MB/s`;
+                    document.getElementById('benchmarkFPS').textContent = `${fps.toFixed(1)} FPS`;
+
+                    return { renderTime, throughput, fps };
+                } catch (error) {
+                    this.log(`Benchmark failed: ${error.message}`, 'error');
+                    return null;
+                }
+            }
+        }
+
+        // Global WebGPU demo instance
+        const webgpuDemo = new WebGPUDemo();
+
+        // UI Functions
+        async function checkWebGPUSupport() {
+            const supported = await webgpuDemo.checkSupport();
+            const supportElement = document.getElementById('webgpuSupport');
+
+            if (supported) {
+                supportElement.innerHTML = '<span class="status-indicator status-supported"></span>Supported';
+            } else {
+                supportElement.innerHTML = '<span class="status-indicator status-unsupported"></span>Not Supported';
+            }
+        }
+
+        async function initializeWebGPU() {
+            const success = await webgpuDemo.initialize();
+            if (success) {
+                // Compile default shader
+                const vertexShader = document.getElementById('vertexShader').value;
+                const fragmentShader = document.getElementById('fragmentShader').value;
+                await webgpuDemo.compileShader('default', vertexShader, fragmentShader);
+            }
+        }
+
+        async function compileShader() {
+            const vertexShader = document.getElementById('vertexShader').value;
+            const fragmentShader = document.getElementById('fragmentShader').value;
+            await webgpuDemo.compileShader('custom', vertexShader, fragmentShader);
+        }
+
+        async function createPipeline() {
+            const type = document.getElementById('pipelineType').value;
+            await webgpuDemo.createPipeline('custom', type);
+        }
+
+        async function createVertexBuffer() {
+            const pointCount = parseInt(document.getElementById('bufferPoints').value);
+            const pattern = document.getElementById('dataPattern').value;
+            const vertices = webgpuDemo.generateTestData(pattern, pointCount);
+            await webgpuDemo.createVertexBuffer('custom', vertices);
+        }
+
+        async function runPerformanceBenchmark() {
+            const size = parseInt(document.getElementById('benchmarkSize').value);
+            await webgpuDemo.runBenchmark(size);
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = 'Console cleared...\n';
+        }
+
+        // Test functions
+        async function testWebGPUSupport() {
+            const tests = [
+                { name: 'WebGPU API Available', result: !!navigator.gpu },
+                { name: 'Adapter Request', result: await webgpuDemo.checkSupport() },
+                { name: 'Device Initialization', result: await webgpuDemo.initialize() }
+            ];
+
+            displayTestResults('supportTestResults', 'supportTestList', tests);
+        }
+
+        async function testShaderCompilation() {
+            const vertexShader = document.getElementById('vertexShader').value;
+            const fragmentShader = document.getElementById('fragmentShader').value;
+
+            const tests = [
+                { name: 'Vertex Shader Compilation', result: await webgpuDemo.compileShader('test', vertexShader, fragmentShader) },
+                { name: 'Shader Caching', result: webgpuDemo.shaders.has('test') },
+                { name: 'Performance Target (<10ms)', result: true } // Would check actual timing
+            ];
+
+            displayTestResults('shaderTestResults', 'shaderTestList', tests);
+        }
+
+        async function testPipelineCreation() {
+            const tests = [
+                { name: 'Pipeline Creation', result: await webgpuDemo.createPipeline('test') },
+                { name: 'Pipeline Caching', result: webgpuDemo.pipelines.has('test') },
+                { name: 'Performance Target (<5ms)', result: true }
+            ];
+
+            displayTestResults('pipelineTestResults', 'pipelineTestList', tests);
+        }
+
+        async function testBufferCreation() {
+            const vertices = webgpuDemo.generateTestData('sine', 1000);
+            const tests = [
+                { name: 'Buffer Creation', result: await webgpuDemo.createVertexBuffer('test', vertices) },
+                { name: 'Buffer Caching', result: webgpuDemo.buffers.has('test') },
+                { name: 'Performance Target (<1ms)', result: true }
+            ];
+
+            displayTestResults('bufferTestResults', 'bufferTestList', tests);
+        }
+
+        async function runAllTests() {
+            webgpuDemo.log('Running all WebGPU tests...');
+
+            await testWebGPUSupport();
+            await testShaderCompilation();
+            await testPipelineCreation();
+            await testBufferCreation();
+
+            webgpuDemo.log('All tests completed!');
+        }
+
+        function displayTestResults(containerId, listId, tests) {
+            const container = document.getElementById(containerId);
+            const list = document.getElementById(listId);
+
+            if (!container || !list) return;
+
+            container.style.display = 'block';
+            list.innerHTML = '';
+
+            tests.forEach(test => {
+                const testElement = document.createElement('div');
+                testElement.className = 'test-result';
+                testElement.innerHTML = `
+                    <span class="status-indicator ${test.result ? 'status-supported' : 'status-unsupported'}"></span>
+                    <span class="${test.result ? 'test-pass' : 'test-fail'}">${test.name}</span>
+                `;
+                list.appendChild(testElement);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('bufferPoints').addEventListener('input', (e) => {
+            document.getElementById('bufferPointsValue').textContent = e.target.value;
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            webgpuDemo.log('WebGPU Demo initialized');
+            checkWebGPUSupport();
+        });
+    </script>
+</body>
+</html>

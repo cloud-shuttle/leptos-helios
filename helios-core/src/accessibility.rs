@@ -400,15 +400,15 @@ impl AccessibilitySystem {
 
         // Add chart-specific shortcuts
         match spec.mark {
-            MarkType::Line | MarkType::Area => {
+            MarkType::Line { .. } | MarkType::Area { .. } => {
                 keyboard_map.insert("next_point".to_string(), "right".to_string());
                 keyboard_map.insert("prev_point".to_string(), "left".to_string());
             }
-            MarkType::Bar => {
+            MarkType::Bar { .. } => {
                 keyboard_map.insert("next_bar".to_string(), "right".to_string());
                 keyboard_map.insert("prev_bar".to_string(), "left".to_string());
             }
-            MarkType::Point => {
+            MarkType::Point { .. } => {
                 keyboard_map.insert("next_point".to_string(), "tab".to_string());
                 keyboard_map.insert("prev_point".to_string(), "shift+tab".to_string());
             }
@@ -426,131 +426,131 @@ impl AccessibilitySystem {
     }
 
     /// Generate accessibility enhancements HTML
-    pub fn generate_accessibility_html(
-        &self,
-        spec: &ChartSpec,
-        data: &DataFrame,
-    ) -> Result<String, AccessibilityError> {
-        let alt_text = self.generate_alt_text(spec, data)?;
-        let data_table = self.create_data_table(spec, data)?;
-        let keyboard_map = self.generate_keyboard_map(spec);
+    /*pub fn _generate_accessibility_html(
+            &self,
+            spec: &ChartSpec,
+            data: &DataFrame,
+        ) -> Result<String, AccessibilityError> {
+            let alt_text = self.generate_alt_text(spec, data)?;
+            let data_table = self.create_data_table(spec, data)?;
+            let keyboard_map = self.generate_keyboard_map(spec);
 
-        let keyboard_shortcuts = keyboard_map
-            .iter()
-            .map(|(action, key)| format!("  <li><kbd>{}</kbd>: {}</li>", key, action))
-            .collect::<Vec<_>>()
-            .join("\n");
+            let keyboard_shortcuts = keyboard_map
+                .iter()
+                .map(|(action, key)| format!("  <li><kbd>{}</kbd>: {}</li>", key, action))
+                .collect::<Vec<_>>()
+                .join("\n");
 
-        let table_html = self.render_data_table_html(&data_table);
+            let table_html = self.render_data_table_html(&data_table);
 
-        Ok(format!(
-            "<!-- Accessibility Enhancements -->\n\
-            <div class=\"helios-accessibility\" role=\"region\" aria-label=\"Chart Accessibility Features\">\n\
-            \n\
-                <!-- Screen Reader Description -->\n\
-                <div class=\"sr-only\" aria-live=\"polite\">\n\
-                    <h3>Chart Description</h3>\n\
-                    <p>{}</p>\n\
-                </div>\n\
-            \n\
-                <!-- Keyboard Navigation Help -->\n\
-                <details class=\"keyboard-help\">\n\
-                    <summary>Keyboard Navigation</summary>\n\
-                    <div role=\"group\" aria-labelledby=\"keyboard-shortcuts\">\n\
-                        <h4 id=\"keyboard-shortcuts\">Available Shortcuts:</h4>\n\
-                        <ul>\n\
-            {}\n\
-                        </ul>\n\
+            Ok(format!(
+                r#"<!-- Accessibility Enhancements -->
+                <div class=\"helios-accessibility\" role=\"region\" aria-label=\"Chart Accessibility Features\">\n\
+                \n\
+                    <!-- Screen Reader Description -->\n\
+                    <div class=\"sr-only\" aria-live=\"polite\">\n\
+                        <h3>Chart Description</h3>\n\
+                        <p>{}</p>\n\
                     </div>\n\
-                </details>\n\
-            \n\
-                <!-- Skip to Data Table Link -->\n\
-                <a href=\"#data-table\" class=\"skip-link\">Skip to Data Table</a>\n\
-            \n\
-                <!-- Alternative Data Table -->\n\
-                <div id=\"data-table\" class=\"data-table-container\">\n\
-                    <h3>Data Table Alternative</h3>\n\
-                    {}\n\
+                \n\
+                    <!-- Keyboard Navigation Help -->\n\
+                    <details class=\"keyboard-help\">\n\
+                        <summary>Keyboard Navigation</summary>\n\
+                        <div role=\"group\" aria-labelledby=\"keyboard-shortcuts\">\n\
+                            <h4 id=\"keyboard-shortcuts\">Available Shortcuts:</h4>\n\
+                            <ul>\n\
+                {}\n\
+                            </ul>\n\
+                        </div>\n\
+                    </details>\n\
+                \n\
+                    <!-- Skip to Data Table Link -->\n\
+                    <a href=\"#data-table\" class=\"skip-link\">Skip to Data Table</a>\n\
+                \n\
+                    <!-- Alternative Data Table -->\n\
+                    <div id=\"data-table\" class=\"data-table-container\">\n\
+                        <h3>Data Table Alternative</h3>\n\
+                        {}\n\
+                    </div>\n\
+                \n\
+                    <!-- Focus Management -->\n\
+                    <div class=\"focus-trap\" tabindex=\"-1\" role=\"group\" aria-label=\"Chart Interactive Area\">\n\
+                        <!-- Chart content will be inserted here -->\n\
+                    </div>\n\
+                \n\
                 </div>\n\
-            \n\
-                <!-- Focus Management -->\n\
-                <div class=\"focus-trap\" tabindex=\"-1\" role=\"group\" aria-label=\"Chart Interactive Area\">\n\
-                    <!-- Chart content will be inserted here -->\n\
-                </div>\n\
-            \n\
-            </div>\n\
-            \n\
-            <style>\n\
-.helios-accessibility .sr-only {{
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}}
+                \n\
+                <style>\n\
+    .helios-accessibility .sr-only {{
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }}
 
-.helios-accessibility .skip-link {{
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: #000;
-    color: white;
-    padding: 8px;
-    text-decoration: none;
-    z-index: 1000;
-}}
+    .helios-accessibility .skip-link {{
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: #000;
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        z-index: 1000;
+    }}
 
-.helios-accessibility .skip-link:focus {{
-    top: 6px;
-}}
+    .helios-accessibility .skip-link:focus {{
+        top: 6px;
+    }}
 
-.helios-accessibility .keyboard-help {{
-    margin-bottom: 1rem;
-}}
+    .helios-accessibility .keyboard-help {{
+        margin-bottom: 1rem;
+    }}
 
-.helios-accessibility .keyboard-help kbd {{
-    background: #f0f0f0;
-    border: 1px solid #ccc;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: monospace;
-}}
+    .helios-accessibility .keyboard-help kbd {{
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+    }}
 
-.helios-accessibility .focus-trap:focus {{
-    outline: 3px solid #005fcc;
-    outline-offset: 2px;
-}}
+    .helios-accessibility .focus-trap:focus {{
+        outline: 3px solid #005fcc;
+        outline-offset: 2px;
+    }}
 
-.helios-accessibility .data-table-container {{
-    margin-top: 1rem;
-    max-height: 400px;
-    overflow-y: auto;
-}}
+    .helios-accessibility .data-table-container {{
+        margin-top: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }}
 
-.helios-accessibility table {{
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 0.5rem;
-}}
+    .helios-accessibility table {{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.5rem;
+    }}
 
-.helios-accessibility th,
-.helios-accessibility td {{
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-}}
+    .helios-accessibility th,
+    .helios-accessibility td {{
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }}
 
-.helios-accessibility th {{
-    background-color: #f0f0f0;
-    font-weight: bold;
-}}
-</style>
-        "#, alt_text, keyboard_shortcuts, table_html))
-    }
+    .helios-accessibility th {{
+        background-color: #f0f0f0;
+        font-weight: bold;
+    }}
+    </style>
+            "#, alt_text, keyboard_shortcuts, table_html))
+        }*/
 
     /// Render data table as HTML
     fn render_data_table_html(&self, table: &DataTable) -> String {
@@ -613,12 +613,10 @@ impl AltTextGenerator {
         }
 
         let chart_type = match spec.mark {
-            MarkType::Line => "line chart",
-            MarkType::Bar => "bar chart",
-            MarkType::Point => "scatter plot",
-            MarkType::Area => "area chart",
-            MarkType::Circle => "bubble chart",
-            MarkType::Square => "square chart",
+            MarkType::Line { .. } => "line chart",
+            MarkType::Bar { .. } => "bar chart",
+            MarkType::Point { .. } => "scatter plot",
+            MarkType::Area { .. } => "area chart",
             _ => "chart",
         };
 
@@ -687,10 +685,10 @@ impl DataTableGenerator {
         }
 
         let chart_type = match spec.mark {
-            MarkType::Line => "Line Chart",
-            MarkType::Bar => "Bar Chart",
-            MarkType::Point => "Scatter Plot",
-            MarkType::Area => "Area Chart",
+            MarkType::Line { .. } => "Line Chart",
+            MarkType::Bar { .. } => "Bar Chart",
+            MarkType::Point { .. } => "Scatter Plot",
+            MarkType::Area { .. } => "Area Chart",
             _ => "Chart",
         };
 
@@ -731,7 +729,7 @@ impl ComplianceValidator {
         let mut violations = Vec::new();
         let mut warnings = Vec::new();
         let mut tested_criteria = Vec::new();
-        let mut score = 100.0;
+        let mut score: f32 = 100.0;
 
         // Test 1.1.1 Non-text Content (Level A)
         tested_criteria.push("1.1.1 Non-text Content".to_string());
@@ -898,7 +896,7 @@ impl ComplianceValidator {
             level_achieved,
             violations,
             warnings,
-            score: score.max(0.0),
+            score: score.max(0.0) as f64,
             recommendations,
             tested_criteria,
         })

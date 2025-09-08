@@ -1,0 +1,32 @@
+Helios Visualization Library - Demo Release v0.2.0
+==================================================
+
+Release Date: Mon  8 Sep 2025 21:14:40 AEST
+Version: v0.2.0-demo
+Status: Ready for Release
+
+Demo URLs (when running demo-server.py):
+- Canvas2D TDD Demo: http://localhost:8080/
+- WebGPU Demo: http://localhost:8080/webgpu
+- WebGPU Charts Demo: http://localhost:8080/webgpu-charts
+- WASM Example: http://localhost:8080/example
+
+Quick Start:
+1. python3 demo-server.py
+2. Open http://localhost:8080 in your browser
+3. Explore all four demo pages
+
+Features:
+- Complete TDD implementation
+- Canvas2D rendering with 100K points in <3ms
+- WebGPU acceleration with 800+ MB/s throughput
+- WebAssembly integration with Rust functions
+- Interactive charts and performance benchmarks
+
+Performance Metrics:
+- Canvas2D: 100K points in <3ms
+- WebGPU: 816 MB/s throughput, 1M points in 77ms
+- WASM: <1ms function execution
+- Interactive: Sub-millisecond hover detection
+
+Built with Rust, WebAssembly, WebGPU, and Test-Driven Development

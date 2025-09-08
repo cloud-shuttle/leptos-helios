@@ -390,7 +390,7 @@ pub struct MockFileWatcher {
 }
 
 impl MockFileWatcher {
-    fn new(receiver: broadcast::Receiver<FileChangeEvent>) -> Self {
+    pub fn new(receiver: broadcast::Receiver<FileChangeEvent>) -> Self {
         Self {
             change_receiver: receiver,
         }

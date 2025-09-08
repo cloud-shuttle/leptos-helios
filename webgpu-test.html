@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGPU Support Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loading {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 WebGPU Support Test</h1>
+        <p>This page tests the WebGPU support detection functionality implemented in the Helios WASM module.</p>
+
+        <div class="test-section">
+            <h2>WebGPU Support Check</h2>
+            <button onclick="testWebGPUSupport()">Test WebGPU Support</button>
+            <div id="webgpu-result" class="result info">Click the button to test WebGPU support</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Browser WebGPU API Check</h2>
+            <button onclick="checkBrowserWebGPU()">Check Browser WebGPU API</button>
+            <div id="browser-result" class="result info">Click the button to check browser WebGPU API</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Test Results</h2>
+            <div id="test-results"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import init, { test_webgpu_support } from './helios-app/pkg/leptos_helios_app.js';
+
+        let wasmModule = null;
+
+        // Initialize WASM module
+        async function initWasm() {
+            try {
+                await init();
+                wasmModule = true;
+                console.log('WASM module initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize WASM module:', error);
+            }
+        }
+
+        // Test WebGPU support using WASM
+        async function testWebGPUSupport() {
+            const resultDiv = document.getElementById('webgpu-result');
+            resultDiv.innerHTML = '<div class="loading">Testing WebGPU support...</div>';
+
+            try {
+                if (!wasmModule) {
+                    await initWasm();
+                }
+
+                const result = test_webgpu_support();
+                console.log('WebGPU test result:', result);
+
+                const isSupported = result === 'Supported';
+                const className = isSupported ? 'success' : 'error';
+
+                resultDiv.innerHTML = `<div class="result ${className}">WebGPU Support: ${result}</div>`;
+
+                // Add to test results
+                addTestResult('WASM WebGPU Check', result, isSupported);
+
+            } catch (error) {
+                console.error('WebGPU test error:', error);
+                resultDiv.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+                addTestResult('WASM WebGPU Check', 'Error', false);
+            }
+        };
+
+        // Check browser WebGPU API directly
+        function checkBrowserWebGPU() {
+            const resultDiv = document.getElementById('browser-result');
+            resultDiv.innerHTML = '<div class="loading">Checking browser WebGPU API...</div>';
+
+            try {
+                // Check if navigator.gpu exists
+                if (navigator.gpu) {
+                    resultDiv.innerHTML = '<div class="result success">Browser WebGPU API: Available</div>';
+                    addTestResult('Browser WebGPU API', 'Available', true);
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">Browser WebGPU API: Not Available</div>';
+                    addTestResult('Browser WebGPU API', 'Not Available', false);
+                }
+            } catch (error) {
+                console.error('Browser WebGPU check error:', error);
+                resultDiv.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+                addTestResult('Browser WebGPU API', 'Error', false);
+            }
+        };
+
+        // Add test result to results section
+        function addTestResult(testName, result, success) {
+            const resultsDiv = document.getElementById('test-results');
+            const className = success ? 'success' : 'error';
+            const timestamp = new Date().toLocaleTimeString();
+
+            resultsDiv.innerHTML += `
+                <div class="result ${className}">
+                    <strong>${testName}</strong>: ${result} (${timestamp})
+                </div>
+            `;
+        }
+
+        // Initialize on page load
+        initWasm();
+
+        // Expose functions to global scope for onclick handlers
+        window.testWebGPUSupport = testWebGPUSupport;
+        window.checkBrowserWebGPU = checkBrowserWebGPU;
+    </script>
+</body>
+</html>

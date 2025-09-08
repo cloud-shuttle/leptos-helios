@@ -5,9 +5,10 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Core visualization engine for Helios"
-keywords.workspace = true
-categories.workspace = true
+documentation = "https://docs.rs/leptos-helios"
+description = "High-performance Rust visualization library with Canvas2D, WebGPU, and WebAssembly support"
+keywords = ["visualization", "charts", "webgpu", "canvas2d", "wasm"]
+categories = ["visualization", "web-programming", "graphics"]
 
 [dependencies]
 # Core dependencies

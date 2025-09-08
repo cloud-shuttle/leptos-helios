@@ -53,11 +53,38 @@ pub fn create_simple_chart() -> String {
 
 // Export a function to test WebGPU capabilities
 #[wasm_bindgen]
-pub fn test_webgpu_support() -> bool {
+pub fn test_webgpu_support() -> String {
     console_log!("Testing WebGPU support");
-    // Mock WebGPU support detection
-    // In a real implementation, this would check for WebGPU availability
-    true
+
+    // Check if WebGPU is available in the browser
+    if let Ok(webgpu_available) = check_webgpu_availability() {
+        console_log!("WebGPU support check result: {}", webgpu_available);
+        if webgpu_available {
+            "Supported".to_string()
+        } else {
+            "Not Supported".to_string()
+        }
+    } else {
+        console_log!("WebGPU support check failed");
+        "Error".to_string()
+    }
+}
+
+// Helper function to check WebGPU availability using JavaScript interop
+fn check_webgpu_availability() -> Result<bool, JsValue> {
+    // Use JavaScript to check for WebGPU support
+    let window = web_sys::window().ok_or("No window object")?;
+    let navigator = window.navigator();
+
+    // Check if navigator.gpu exists (WebGPU API)
+    let gpu = js_sys::Reflect::get(&navigator, &JsValue::from_str("gpu"))?;
+
+    if gpu.is_undefined() {
+        return Ok(false);
+    }
+
+    // If we get here, WebGPU is available
+    Ok(true)
 }
 
 // Export a function to create chart data

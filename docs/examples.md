@@ -2,7 +2,71 @@
 
 This document provides comprehensive examples for all Helios chart types and features.
 
-## 🚀 WebGPU Demo
+## 🎯 Demo Suite
+
+The Helios demo suite showcases multiple rendering technologies and methodologies:
+
+### 📊 Canvas2D TDD Demo
+Interactive demonstration of Test-Driven Development applied to Canvas2D rendering:
+
+```bash
+python3 demo-server.py
+# Open http://localhost:8080/
+```
+
+**Features:**
+- Complete TDD methodology (RED-GREEN-REFACTOR)
+- Line, bar, and scatter chart rendering
+- Performance benchmarks (100K points in <3ms)
+- Interactive controls and real-time metrics
+- 100% test coverage validation
+
+### ⚡ WebGPU Demo
+High-performance GPU acceleration testing and benchmarking:
+
+```bash
+python3 demo-server.py
+# Open http://localhost:8080/webgpu
+```
+
+**Features:**
+- WebGPU support detection and initialization
+- Shader compilation and caching
+- Render pipeline creation
+- Vertex buffer management
+- Performance benchmarking (816+ MB/s throughput)
+
+### 📈 WebGPU Charts Demo
+Visual GPU-rendered charts with interactive controls:
+
+```bash
+python3 demo-server.py
+# Open http://localhost:8080/webgpu-charts
+```
+
+**Features:**
+- Real-time GPU-accelerated chart rendering
+- Interactive data point controls
+- Live performance metrics
+- Multiple chart types (line, bar, scatter)
+- Visual performance validation
+
+### 🦀 WASM Example
+Rust-WebAssembly integration showcase:
+
+```bash
+python3 demo-server.py
+# Open http://localhost:8080/example
+```
+
+**Features:**
+- Rust function export to JavaScript
+- String processing and JSON generation
+- Real-time function execution
+- WebAssembly performance demonstration
+- Cross-language communication
+
+## 🚀 WebGPU Demo (Command Line)
 
 The WebGPU demo showcases the real WebGPU implementation with performance benchmarking:
 
