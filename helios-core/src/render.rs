@@ -31,21 +31,21 @@ pub enum RenderError {
 pub enum RenderBackend {
     /// Primary: WebGPU for maximum performance
     WebGPU {
-        device: Device,
-        queue: Queue,
-        surface: Surface,
+        device: Option<Device>,
+        queue: Option<Queue>,
+        surface: Option<Surface>,
         compute_capability: bool,
         memory_budget: usize,
     },
 
     /// Fallback: WebGL2 for broad compatibility
     WebGL2 {
-        context: WebGl2RenderingContext,
+        context: Option<String>, // Placeholder for WebGL2RenderingContext
         extensions: Vec<String>,
     },
 
     /// Last resort: Canvas 2D for universal support
-    Canvas2D { context: CanvasRenderingContext2d },
+    Canvas2D { context: Option<String> }, // Placeholder for CanvasRenderingContext2d
 }
 
 impl RenderBackend {
@@ -133,6 +133,7 @@ pub struct PerformanceProfile {
 }
 
 /// Main renderer
+#[derive(Clone)]
 pub struct Renderer {
     backend: RenderBackend,
     pipelines: HashMap<ChartType, RenderPipeline>,
@@ -187,6 +188,7 @@ impl Renderer {
             .entry(chart_type)
             .or_insert_with(|| RenderPipeline::new(&self.backend, chart_type))
     }
+
 
     fn execute_render_pass(
         &self,
@@ -621,3 +623,199 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
     Arc,
 };
+
+/// Chart type enumeration
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ChartType {
+    Line,
+    Bar,
+    Scatter,
+    Area,
+}
+
+impl ChartType {
+    pub fn from_spec(spec: &ChartSpec) -> Self {
+        match spec.mark {
+            MarkType::Line { .. } => ChartType::Line,
+            MarkType::Bar { .. } => ChartType::Bar,
+            MarkType::Point { .. } => ChartType::Scatter,
+            MarkType::Area { .. } => ChartType::Area,
+        }
+    }
+}
+
+/// Render pipeline
+#[derive(Debug, Clone)]
+pub struct RenderPipeline {
+    pub chart_type: ChartType,
+    pub optimized: bool,
+}
+
+impl RenderPipeline {
+    pub fn new(backend: &RenderBackend, chart_type: ChartType) -> Self {
+        Self {
+            chart_type,
+            optimized: matches!(backend, RenderBackend::WebGPU { .. }),
+        }
+    }
+
+    pub fn is_optimized(&self) -> bool {
+        self.optimized
+    }
+}
+
+/// Buffer pool for efficient memory management
+#[derive(Debug, Clone)]
+pub struct BufferPool {
+    pub available_buffers: Vec<Buffer>,
+    pub used_buffers: Vec<Buffer>,
+}
+
+impl BufferPool {
+    pub fn new(backend: &RenderBackend) -> Result<Self, RenderError> {
+        Ok(Self {
+            available_buffers: Vec::new(),
+            used_buffers: Vec::new(),
+        })
+    }
+
+    pub fn get_buffers_for_spec(&self, spec: &ChartSpec) -> RenderBuffers {
+        RenderBuffers {
+            vertex_buffer: None,
+            index_buffer: None,
+            uniform_buffer: None,
+        }
+    }
+
+    pub fn allocate_buffer(&mut self, size: usize) -> Result<Buffer, RenderError> {
+        let buffer = Buffer {
+            size,
+            data: vec![0u8; size],
+        };
+        self.used_buffers.push(buffer.clone());
+        Ok(buffer)
+    }
+
+    pub fn return_buffer(&mut self, buffer: Buffer) {
+        if let Some(pos) = self.used_buffers.iter().position(|b| b.size == buffer.size) {
+            self.used_buffers.remove(pos);
+            self.available_buffers.push(buffer);
+        }
+    }
+
+    pub fn get_stats(&self) -> BufferPoolStats {
+        BufferPoolStats {
+            total_allocations: self.used_buffers.len() + self.available_buffers.len(),
+            total_deallocations: 0,
+            current_allocations: self.used_buffers.len(),
+            available_buffers: self.available_buffers.len(),
+            reuse_count: 0,
+        }
+    }
+}
+
+/// GPU buffer
+#[derive(Debug, Clone)]
+pub struct Buffer {
+    pub size: usize,
+    pub data: Vec<u8>,
+}
+
+/// Render buffers
+#[derive(Debug, Clone)]
+pub struct RenderBuffers {
+    pub vertex_buffer: Option<Buffer>,
+    pub index_buffer: Option<Buffer>,
+    pub uniform_buffer: Option<Buffer>,
+}
+
+/// Buffer pool statistics
+#[derive(Debug, Clone)]
+pub struct BufferPoolStats {
+    pub total_allocations: usize,
+    pub total_deallocations: usize,
+    pub current_allocations: usize,
+    pub available_buffers: usize,
+    pub reuse_count: usize,
+}
+
+/// Frame timer for performance monitoring
+#[derive(Debug, Clone)]
+pub struct FrameTimer {
+    pub frame_times: VecDeque<Duration>,
+    pub max_samples: usize,
+}
+
+impl FrameTimer {
+    pub fn new() -> Self {
+        Self {
+            frame_times: VecDeque::new(),
+            max_samples: 60, // Keep last 60 frames
+        }
+    }
+
+    pub fn record_frame(&mut self, frame_time: Duration) {
+        self.frame_times.push_back(frame_time);
+        if self.frame_times.len() > self.max_samples {
+            self.frame_times.pop_front();
+        }
+    }
+
+    pub fn suggest_quality(&self) -> f32 {
+        if self.frame_times.is_empty() {
+            return 1.0;
+        }
+
+        let avg_frame_time = self.frame_times.iter()
+            .map(|d| d.as_secs_f32())
+            .sum::<f32>() / self.frame_times.len() as f32;
+
+        if avg_frame_time > 0.016 { // 16ms = 60 FPS
+            0.5 // Reduce quality
+        } else {
+            1.0 // Full quality
+        }
+    }
+}
+
+/// Adaptive quality manager
+#[derive(Debug, Clone)]
+pub struct AdaptiveQualityManager {
+    pub quality_level: f32,
+}
+
+impl AdaptiveQualityManager {
+    pub fn new() -> Self {
+        Self {
+            quality_level: 1.0,
+        }
+    }
+
+    pub fn get_render_config(&self, quality: f32) -> RenderConfig {
+        RenderConfig {
+            quality_level: quality,
+            enable_lod: quality < 0.8,
+            reduce_shadows: quality < 0.6,
+        }
+    }
+
+    pub fn update_frame_stats(&mut self, frame_time: Duration) {
+        if frame_time > Duration::from_millis(16) {
+            self.quality_level = (self.quality_level * 0.9).max(0.1);
+        } else {
+            self.quality_level = (self.quality_level * 1.1).min(1.0);
+        }
+    }
+
+    pub fn set_quality_level(&mut self, level: f32) {
+        self.quality_level = level.clamp(0.0, 1.0);
+    }
+}
+
+/// Render configuration
+#[derive(Debug, Clone)]
+pub struct RenderConfig {
+    pub quality_level: f32,
+    pub enable_lod: bool,
+    pub reduce_shadows: bool,
+}

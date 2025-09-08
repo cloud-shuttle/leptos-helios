@@ -237,3 +237,15 @@ fn get_enabled_features() -> Vec<String> {
 
 // Re-export ML intelligence components
 pub use ml_intelligence::*;
+
+// Re-export GPU acceleration components
+pub use gpu_accelerator::*;
+
+// Re-export performance components
+pub use performance::*;
+
+// Re-export renderer components
+pub use render::*;
+
+// Re-export WASM optimization components
+pub use wasm_optimizer::*;
