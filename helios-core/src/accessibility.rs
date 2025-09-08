@@ -5,8 +5,8 @@
 
 use crate::chart::{ChartSpec, MarkType};
 use polars::prelude::DataFrame;
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Accessibility system errors
 #[derive(Debug, thiserror::Error)]
@@ -30,9 +30,9 @@ pub enum AccessibilityError {
 /// WCAG 2.1 compliance levels
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum WCAGLevel {
-    A,      // Basic compliance
-    AA,     // Standard compliance (target)
-    AAA,    // Enhanced compliance
+    A,   // Basic compliance
+    AA,  // Standard compliance (target)
+    AAA, // Enhanced compliance
 }
 
 /// Accessibility configuration
@@ -207,7 +207,7 @@ impl Default for AlternativeFormats {
         Self {
             data_tables: true,
             text_descriptions: true,
-            sonification: false, // Advanced feature
+            sonification: false,     // Advanced feature
             tactile_graphics: false, // Advanced feature
             high_contrast_version: true,
         }
@@ -270,7 +270,7 @@ impl Default for PerformanceConfig {
     fn default() -> Self {
         Self {
             enabled: true,
-            budget_ms: 100, // 100ms performance budget
+            budget_ms: 100,       // 100ms performance budget
             memory_budget_mb: 50, // 50MB memory budget
             fps_target: 60,
             lazy_loading: true,
@@ -304,10 +304,10 @@ impl Default for CachingConfig {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CacheStrategy {
-    LRU,    // Least Recently Used
-    LFU,    // Least Frequently Used
-    TTL,    // Time To Live
-    Size,   // Size-based eviction
+    LRU,  // Least Recently Used
+    LFU,  // Least Frequently Used
+    TTL,  // Time To Live
+    Size, // Size-based eviction
 }
 
 /// Performance monitoring configuration
@@ -368,17 +368,29 @@ impl AccessibilitySystem {
     }
 
     /// Validate WCAG compliance for a chart
-    pub fn validate_wcag_compliance(&self, spec: &ChartSpec, data: &DataFrame) -> Result<ComplianceReport, AccessibilityError> {
+    pub fn validate_wcag_compliance(
+        &self,
+        spec: &ChartSpec,
+        data: &DataFrame,
+    ) -> Result<ComplianceReport, AccessibilityError> {
         self.compliance_validator.validate(spec, data, &self.config)
     }
 
     /// Generate alternative text description
-    pub fn generate_alt_text(&self, spec: &ChartSpec, data: &DataFrame) -> Result<String, AccessibilityError> {
+    pub fn generate_alt_text(
+        &self,
+        spec: &ChartSpec,
+        data: &DataFrame,
+    ) -> Result<String, AccessibilityError> {
         self.alt_text_generator.generate(spec, data)
     }
 
     /// Create accessible data table
-    pub fn create_data_table(&self, spec: &ChartSpec, data: &DataFrame) -> Result<DataTable, AccessibilityError> {
+    pub fn create_data_table(
+        &self,
+        spec: &ChartSpec,
+        data: &DataFrame,
+    ) -> Result<DataTable, AccessibilityError> {
         self.data_table_generator.create(spec, data)
     }
 
@@ -391,15 +403,15 @@ impl AccessibilitySystem {
             MarkType::Line | MarkType::Area => {
                 keyboard_map.insert("next_point".to_string(), "right".to_string());
                 keyboard_map.insert("prev_point".to_string(), "left".to_string());
-            },
+            }
             MarkType::Bar => {
                 keyboard_map.insert("next_bar".to_string(), "right".to_string());
                 keyboard_map.insert("prev_bar".to_string(), "left".to_string());
-            },
+            }
             MarkType::Point => {
                 keyboard_map.insert("next_point".to_string(), "tab".to_string());
                 keyboard_map.insert("prev_point".to_string(), "shift+tab".to_string());
-            },
+            }
             _ => {
                 keyboard_map.insert("navigate".to_string(), "arrow_keys".to_string());
             }
@@ -414,56 +426,61 @@ impl AccessibilitySystem {
     }
 
     /// Generate accessibility enhancements HTML
-    pub fn generate_accessibility_html(&self, spec: &ChartSpec, data: &DataFrame) -> Result<String, AccessibilityError> {
+    pub fn generate_accessibility_html(
+        &self,
+        spec: &ChartSpec,
+        data: &DataFrame,
+    ) -> Result<String, AccessibilityError> {
         let alt_text = self.generate_alt_text(spec, data)?;
         let data_table = self.create_data_table(spec, data)?;
         let keyboard_map = self.generate_keyboard_map(spec);
 
-        let keyboard_shortcuts = keyboard_map.iter()
+        let keyboard_shortcuts = keyboard_map
+            .iter()
             .map(|(action, key)| format!("  <li><kbd>{}</kbd>: {}</li>", key, action))
             .collect::<Vec<_>>()
             .join("\n");
 
         let table_html = self.render_data_table_html(&data_table);
 
-        Ok(format!(r#"
-<!-- Accessibility Enhancements -->
-<div class="helios-accessibility" role="region" aria-label="Chart Accessibility Features">
-
-    <!-- Screen Reader Description -->
-    <div class="sr-only" aria-live="polite">
-        <h3>Chart Description</h3>
-        <p>{}</p>
-    </div>
-
-    <!-- Keyboard Navigation Help -->
-    <details class="keyboard-help">
-        <summary>Keyboard Navigation</summary>
-        <div role="group" aria-labelledby="keyboard-shortcuts">
-            <h4 id="keyboard-shortcuts">Available Shortcuts:</h4>
-            <ul>
-{}
-            </ul>
-        </div>
-    </details>
-
-    <!-- Skip to Data Table Link -->
-    <a href="#data-table" class="skip-link">Skip to Data Table</a>
-
-    <!-- Alternative Data Table -->
-    <div id="data-table" class="data-table-container">
-        <h3>Data Table Alternative</h3>
-        {}
-    </div>
-
-    <!-- Focus Management -->
-    <div class="focus-trap" tabindex="-1" role="group" aria-label="Chart Interactive Area">
-        <!-- Chart content will be inserted here -->
-    </div>
-
-</div>
-
-<style>
+        Ok(format!(
+            "<!-- Accessibility Enhancements -->\n\
+            <div class=\"helios-accessibility\" role=\"region\" aria-label=\"Chart Accessibility Features\">\n\
+            \n\
+                <!-- Screen Reader Description -->\n\
+                <div class=\"sr-only\" aria-live=\"polite\">\n\
+                    <h3>Chart Description</h3>\n\
+                    <p>{}</p>\n\
+                </div>\n\
+            \n\
+                <!-- Keyboard Navigation Help -->\n\
+                <details class=\"keyboard-help\">\n\
+                    <summary>Keyboard Navigation</summary>\n\
+                    <div role=\"group\" aria-labelledby=\"keyboard-shortcuts\">\n\
+                        <h4 id=\"keyboard-shortcuts\">Available Shortcuts:</h4>\n\
+                        <ul>\n\
+            {}\n\
+                        </ul>\n\
+                    </div>\n\
+                </details>\n\
+            \n\
+                <!-- Skip to Data Table Link -->\n\
+                <a href=\"#data-table\" class=\"skip-link\">Skip to Data Table</a>\n\
+            \n\
+                <!-- Alternative Data Table -->\n\
+                <div id=\"data-table\" class=\"data-table-container\">\n\
+                    <h3>Data Table Alternative</h3>\n\
+                    {}\n\
+                </div>\n\
+            \n\
+                <!-- Focus Management -->\n\
+                <div class=\"focus-trap\" tabindex=\"-1\" role=\"group\" aria-label=\"Chart Interactive Area\">\n\
+                    <!-- Chart content will be inserted here -->\n\
+                </div>\n\
+            \n\
+            </div>\n\
+            \n\
+            <style>\n\
 .helios-accessibility .sr-only {{
     position: absolute;
     width: 1px;
@@ -537,14 +554,19 @@ impl AccessibilitySystem {
 
     /// Render data table as HTML
     fn render_data_table_html(&self, table: &DataTable) -> String {
-        let headers = table.headers.iter()
+        let headers = table
+            .headers
+            .iter()
             .map(|h| format!("    <th scope=\"col\">{}</th>", h))
             .collect::<Vec<_>>()
             .join("\n");
 
-        let rows = table.rows.iter()
+        let rows = table
+            .rows
+            .iter()
             .map(|row| {
-                let cells = row.iter()
+                let cells = row
+                    .iter()
                     .map(|cell| format!("      <td>{}</td>", cell))
                     .collect::<Vec<_>>()
                     .join("\n");
@@ -559,7 +581,8 @@ impl AccessibilitySystem {
             String::new()
         };
 
-        format!(r#"<table role="table" aria-label="{}">
+        format!(
+            r#"<table role="table" aria-label="{}">
 {}  <thead>
     <tr>
 {}
@@ -568,7 +591,9 @@ impl AccessibilitySystem {
   <tbody>
 {}
   </tbody>
-</table>"#, table.title, caption, headers, rows)
+</table>"#,
+            table.title, caption, headers, rows
+        )
     }
 }
 
@@ -640,7 +665,9 @@ impl DataTableGenerator {
     }
 
     fn create(&self, spec: &ChartSpec, data: &DataFrame) -> Result<DataTable, AccessibilityError> {
-        let headers = data.get_column_names().into_iter()
+        let headers = data
+            .get_column_names()
+            .into_iter()
             .map(|s| s.to_string())
             .collect();
 
@@ -669,10 +696,17 @@ impl DataTableGenerator {
 
         Ok(DataTable {
             title: format!("{} Data", chart_type),
-            summary: format!("Data table showing the underlying data for the {} visualization", chart_type.to_lowercase()),
+            summary: format!(
+                "Data table showing the underlying data for the {} visualization",
+                chart_type.to_lowercase()
+            ),
             headers,
             rows,
-            caption: Some(format!("Raw data used to generate the {} (showing first {} rows)", chart_type.to_lowercase(), max_rows)),
+            caption: Some(format!(
+                "Raw data used to generate the {} (showing first {} rows)",
+                chart_type.to_lowercase(),
+                max_rows
+            )),
             scope_attributes: HashMap::new(),
         })
     }
@@ -688,7 +722,12 @@ impl ComplianceValidator {
         Self { target_level }
     }
 
-    fn validate(&self, spec: &ChartSpec, data: &DataFrame, config: &AccessibilityConfig) -> Result<ComplianceReport, AccessibilityError> {
+    fn validate(
+        &self,
+        spec: &ChartSpec,
+        data: &DataFrame,
+        config: &AccessibilityConfig,
+    ) -> Result<ComplianceReport, AccessibilityError> {
         let mut violations = Vec::new();
         let mut warnings = Vec::new();
         let mut tested_criteria = Vec::new();
@@ -713,7 +752,8 @@ impl ComplianceValidator {
             violations.push(ComplianceViolation {
                 criterion: "1.3.1 Info and Relationships".to_string(),
                 severity: ViolationSeverity::High,
-                description: "Charts should provide data in alternative structured format".to_string(),
+                description: "Charts should provide data in alternative structured format"
+                    .to_string(),
                 remedy: "Enable data table generation".to_string(),
                 impact: "Users may not understand data relationships".to_string(),
             });
@@ -727,9 +767,11 @@ impl ComplianceValidator {
                 violations.push(ComplianceViolation {
                     criterion: "1.4.3 Contrast (Minimum)".to_string(),
                     severity: ViolationSeverity::High,
-                    description: "Color contrast ratio must be at least 4.5:1 for AA compliance".to_string(),
+                    description: "Color contrast ratio must be at least 4.5:1 for AA compliance"
+                        .to_string(),
                     remedy: "Increase minimum contrast ratio to 4.5 or higher".to_string(),
-                    impact: "Users with low vision may not be able to distinguish content".to_string(),
+                    impact: "Users with low vision may not be able to distinguish content"
+                        .to_string(),
                 });
                 score -= 15.0;
             }
@@ -740,7 +782,10 @@ impl ComplianceValidator {
         if matches!(self.target_level, WCAGLevel::AA | WCAGLevel::AAA) {
             // Charts are inherently visual, but we provide alternatives
             if !config.alternative_formats.text_descriptions {
-                warnings.push("Consider providing text-based descriptions for complex visualizations".to_string());
+                warnings.push(
+                    "Consider providing text-based descriptions for complex visualizations"
+                        .to_string(),
+                );
             }
         }
 
@@ -801,11 +846,16 @@ impl ComplianceValidator {
 
         // Additional checks for data quality
         if data.height() == 0 {
-            warnings.push("Empty datasets may not provide meaningful accessibility content".to_string());
+            warnings.push(
+                "Empty datasets may not provide meaningful accessibility content".to_string(),
+            );
         }
 
         if data.width() > 20 {
-            warnings.push("Charts with many columns may be difficult to navigate with assistive technology".to_string());
+            warnings.push(
+                "Charts with many columns may be difficult to navigate with assistive technology"
+                    .to_string(),
+            );
         }
 
         // Determine achieved level
@@ -814,7 +864,11 @@ impl ComplianceValidator {
                 WCAGLevel::AAA => WCAGLevel::AAA,
                 _ => WCAGLevel::AA,
             }
-        } else if score >= 85.0 && violations.iter().all(|v| !matches!(v.severity, ViolationSeverity::Critical)) {
+        } else if score >= 85.0
+            && violations
+                .iter()
+                .all(|v| !matches!(v.severity, ViolationSeverity::Critical))
+        {
             WCAGLevel::AA
         } else if score >= 70.0 {
             WCAGLevel::A
@@ -829,10 +883,14 @@ impl ComplianceValidator {
         } else {
             recommendations.push("Address critical and high severity violations first".to_string());
             if !warnings.is_empty() {
-                recommendations.push("Consider implementing suggested improvements in warnings".to_string());
+                recommendations
+                    .push("Consider implementing suggested improvements in warnings".to_string());
             }
             if !config.alternative_formats.sonification {
-                recommendations.push("Consider advanced features like sonification for enhanced accessibility".to_string());
+                recommendations.push(
+                    "Consider advanced features like sonification for enhanced accessibility"
+                        .to_string(),
+                );
             }
         }
 
@@ -873,26 +931,27 @@ impl PerformanceMonitor {
     }
 
     pub fn finish(self) -> Result<PerformanceMetrics, AccessibilityError> {
-        let start_time = self.start_time
-            .ok_or_else(|| AccessibilityError::ConfigurationError("Monitoring not started".to_string()))?;
+        let start_time = self.start_time.ok_or_else(|| {
+            AccessibilityError::ConfigurationError("Monitoring not started".to_string())
+        })?;
 
         let render_time_ms = start_time.elapsed().as_millis() as f64;
         let memory_usage_mb = self.estimate_memory_usage();
         let budget_compliance = render_time_ms <= self.config.budget_ms as f64;
 
         if !budget_compliance && self.config.monitoring.alert_on_budget_exceeded {
-            return Err(AccessibilityError::PerformanceBudgetExceeded(
-                format!("Operation '{}' took {}ms, exceeding budget of {}ms",
-                    self.operation_name, render_time_ms, self.config.budget_ms)
-            ));
+            return Err(AccessibilityError::PerformanceBudgetExceeded(format!(
+                "Operation '{}' took {}ms, exceeding budget of {}ms",
+                self.operation_name, render_time_ms, self.config.budget_ms
+            )));
         }
 
         Ok(PerformanceMetrics {
             render_time_ms,
             memory_usage_mb,
-            fps: 60.0, // Mock - would measure actual FPS
+            fps: 60.0,                  // Mock - would measure actual FPS
             interaction_delay_ms: 16.0, // Mock - would measure actual interaction delay
-            cache_hit_rate: 0.85, // Mock - would track actual cache performance
+            cache_hit_rate: 0.85,       // Mock - would track actual cache performance
             budget_compliance,
             timestamp: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
@@ -919,7 +978,8 @@ mod tests {
         let data = df! {
             "category" => ["A", "B", "C"],
             "value" => [10, 20, 15],
-        }.unwrap();
+        }
+        .unwrap();
 
         let config = AccessibilityConfig::default();
         let perf_config = PerformanceConfig::default();
@@ -938,7 +998,8 @@ mod tests {
         let data = df! {
             "date" => ["2023-01", "2023-02", "2023-03"],
             "revenue" => [100, 120, 110],
-        }.unwrap();
+        }
+        .unwrap();
 
         let config = AccessibilityConfig::default();
         let perf_config = PerformanceConfig::default();
@@ -957,7 +1018,8 @@ mod tests {
         let data = df! {
             "x" => [1, 2, 3],
             "y" => [10, 20, 15],
-        }.unwrap();
+        }
+        .unwrap();
 
         let config = AccessibilityConfig::default();
         let perf_config = PerformanceConfig::default();
@@ -992,7 +1054,8 @@ mod tests {
         let data = df! {
             "time" => [1, 2, 3, 4],
             "value" => [10, 15, 12, 18],
-        }.unwrap();
+        }
+        .unwrap();
 
         let config = AccessibilityConfig::default();
         let perf_config = PerformanceConfig::default();
@@ -1030,7 +1093,8 @@ mod tests {
         let data = df! {
             "x" => [1, 2],
             "y" => [1, 2],
-        }.unwrap();
+        }
+        .unwrap();
 
         let mut config = AccessibilityConfig::default();
         config.screen_reader.generate_alt_text = false; // Introduce violation
@@ -1043,7 +1107,10 @@ mod tests {
 
         assert!(!report.violations.is_empty());
         assert!(report.score < 70.0);
-        assert!(report.violations.iter().any(|v| matches!(v.severity, ViolationSeverity::Critical)));
+        assert!(report
+            .violations
+            .iter()
+            .any(|v| matches!(v.severity, ViolationSeverity::Critical)));
     }
 
     #[test]
@@ -1073,7 +1140,9 @@ mod tests {
 
         let report = system.validate_wcag_compliance(&spec, &data).unwrap();
 
-        let contrast_violations: Vec<_> = report.violations.iter()
+        let contrast_violations: Vec<_> = report
+            .violations
+            .iter()
             .filter(|v| v.criterion.contains("Contrast"))
             .collect();
 
