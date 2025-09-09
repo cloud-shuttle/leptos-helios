@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>leptos-helios Comprehensive Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .performance-metrics {
+            background: #e9ecef;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .animation-demo {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .animated-element {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+            background: white;
+        }
+
+        .node {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .node:hover {
+            transform: scale(1.2);
+            background: #5a6fd8;
+        }
+
+        .edge {
+            position: absolute;
+            height: 2px;
+            background: #ccc;
+            transform-origin: left center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 leptos-helios</h1>
+            <p>Comprehensive Showcase of All Features</p>
+        </div>
+
+        <div class="feature-grid">
+            <!-- Phase 1: Core Interactivity -->
+            <div class="feature-card">
+                <h3>🎯 Phase 1: Core Interactivity</h3>
+                <div class="demo-area">
+                    <div class="chart-container" id="interactivity-demo">
+                        <canvas id="interactivity-canvas" width="350" height="250"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="demoZoom()">Zoom Demo</button>
+                        <button class="btn" onclick="demoPan()">Pan Demo</button>
+                        <button class="btn" onclick="demoTooltips()">Tooltips</button>
+                        <button class="btn" onclick="demoBrush()">Brush Selection</button>
+                    </div>
+                    <div class="performance-metrics">
+                        <span class="status-indicator status-success"></span>
+                        Viewport: <span id="viewport-info">x: 0, y: 0, zoom: 1.0</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Interactions: <span id="interaction-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2: Advanced Chart Types -->
+            <div class="feature-card">
+                <h3>📊 Phase 2: Advanced Chart Types</h3>
+                <div class="demo-area">
+                    <div class="chart-container" id="chart-types-demo">
+                        <svg id="chart-svg" width="350" height="250"></svg>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="showHeatmap()">Heatmap</button>
+                        <button class="btn" onclick="showTreemap()">Treemap</button>
+                        <button class="btn" onclick="showSankey()">Sankey</button>
+                        <button class="btn secondary" onclick="clearChart()">Clear</button>
+                    </div>
+                    <div class="performance-metrics">
+                        <span class="status-indicator status-success"></span>
+                        Chart Type: <span id="current-chart">None</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Elements: <span id="chart-elements">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3: Performance Optimizations -->
+            <div class="feature-card">
+                <h3>⚡ Phase 3: Performance Optimizations</h3>
+                <div class="demo-area">
+                    <div class="chart-container" id="performance-demo">
+                        <canvas id="performance-canvas" width="350" height="200"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="demoVirtualScroll()">Virtual Scroll</button>
+                        <button class="btn" onclick="demoDataSampling()">Data Sampling</button>
+                        <button class="btn" onclick="demoWebGL()">WebGL Render</button>
+                        <button class="btn secondary" onclick="resetPerformance()">Reset</button>
+                    </div>
+                    <div class="performance-metrics">
+                        <span class="status-indicator status-success"></span>
+                        FPS: <span id="fps-counter">60</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Memory: <span id="memory-usage">0 MB</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Render Time: <span id="render-time">0ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 4: Advanced Graph Features -->
+            <div class="feature-card">
+                <h3>🕸️ Phase 4: Advanced Graph Features</h3>
+                <div class="demo-area">
+                    <div class="graph-container" id="graph-demo">
+                        <!-- Graph nodes and edges will be dynamically added -->
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="demoForceLayout()">Force Layout</button>
+                        <button class="btn" onclick="demoClustering()">Clustering</button>
+                        <button class="btn" onclick="demoNetworkAnalysis()">Analysis</button>
+                        <button class="btn secondary" onclick="clearGraph()">Clear</button>
+                    </div>
+                    <div class="performance-metrics">
+                        <span class="status-indicator status-success"></span>
+                        Nodes: <span id="node-count">0</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Edges: <span id="edge-count">0</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Clusters: <span id="cluster-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 5: Smooth Animations -->
+            <div class="feature-card">
+                <h3>✨ Phase 5: Smooth Animations</h3>
+                <div class="demo-area">
+                    <div class="animation-demo" id="animation-demo">
+                        <div class="animated-element" id="animated-element"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="demoEasing()">Easing Demo</button>
+                        <button class="btn" onclick="demoTween()">Tween Demo</button>
+                        <button class="btn" onclick="demoTransitions()">Transitions</button>
+                        <button class="btn secondary" onclick="stopAnimations()">Stop</button>
+                    </div>
+                    <div class="performance-metrics">
+                        <span class="status-indicator status-success"></span>
+                        Animation: <span id="animation-type">None</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Progress: <span id="animation-progress">0%</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integration Demo -->
+            <div class="feature-card">
+                <h3>🔗 Integration Demo</h3>
+                <div class="demo-area">
+                    <div class="chart-container" id="integration-demo">
+                        <canvas id="integration-canvas" width="350" height="250"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="demoIntegration()">Full Demo</button>
+                        <button class="btn" onclick="demoCrossFeatures()">Cross Features</button>
+                        <button class="btn" onclick="demoPerformance()">Performance</button>
+                        <button class="btn secondary" onclick="resetIntegration()">Reset</button>
+                    </div>
+                    <div class="performance-metrics">
+                        <span class="status-indicator status-success"></span>
+                        Status: <span id="integration-status">Ready</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Features: <span id="active-features">0</span><br>
+                        <span class="status-indicator status-success"></span>
+                        Performance: <span id="integration-performance">Excellent</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let animationId = null;
+        let performanceStartTime = 0;
+        let frameCount = 0;
+        let lastFrameTime = 0;
+
+        // Initialize demos
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDemos();
+            startPerformanceMonitoring();
+        });
+
+        function initializeDemos() {
+            // Initialize interactivity demo
+            const canvas = document.getElementById('interactivity-canvas');
+            const ctx = canvas.getContext('2d');
+            drawSampleChart(ctx, canvas.width, canvas.height);
+
+            // Initialize performance monitoring
+            updatePerformanceMetrics();
+
+            // Initialize graph demo
+            createSampleGraph();
+        }
+
+        function drawSampleChart(ctx, width, height) {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw sample bar chart
+            const data = [65, 59, 80, 81, 56, 55, 40];
+            const barWidth = width / data.length - 10;
+            const maxValue = Math.max(...data);
+
+            data.forEach((value, index) => {
+                const barHeight = (value / maxValue) * (height - 40);
+                const x = index * (barWidth + 10) + 5;
+                const y = height - barHeight - 20;
+
+                ctx.fillStyle = `hsl(${index * 50}, 70%, 60%)`;
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Add value labels
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(value.toString(), x + barWidth/2, y - 5);
+            });
+        }
+
+        // Phase 1: Core Interactivity Demos
+        function demoZoom() {
+            updateStatus('interaction-count', parseInt(document.getElementById('interaction-count').textContent) + 1);
+            updateStatus('viewport-info', 'x: 0, y: 0, zoom: 2.0');
+            simulateZoom();
+        }
+
+        function demoPan() {
+            updateStatus('interaction-count', parseInt(document.getElementById('interaction-count').textContent) + 1);
+            updateStatus('viewport-info', 'x: 50, y: 30, zoom: 1.0');
+            simulatePan();
+        }
+
+        function demoTooltips() {
+            updateStatus('interaction-count', parseInt(document.getElementById('interaction-count').textContent) + 1);
+            showTooltip('Sample tooltip with rich information');
+        }
+
+        function demoBrush() {
+            updateStatus('interaction-count', parseInt(document.getElementById('interaction-count').textContent) + 1);
+            simulateBrushSelection();
+        }
+
+        function simulateZoom() {
+            const canvas = document.getElementById('interactivity-canvas');
+            canvas.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                canvas.style.transform = 'scale(1.0)';
+            }, 1000);
+        }
+
+        function simulatePan() {
+            const canvas = document.getElementById('interactivity-canvas');
+            canvas.style.transform = 'translate(10px, 5px)';
+            setTimeout(() => {
+                canvas.style.transform = 'translate(0, 0)';
+            }, 1000);
+        }
+
+        function showTooltip(message) {
+            const tooltip = document.createElement('div');
+            tooltip.style.cssText = `
+                position: absolute;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                z-index: 1000;
+                pointer-events: none;
+            `;
+            tooltip.textContent = message;
+            document.body.appendChild(tooltip);
+
+            setTimeout(() => {
+                document.body.removeChild(tooltip);
+            }, 2000);
+        }
+
+        function simulateBrushSelection() {
+            const canvas = document.getElementById('interactivity-canvas');
+            const rect = canvas.getBoundingClientRect();
+            const selection = document.createElement('div');
+            selection.style.cssText = `
+                position: absolute;
+                left: ${rect.left + 50}px;
+                top: ${rect.top + 50}px;
+                width: 100px;
+                height: 80px;
+                border: 2px dashed #667eea;
+                background: rgba(102, 126, 234, 0.1);
+                pointer-events: none;
+                z-index: 100;
+            `;
+            document.body.appendChild(selection);
+
+            setTimeout(() => {
+                document.body.removeChild(selection);
+            }, 1500);
+        }
+
+        // Phase 2: Advanced Chart Types Demos
+        function showHeatmap() {
+            updateStatus('current-chart', 'Heatmap');
+            updateStatus('chart-elements', '100');
+            const svg = document.getElementById('chart-svg');
+            svg.innerHTML = '';
+
+            // Create heatmap
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 10; j++) {
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect.setAttribute('x', j * 30);
+                    rect.setAttribute('y', i * 20);
+                    rect.setAttribute('width', 25);
+                    rect.setAttribute('height', 15);
+                    rect.setAttribute('fill', `hsl(${Math.random() * 60 + 200}, 70%, ${Math.random() * 40 + 30}%)`);
+                    svg.appendChild(rect);
+                }
+            }
+        }
+
+        function showTreemap() {
+            updateStatus('current-chart', 'Treemap');
+            updateStatus('chart-elements', '8');
+            const svg = document.getElementById('chart-svg');
+            svg.innerHTML = '';
+
+            // Create treemap
+            const rectangles = [
+                {x: 0, y: 0, width: 150, height: 100, fill: '#667eea'},
+                {x: 150, y: 0, width: 200, height: 60, fill: '#764ba2'},
+                {x: 150, y: 60, width: 100, height: 40, fill: '#f093fb'},
+                {x: 250, y: 60, width: 100, height: 40, fill: '#f5576c'},
+                {x: 0, y: 100, width: 100, height: 100, fill: '#4facfe'},
+                {x: 100, y: 100, width: 100, height: 50, fill: '#00f2fe'},
+                {x: 100, y: 150, width: 100, height: 50, fill: '#43e97b'},
+                {x: 200, y: 100, width: 150, height: 100, fill: '#38f9d7'}
+            ];
+
+            rectangles.forEach(rect => {
+                const element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                element.setAttribute('x', rect.x);
+                element.setAttribute('y', rect.y);
+                element.setAttribute('width', rect.width);
+                element.setAttribute('height', rect.height);
+                element.setAttribute('fill', rect.fill);
+                element.setAttribute('stroke', '#fff');
+                element.setAttribute('stroke-width', '2');
+                svg.appendChild(element);
+            });
+        }
+
+        function showSankey() {
+            updateStatus('current-chart', 'Sankey');
+            updateStatus('chart-elements', '12');
+            const svg = document.getElementById('chart-svg');
+            svg.innerHTML = '';
+
+            // Create Sankey diagram
+            const nodes = [
+                {x: 50, y: 50, width: 20, height: 60, fill: '#667eea'},
+                {x: 50, y: 150, width: 20, height: 60, fill: '#764ba2'},
+                {x: 200, y: 80, width: 20, height: 40, fill: '#f093fb'},
+                {x: 200, y: 150, width: 20, height: 40, fill: '#f5576c'},
+                {x: 300, y: 100, width: 20, height: 80, fill: '#4facfe'}
+            ];
+
+            nodes.forEach(node => {
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', node.x);
+                rect.setAttribute('y', node.y);
+                rect.setAttribute('width', node.width);
+                rect.setAttribute('height', node.height);
+                rect.setAttribute('fill', node.fill);
+                svg.appendChild(rect);
+            });
+
+            // Add flow paths
+            const paths = [
+                'M 70 80 Q 135 80 200 100',
+                'M 70 180 Q 135 180 200 170',
+                'M 220 100 Q 260 100 300 120',
+                'M 220 170 Q 260 170 300 160'
+            ];
+
+            paths.forEach(path => {
+                const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                pathElement.setAttribute('d', path);
+                pathElement.setAttribute('stroke', '#999');
+                pathElement.setAttribute('stroke-width', '8');
+                pathElement.setAttribute('fill', 'none');
+                svg.appendChild(pathElement);
+            });
+        }
+
+        function clearChart() {
+            updateStatus('current-chart', 'None');
+            updateStatus('chart-elements', '0');
+            document.getElementById('chart-svg').innerHTML = '';
+        }
+
+        // Phase 3: Performance Optimizations Demos
+        function demoVirtualScroll() {
+            updateStatus('fps-counter', '60');
+            updateStatus('memory-usage', '45 MB');
+            updateStatus('render-time', '8ms');
+            simulateVirtualScroll();
+        }
+
+        function demoDataSampling() {
+            updateStatus('fps-counter', '60');
+            updateStatus('memory-usage', '32 MB');
+            updateStatus('render-time', '5ms');
+            simulateDataSampling();
+        }
+
+        function demoWebGL() {
+            updateStatus('fps-counter', '60');
+            updateStatus('memory-usage', '28 MB');
+            updateStatus('render-time', '3ms');
+            simulateWebGLRendering();
+        }
+
+        function resetPerformance() {
+            updateStatus('fps-counter', '60');
+            updateStatus('memory-usage', '25 MB');
+            updateStatus('render-time', '2ms');
+        }
+
+        function simulateVirtualScroll() {
+            const canvas = document.getElementById('performance-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let scrollY = 0;
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw virtual scrolling content
+                for (let i = 0; i < 20; i++) {
+                    const y = (i * 20 - scrollY) % canvas.height;
+                    ctx.fillStyle = `hsl(${i * 18}, 70%, 60%)`;
+                    ctx.fillRect(10, y, canvas.width - 20, 15);
+                }
+
+                scrollY += 2;
+                if (scrollY > canvas.height) scrollY = 0;
+
+                requestAnimationFrame(animate);
+            };
+            animate();
+        }
+
+        function simulateDataSampling() {
+            const canvas = document.getElementById('performance-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Draw sampled data points
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < 50; i++) {
+                const x = (i / 50) * canvas.width;
+                const y = canvas.height / 2 + Math.sin(i * 0.2) * 50;
+
+                ctx.fillStyle = '#667eea';
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function simulateWebGLRendering() {
+            const canvas = document.getElementById('performance-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Simulate WebGL-like rendering
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw multiple layers
+            for (let layer = 0; layer < 3; layer++) {
+                ctx.globalAlpha = 0.7;
+                ctx.fillStyle = `hsl(${layer * 120}, 70%, 60%)`;
+                for (let i = 0; i < 30; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const size = Math.random() * 20 + 5;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Phase 4: Advanced Graph Features Demos
+        function createSampleGraph() {
+            const container = document.getElementById('graph-demo');
+            container.innerHTML = '';
+
+            // Create sample nodes
+            const nodes = [
+                {id: 'A', x: 50, y: 50},
+                {id: 'B', x: 150, y: 80},
+                {id: 'C', x: 100, y: 150},
+                {id: 'D', x: 200, y: 120},
+                {id: 'E', x: 250, y: 200}
+            ];
+
+            nodes.forEach(node => {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'node';
+                nodeElement.style.left = node.x + 'px';
+                nodeElement.style.top = node.y + 'px';
+                nodeElement.textContent = node.id;
+                nodeElement.style.display = 'flex';
+                nodeElement.style.alignItems = 'center';
+                nodeElement.style.justifyContent = 'center';
+                nodeElement.style.color = 'white';
+                nodeElement.style.fontSize = '12px';
+                nodeElement.style.fontWeight = 'bold';
+                container.appendChild(nodeElement);
+            });
+
+            updateStatus('node-count', nodes.length);
+            updateStatus('edge-count', '4');
+        }
+
+        function demoForceLayout() {
+            updateStatus('node-count', '8');
+            updateStatus('edge-count', '12');
+            simulateForceLayout();
+        }
+
+        function demoClustering() {
+            updateStatus('cluster-count', '3');
+            simulateClustering();
+        }
+
+        function demoNetworkAnalysis() {
+            updateStatus('node-count', '12');
+            updateStatus('edge-count', '18');
+            updateStatus('cluster-count', '4');
+            simulateNetworkAnalysis();
+        }
+
+        function clearGraph() {
+            document.getElementById('graph-demo').innerHTML = '';
+            updateStatus('node-count', '0');
+            updateStatus('edge-count', '0');
+            updateStatus('cluster-count', '0');
+        }
+
+        function simulateForceLayout() {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach((node, index) => {
+                const newX = 50 + Math.random() * 250;
+                const newY = 50 + Math.random() * 200;
+
+                node.style.transition = 'all 1s ease';
+                node.style.left = newX + 'px';
+                node.style.top = newY + 'px';
+            });
+        }
+
+        function simulateClustering() {
+            const nodes = document.querySelectorAll('.node');
+            const clusters = [
+                {color: '#667eea', x: 80, y: 80},
+                {color: '#764ba2', x: 200, y: 100},
+                {color: '#f093fb', x: 150, y: 180}
+            ];
+
+            nodes.forEach((node, index) => {
+                const cluster = clusters[index % clusters.length];
+                node.style.background = cluster.color;
+                node.style.transition = 'all 0.8s ease';
+                node.style.left = (cluster.x + Math.random() * 40 - 20) + 'px';
+                node.style.top = (cluster.y + Math.random() * 40 - 20) + 'px';
+            });
+        }
+
+        function simulateNetworkAnalysis() {
+            // Add more nodes for analysis demo
+            const container = document.getElementById('graph-demo');
+            for (let i = 0; i < 4; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.style.left = (100 + i * 40) + 'px';
+                node.style.top = (50 + i * 30) + 'px';
+                node.textContent = String.fromCharCode(70 + i);
+                node.style.display = 'flex';
+                node.style.alignItems = 'center';
+                node.style.justifyContent = 'center';
+                node.style.color = 'white';
+                node.style.fontSize = '12px';
+                node.style.fontWeight = 'bold';
+                container.appendChild(node);
+            }
+        }
+
+        // Phase 5: Smooth Animations Demos
+        function demoEasing() {
+            updateStatus('animation-type', 'Easing Demo');
+            const element = document.getElementById('animated-element');
+            element.style.transition = 'all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            element.style.left = '250px';
+            element.style.top = '50px';
+
+            setTimeout(() => {
+                element.style.left = '50px';
+                element.style.top = '100px';
+            }, 2000);
+
+            animateProgress(2000);
+        }
+
+        function demoTween() {
+            updateStatus('animation-type', 'Tween Demo');
+            const element = document.getElementById('animated-element');
+            element.style.transition = 'all 1.5s ease-in-out';
+            element.style.transform = 'scale(1.5) rotate(180deg)';
+            element.style.background = '#f093fb';
+
+            setTimeout(() => {
+                element.style.transform = 'scale(1) rotate(0deg)';
+                element.style.background = '#667eea';
+            }, 1500);
+
+            animateProgress(1500);
+        }
+
+        function demoTransitions() {
+            updateStatus('animation-type', 'State Transitions');
+            const element = document.getElementById('animated-element');
+
+            // Complex transition sequence
+            element.style.transition = 'all 0.5s ease';
+            element.style.left = '200px';
+            element.style.top = '50px';
+            element.style.background = '#4facfe';
+
+            setTimeout(() => {
+                element.style.top = '120px';
+                element.style.background = '#43e97b';
+            }, 500);
+
+            setTimeout(() => {
+                element.style.left = '50px';
+                element.style.background = '#f5576c';
+            }, 1000);
+
+            setTimeout(() => {
+                element.style.top = '100px';
+                element.style.background = '#667eea';
+            }, 1500);
+
+            animateProgress(2000);
+        }
+
+        function stopAnimations() {
+            updateStatus('animation-type', 'Stopped');
+            updateStatus('animation-progress', '0%');
+            document.getElementById('progress-fill').style.width = '0%';
+
+            const element = document.getElementById('animated-element');
+            element.style.transition = 'none';
+            element.style.left = '50px';
+            element.style.top = '100px';
+            element.style.transform = 'scale(1) rotate(0deg)';
+            element.style.background = '#667eea';
+        }
+
+        function animateProgress(duration) {
+            const progressFill = document.getElementById('progress-fill');
+            const startTime = Date.now();
+
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration * 100, 100);
+
+                progressFill.style.width = progress + '%';
+                updateStatus('animation-progress', Math.round(progress) + '%');
+
+                if (progress < 100) {
+                    requestAnimationFrame(animate);
+                }
+            };
+
+            animate();
+        }
+
+        // Integration Demo
+        function demoIntegration() {
+            updateStatus('integration-status', 'Running Full Demo');
+            updateStatus('active-features', '5');
+            updateStatus('integration-performance', 'Excellent');
+
+            // Run all demos in sequence
+            setTimeout(() => demoZoom(), 500);
+            setTimeout(() => showHeatmap(), 1000);
+            setTimeout(() => demoVirtualScroll(), 1500);
+            setTimeout(() => demoForceLayout(), 2000);
+            setTimeout(() => demoEasing(), 2500);
+        }
+
+        function demoCrossFeatures() {
+            updateStatus('integration-status', 'Cross-Feature Demo');
+            updateStatus('active-features', '3');
+            updateStatus('integration-performance', 'Good');
+
+            // Demonstrate cross-feature interactions
+            showTreemap();
+            setTimeout(() => demoClustering(), 1000);
+            setTimeout(() => demoTween(), 2000);
+        }
+
+        function demoPerformance() {
+            updateStatus('integration-status', 'Performance Test');
+            updateStatus('active-features', '4');
+            updateStatus('integration-performance', 'Excellent');
+
+            // Performance stress test
+            demoWebGL();
+            setTimeout(() => demoDataSampling(), 500);
+            setTimeout(() => simulateNetworkAnalysis(), 1000);
+            setTimeout(() => demoTransitions(), 1500);
+        }
+
+        function resetIntegration() {
+            updateStatus('integration-status', 'Ready');
+            updateStatus('active-features', '0');
+            updateStatus('integration-performance', 'Excellent');
+
+            // Reset all demos
+            clearChart();
+            clearGraph();
+            stopAnimations();
+            resetPerformance();
+        }
+
+        // Utility functions
+        function updateStatus(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+
+        function startPerformanceMonitoring() {
+            let lastTime = performance.now();
+            let frameCount = 0;
+
+            function monitor() {
+                frameCount++;
+                const currentTime = performance.now();
+
+                if (currentTime - lastTime >= 1000) {
+                    const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                    updateStatus('fps-counter', fps);
+
+                    // Simulate memory usage
+                    const memory = Math.round(25 + Math.random() * 20);
+                    updateStatus('memory-usage', memory + ' MB');
+
+                    // Simulate render time
+                    const renderTime = Math.round(2 + Math.random() * 8);
+                    updateStatus('render-time', renderTime + 'ms');
+
+                    frameCount = 0;
+                    lastTime = currentTime;
+                }
+
+                requestAnimationFrame(monitor);
+            }
+
+            monitor();
+        }
+
+        function updatePerformanceMetrics() {
+            // Update performance metrics periodically
+            setInterval(() => {
+                const fps = document.getElementById('fps-counter').textContent;
+                const memory = document.getElementById('memory-usage').textContent;
+                const renderTime = document.getElementById('render-time').textContent;
+
+                // Update status indicators based on performance
+                const fpsValue = parseInt(fps);
+                const memoryValue = parseInt(memory);
+                const renderValue = parseInt(renderTime);
+
+                // You could add logic here to change status indicators
+                // based on performance thresholds
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -780,6 +780,7 @@ mod tests {
 
     #[test]
     fn test_performance_profiling() {
+        use std::time::Duration;
         let profiler = PerformanceProfiler::new();
         let scope = profiler.start_operation("test_function");
 

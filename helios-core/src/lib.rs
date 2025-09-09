@@ -38,11 +38,16 @@ pub mod advanced_memory;
 // pub mod algorithm_registry;
 // pub mod animation_engine;
 // pub mod anomaly_detection;
+pub mod advanced_chart_types;
+pub mod advanced_graph_features;
 pub mod canvas2d_renderer;
 pub mod canvas_surface;
 pub mod chart;
 pub mod chart_config;
 pub mod cross_browser;
+pub mod interactivity;
+pub mod performance_optimizations;
+pub mod smooth_animations;
 // pub mod custom_components;
 pub mod data_minimal;
 pub mod data_pipeline;
@@ -101,10 +106,18 @@ pub use accessibility::*;
 // pub use animation_engine::*;
 // pub use anomaly_detection::*;
 // pub use custom_components::*;
+pub use advanced_chart_types::*;
+pub use interactivity::*;
+
+pub use performance_optimizations::*;
+
+pub use advanced_graph_features::*;
+
 pub use data_sources::*;
 pub use debugger::*;
 pub use dev_tools::*;
 pub use export_system::*;
+pub use smooth_animations::*;
 // pub use forecasting_engine::*;
 pub use ml_intelligence::*;
 pub use performance::*;

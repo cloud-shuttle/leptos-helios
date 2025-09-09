@@ -778,7 +778,7 @@ impl ExportSystemBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::chart::{ChartSpec, MarkType};
+    use crate::chart::{ChartSpec, ChartSpecBuilder, MarkType};
     use polars::prelude::*;
     use tempfile::tempdir;
 
