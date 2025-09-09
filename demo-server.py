@@ -11,7 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-PORT = 8080
+PORT = 8081
 
 class DemoHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -22,9 +22,9 @@ class DemoHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
-        # Serve the demo page for root path
+        # Serve the demo index page for root path
         if self.path == '/':
-            self.path = '/canvas2d-demo.html'
+            self.path = '/demo-index.html'
         elif self.path == '/webgpu':
             self.path = '/webgpu-demo.html'
         elif self.path == '/webgpu-charts':
@@ -51,49 +51,49 @@ def main():
     with socketserver.TCPServer(("", PORT), DemoHTTPRequestHandler) as httpd:
         print("🚀 Helios Visualization Demo Server")
         print("=" * 50)
-        print(f"📡 Server running at: http://localhost:{PORT}")
-        print("=" * 50)
-        print("🌐 Available Demos:")
-        print(f"  • Canvas2D TDD Demo: http://localhost:{PORT}/")
-        print(f"  • WebGPU Demo: http://localhost:{PORT}/webgpu")
-        print(f"  • WebGPU Charts Demo: http://localhost:{PORT}/webgpu-charts")
-        print(f"  • WASM Example: http://localhost:{PORT}/example")
-        print(f"  • WebGPU Test: http://localhost:{PORT}/webgpu-test")
-        print("=" * 50)
-        print("🎯 Canvas2D Features:")
-        print("  • Line Chart Rendering with TDD Tests")
-        print("  • Bar Chart Rendering with Performance Metrics")
-        print("  • Scatter Plot Rendering with Interactive Hover")
-        print("  • Performance Benchmarks (100K points in <3ms)")
-        print("  • Interactive Zoom, Pan, and Hover Detection")
-        print("  • Real-time TDD Test Results")
-        print("=" * 50)
-        print("⚡ WebGPU Features:")
-        print("  • WebGPU Support Detection")
-        print("  • Shader Compilation and Caching")
-        print("  • Render Pipeline Creation")
-        print("  • Vertex Buffer Management")
-        print("  • Performance Benchmarking")
-        print("  • GPU Acceleration Testing")
-        print("=" * 50)
-        print("💡 Press Ctrl+C to stop the server")
-        print()
+    print(f"📡 Server running at: http://localhost:{PORT}")
+    print("=" * 50)
+    print("🌐 Available Demos:")
+    print(f"  • Demo Index: http://localhost:{PORT}/")
+    print(f"  • Phase 4 Showcase: http://localhost:{PORT}/phase4-showcase.html")
+    print(f"  • WebGPU Charts Demo: http://localhost:{PORT}/webgpu-charts-demo.html")
+    print(f"  • Canvas2D Demo: http://localhost:{PORT}/canvas2d-demo.html")
+    print(f"  • WebGPU Test: http://localhost:{PORT}/webgpu-test.html")
+    print("=" * 50)
+    print("🎯 Canvas2D Features:")
+    print("  • Line Chart Rendering with TDD Tests")
+    print("  • Bar Chart Rendering with Performance Metrics")
+    print("  • Scatter Plot Rendering with Interactive Hover")
+    print("  • Performance Benchmarks (100K points in <3ms)")
+    print("  • Interactive Zoom, Pan, and Hover Detection")
+    print("  • Real-time TDD Test Results")
+    print("=" * 50)
+    print("⚡ WebGPU Features:")
+    print("  • WebGPU Support Detection")
+    print("  • Shader Compilation and Caching")
+    print("  • Render Pipeline Creation")
+    print("  • Vertex Buffer Management")
+    print("  • Performance Benchmarking")
+    print("  • GPU Acceleration Testing")
+    print("=" * 50)
+    print("💡 Press Ctrl+C to stop the server")
+    print()
 
-        # Try to open the browser automatically
-        try:
-            webbrowser.open(f'http://localhost:{PORT}')
-            print("🌐 Opening demo in your default browser...")
-        except Exception as e:
-            print(f"⚠️  Could not open browser automatically: {e}")
-            print("   Please manually open: http://localhost:8080")
+    # Try to open the browser automatically
+    try:
+        webbrowser.open(f'http://localhost:{PORT}')
+        print("🌐 Opening demo in your default browser...")
+    except Exception as e:
+        print(f"⚠️  Could not open browser automatically: {e}")
+        print("   Please manually open: http://localhost:8081")
 
-        print()
+    print()
 
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\n🛑 Server stopped by user")
-            print("👋 Thanks for trying the Canvas2D TDD Demo!")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\n🛑 Server stopped by user")
+        print("👋 Thanks for trying the Canvas2D TDD Demo!")
 
 if __name__ == "__main__":
     main()

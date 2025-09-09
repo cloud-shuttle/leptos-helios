@@ -618,7 +618,8 @@
                 const startTime = performance.now();
 
                 try {
-                    const shader = this.shaders.get('default');
+                    const shaderName = type === 'point' ? 'point' : 'default';
+                    const shader = this.shaders.get(shaderName);
 
                     const pipeline = this.device.createRenderPipeline({
                         layout: 'auto',
@@ -642,7 +643,8 @@
                             }]
                         },
                         primitive: {
-                            topology: type === 'line' ? 'line-strip' : 'triangle-list'
+                            topology: type === 'line' ? 'line-strip' :
+                                     type === 'point' ? 'point-list' : 'triangle-list'
                         }
                     });
 
@@ -690,20 +692,20 @@
             }
 
             // Render line chart
-            async renderLineChart(canvasId, data, type = 'sine') {
+            async renderLineChart(canvasId, pointCount, type = 'sine') {
                 if (!this.device) {
                     this.log('WebGPU device not initialized', 'error');
                     return false;
                 }
 
                 const startTime = performance.now();
-                this.log(`Rendering line chart with ${data.length} points`);
+                this.log(`Rendering line chart with ${pointCount} points`);
 
                 try {
                     const context = await this.createCanvasContext(canvasId);
                     if (!context) return false;
 
-                    const vertices = this.generateTestData(type, data);
+                    const vertices = this.generateTestData(type, pointCount);
 
                     // Create vertex buffer
                     const vertexBuffer = this.device.createBuffer({
@@ -756,7 +758,7 @@
 
                     // Update UI
                     document.getElementById('lineChartRenderTime').textContent = `${renderTime.toFixed(2)}ms`;
-                    document.getElementById('lineChartPoints').textContent = data.length.toString();
+                    document.getElementById('lineChartPoints').textContent = pointCount.toString();
                     document.getElementById('lineChartFPS').textContent = `${fps.toFixed(1)} FPS`;
 
                     return true;
@@ -787,18 +789,32 @@
                         const x = (i / barCount) * 2 - 1;
 
                         if (orientation === 'vertical') {
-                            // Vertical bars
-                            vertices.push([x, -1]); // Bottom
-                            vertices.push([x, -1 + value * 2]); // Top
-                            vertices.push([x + 0.8 / barCount, -1 + value * 2]); // Top right
-                            vertices.push([x + 0.8 / barCount, -1]); // Bottom right
+                            // Vertical bars - 2 triangles per bar
+                            const barWidth = 1.6 / barCount; // Make bars wider
+
+                            // First triangle (bottom-left, top-left, top-right)
+                            vertices.push([x, -1]);
+                            vertices.push([x, -1 + value * 2]);
+                            vertices.push([x + barWidth, -1 + value * 2]);
+
+                            // Second triangle (bottom-left, top-right, bottom-right)
+                            vertices.push([x, -1]);
+                            vertices.push([x + barWidth, -1 + value * 2]);
+                            vertices.push([x + barWidth, -1]);
                         } else {
-                            // Horizontal bars
+                            // Horizontal bars - 2 triangles per bar
                             const y = (i / barCount) * 2 - 1;
-                            vertices.push([-1, y]); // Left
-                            vertices.push([-1 + value * 2, y]); // Right
-                            vertices.push([-1 + value * 2, y + 0.8 / barCount]); // Top right
-                            vertices.push([-1, y + 0.8 / barCount]); // Top left
+                            const barHeight = 1.6 / barCount; // Make bars taller
+
+                            // First triangle (left, top-left, top-right)
+                            vertices.push([-1, y]);
+                            vertices.push([-1, y + barHeight]);
+                            vertices.push([-1 + value * 2, y + barHeight]);
+
+                            // Second triangle (left, top-right, right)
+                            vertices.push([-1, y]);
+                            vertices.push([-1 + value * 2, y + barHeight]);
+                            vertices.push([-1 + value * 2, y]);
                         }
                     }
 
@@ -883,12 +899,20 @@
                         const x = (Math.random() - 0.5) * 2;
                         const y = (Math.random() - 0.5) * 2;
 
-                        // Create a small square for each point
-                        const size = pointSize / 100; // Scale down
-                        vertices.push([x - size, y - size]);
-                        vertices.push([x + size, y - size]);
-                        vertices.push([x + size, y + size]);
-                        vertices.push([x - size, y + size]);
+                        // Create small squares for each point using 2 triangles (6 vertices)
+                        const size = pointSize / 50; // Make points more visible
+                        const scaledX = x * 0.9;
+                        const scaledY = y * 0.9;
+
+                        // First triangle (bottom-left, top-left, top-right)
+                        vertices.push([scaledX - size, scaledY - size]);
+                        vertices.push([scaledX - size, scaledY + size]);
+                        vertices.push([scaledX + size, scaledY + size]);
+
+                        // Second triangle (bottom-left, top-right, bottom-right)
+                        vertices.push([scaledX - size, scaledY - size]);
+                        vertices.push([scaledX + size, scaledY + size]);
+                        vertices.push([scaledX + size, scaledY - size]);
                     }
 
                     // Create vertex buffer
@@ -958,7 +982,6 @@
                 const startTime = performance.now();
 
                 try {
-                    const vertices = this.generateTestData('sine', size);
                     const success = await this.renderLineChart(canvasId, size, 'sine');
 
                     if (success) {
@@ -1002,7 +1025,19 @@ fn fs_main() -> @location(0) vec4<f32> {
     return vec4<f32>(0.0, 0.5, 1.0, 1.0);
 }`;
 
+                // Create point shader for scatter plots
+                const pointVertexShader = `@vertex
+fn vs_main(@location(0) position: vec2<f32>) -> @builtin(position) vec4<f32> {
+    return vec4<f32>(position, 0.0, 1.0);
+}`;
+
+                const pointFragmentShader = `@fragment
+fn fs_main() -> @location(0) vec4<f32> {
+    return vec4<f32>(0.2, 0.6, 1.0, 1.0);
+}`;
+
                 await webgpuChartsDemo.compileShader('default', vertexShader, fragmentShader);
+                await webgpuChartsDemo.compileShader('point', pointVertexShader, pointFragmentShader);
                 document.getElementById('renderContext').textContent = 'Ready';
             }
         }

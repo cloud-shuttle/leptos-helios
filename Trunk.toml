@@ -6,3 +6,12 @@ bin = "helios-app"
 
 [tools]
 wasm_opt = "false"
+
+[serve]
+addresses = ["127.0.0.1:8080"]
+open = true
+watch = true
+
+[watch]
+watch = ["src", "assets", "index.html"]
+ignore = ["target", "node_modules", ".git"]

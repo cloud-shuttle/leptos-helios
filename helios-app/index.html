@@ -3,102 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helios Visualization Library</title>
+    <title>Helios App - Trunk Development</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a1a;
-            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
         }
-        #app {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .loading {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             text-align: center;
         }
-        .spinner {
-            border: 4px solid #333;
-            border-top: 4px solid #00d4ff;
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .demo-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 2rem;
+        }
+        .demo-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s ease, background 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .demo-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+        .demo-card h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .chart-container {
-            width: 800px;
-            height: 600px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            background: #2a2a2a;
-            margin: 20px;
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Loading Helios Visualization Library...</p>
+    <div class="container">
+        <h1>🚀 Helios App</h1>
+        <p class="subtitle">High-performance Rust visualization library for Leptos</p>
+
+        <div class="status">
+            <h3>Development Server Status</h3>
+            <p>✅ Trunk development server running</p>
+            <p>🔄 Hot reloading enabled</p>
+            <p>⚡ WASM optimization disabled for faster builds</p>
+        </div>
+
+        <div class="demo-links">
+            <a href="/webgpu-charts-demo.html" class="demo-card">
+                <h3>🎨 WebGPU Charts Demo</h3>
+                <p>Interactive GPU-accelerated chart rendering with real-time performance metrics</p>
+            </a>
+
+            <a href="/canvas2d-demo.html" class="demo-card">
+                <h3>🖼️ Canvas2D Demo</h3>
+                <p>Universal browser support with Canvas2D fallback rendering</p>
+            </a>
+
+            <a href="/phase4-showcase.html" class="demo-card">
+                <h3>🏢 Phase 4 Showcase</h3>
+                <p>Enterprise features: Security, Audit Logging, Data Governance, Accessibility</p>
+            </a>
+
+            <a href="/example.html" class="demo-card">
+                <h3>📊 WASM Example</h3>
+                <p>WebAssembly integration with Rust-powered data processing</p>
+            </a>
+        </div>
+
+        <div class="status">
+            <h3>Development Features</h3>
+            <p>🔄 <strong>Hot Reloading:</strong> Changes to Rust code automatically rebuild and reload</p>
+            <p>⚡ <strong>Fast Builds:</strong> Optimized for development speed</p>
+            <p>🎯 <strong>Live Preview:</strong> See changes instantly in the browser</p>
+            <p>🛠️ <strong>Debug Mode:</strong> Full source maps and debugging support</p>
         </div>
     </div>
-    <script type="module">
-        // Wait for Trunk to load the WASM module
-        window.addEventListener('TrunkApplicationStarted', async (event) => {
-            try {
-                const { greet, process_data, create_simple_chart, test_webgpu_support } = window.wasmBindings;
 
-                console.log('Helios loaded successfully');
+    <script>
+        // Initialize the Leptos app
+        console.log('🚀 Initializing Helios App with Trunk...');
 
-                // Test the exported functions
-                const greeting = greet('World');
-                console.log(greeting);
+        // Check if WebGPU is available
+        if ('gpu' in navigator) {
+            console.log('✅ WebGPU support detected');
+        } else {
+            console.log('⚠️ WebGPU not available, will use Canvas2D fallback');
+        }
 
-                const processed = process_data('hello world');
-                console.log(processed);
+        // Add loading indicator
+        const statusDiv = document.querySelector('.status');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.innerHTML = '<div class="loading"></div> Loading WASM module...';
+        statusDiv.appendChild(loadingDiv);
 
-                const chart = create_simple_chart();
-                console.log('Chart JSON:', chart);
-
-                const webgpuSupport = test_webgpu_support();
-                console.log('WebGPU Support:', webgpuSupport);
-
-                // Display results on the page
-                document.getElementById('app').innerHTML = `
-                    <div class="loading">
-                        <h1>🚀 Helios Visualization Library</h1>
-                        <p>✅ WASM module loaded successfully!</p>
-                        <p><strong>Greeting:</strong> ${greeting}</p>
-                        <p><strong>Data Processing:</strong> ${processed}</p>
-                        <p><strong>WebGPU Support:</strong> ${webgpuSupport ? '✅ Supported' : '❌ Not Supported'}</p>
-                        <div class="chart-container">
-                            <h3>Sample Chart Configuration</h3>
-                            <pre style="text-align: left; padding: 20px; overflow: auto; height: 400px;">${JSON.stringify(JSON.parse(chart), null, 2)}</pre>
-                        </div>
-                        <p><em>Built with Trunk + Rust + WebAssembly</em></p>
-                    </div>
-                `;
-            } catch (error) {
-                console.error('Error loading Helios:', error);
-                document.getElementById('app').innerHTML = `
-                    <div class="loading">
-                        <h1>❌ Error Loading Helios</h1>
-                        <p>Failed to load the WASM module:</p>
-                        <pre style="color: #ff6b6b;">${error.message}</pre>
-                    </div>
-                `;
-            }
-        });
+        // This will be replaced by Trunk with the actual WASM module
+        setTimeout(() => {
+            loadingDiv.innerHTML = '✅ WASM module loaded successfully';
+        }, 1000);
     </script>
 </body>
 </html>

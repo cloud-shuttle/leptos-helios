@@ -118,11 +118,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## 📚 Documentation
 
+### **Core Documentation**
 - **[API Reference](docs/API_REFERENCE.md)** - Complete API documentation
 - **[Tutorials](docs/TUTORIALS.md)** - Step-by-step guides
 - **[Examples](examples/)** - Code examples and demos
 - **[Contributing Guide](CONTRIBUTING.md)** - How to contribute
 - **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
+
+### **Organized Documentation**
+- **[Releases](docs/releases/)** - Release notes, phase completion reports, and development summaries
+- **[Development](docs/development/)** - Development guides, TDD documentation, and Trunk integration
+- **[Architecture](docs/architecture/)** - System architecture, WebGPU abstraction, and technical design
+- **[Examples](docs/examples/)** - Implementation examples, demos, and usage patterns
+
+### **Development Workflow**
+- **[Trunk Integration](docs/development/TRUNK_INTEGRATION.md)** - Modern development with hot reloading
+- **[TDD Implementation](docs/development/TDD_IMPLEMENTATION_COMPLETE.md)** - Test-driven development guide
+- **[Plugin Architecture](docs/development/PLUGIN_ARCHITECTURE_SUMMARY.md)** - Extensible plugin system
 
 ## 🏗️ Architecture
 

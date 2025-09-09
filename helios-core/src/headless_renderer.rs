@@ -4,11 +4,10 @@
 //! enabling chart rendering without a browser environment.
 
 use crate::chart::ChartSpec;
-use crate::export_system::{ExportConfig, ExportFormat, ExportResult};
+use crate::export_system::ExportConfig;
 use polars::prelude::DataFrame;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::Path;
 use std::time::Instant;
 
 /// Headless rendering errors

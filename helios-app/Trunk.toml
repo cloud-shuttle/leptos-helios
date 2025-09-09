@@ -1,3 +1,8 @@
-# Trunk configuration for Helios app
+# Minimal Trunk configuration for Helios app
+[build]
+target = "dist"
+index = "index.html"
+wasm_file = "leptos_helios_app"
+
 [tools]
 wasm_opt = "false"

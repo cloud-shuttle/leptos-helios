@@ -151,23 +151,23 @@ impl Plugin for CustomChartPlugin {
 
 impl ChartPlugin for CustomChartPlugin {
     fn supported_marks(&self) -> Vec<MarkType> {
-        vec![MarkType::Point { 
-            size: Some(5.0), 
-            opacity: Some(1.0), 
-            shape: Some(PointShape::Circle) 
+        vec![MarkType::Point {
+            size: Some(5.0),
+            opacity: Some(1.0),
+            shape: Some(PointShape::Circle)
         }]
     }
-    
+
     fn render(&self, spec: &ChartSpec, context: &RenderContext) -> Result<RenderResult, PluginError> {
         // Custom rendering logic
         Ok(RenderResult::success())
     }
-    
+
     fn validate_spec(&self, spec: &ChartSpec) -> Result<(), PluginError> {
         // Validation logic
         Ok(())
     }
-    
+
     fn estimate_performance(&self, spec: &ChartSpec) -> PerformanceEstimate {
         PerformanceEstimate {
             estimated_time_ms: 10,

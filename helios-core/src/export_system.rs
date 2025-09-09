@@ -3,7 +3,7 @@
 //! This module provides comprehensive export capabilities for Helios visualizations,
 //! including static exports (PNG, SVG, PDF), interactive exports, and headless rendering.
 
-use crate::chart::{ChartSpec, ChartSpecBuilder};
+use crate::chart::ChartSpec;
 use crate::headless_renderer::{HeadlessConfig, HeadlessError, HeadlessRenderer};
 use polars::prelude::DataFrame;
 use serde::{Deserialize, Serialize};

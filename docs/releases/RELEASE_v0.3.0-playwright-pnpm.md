@@ -1,7 +1,7 @@
 # 🚀 Helios v0.3.0 - Playwright E2E Testing & pnpm Migration
 
-**Release Date**: September 9, 2025  
-**Version**: v0.3.0  
+**Release Date**: September 9, 2025
+**Version**: v0.3.0
 **Codename**: "Dragon Slayer" 🐉
 
 ## 🎯 **Major Achievements**
@@ -165,10 +165,10 @@ This release establishes a **solid foundation** for future development:
 
 ---
 
-**Total Development Time**: 3 weeks  
-**Lines of Code**: 15,000+  
-**Test Coverage**: 95%+  
-**Browser Support**: Chrome, Firefox, Safari, Edge, Mobile  
-**Performance**: Sub-second rendering for 100K+ data points  
+**Total Development Time**: 3 weeks
+**Lines of Code**: 15,000+
+**Test Coverage**: 95%+
+**Browser Support**: Chrome, Firefox, Safari, Edge, Mobile
+**Performance**: Sub-second rendering for 100K+ data points
 
 **Ready for Production!** 🚀

@@ -6,6 +6,7 @@
 //! - Memory leak prevention
 //! - Advanced allocation strategies
 
+use leptos_helios::advanced_memory::AdvancedMemoryPool;
 use leptos_helios::*;
 use proptest::prelude::*;
 use std::time::{Duration, Instant};
@@ -777,7 +778,7 @@ impl MemoryDefragmenter {
         self.fragmentation
     }
     fn defragment(&self) {}
-    fn defragment_memory(&self, initial_fragmentation: f64) -> f64 {
+    fn defragment_memory(&self, _initial_fragmentation: f64) -> f64 {
         0.05 // Simulate 5% final fragmentation (well below 10% threshold)
     }
 }
