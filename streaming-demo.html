@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helios Live Streaming Visualization Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .control-group select option {
+            background: #2a5298;
+            color: white;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .chart-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .metrics-panel {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-card h4 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-connected {
+            background: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        .status-disconnected {
+            background: #e74c3c;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+
+        .log-container {
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .log-entry {
+            margin-bottom: 0.25rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .log-info {
+            color: #00ff00;
+        }
+
+        .log-warning {
+            color: #ffaa00;
+        }
+
+        .log-error {
+            color: #ff4444;
+        }
+
+        .log-success {
+            color: #44ff44;
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 Helios Live Streaming Visualization</h1>
+        <p>Real-time data visualization with WebSocket streaming</p>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label for="data-source">Data Source</label>
+            <select id="data-source">
+                <option value="stock">Stock Prices</option>
+                <option value="sensor">IoT Sensors</option>
+                <option value="network">Network Traffic</option>
+                <option value="crypto">Cryptocurrency</option>
+                <option value="weather">Weather Data</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="update-frequency">Update Frequency</label>
+            <select id="update-frequency">
+                <option value="100">100ms (Fast)</option>
+                <option value="500" selected>500ms (Normal)</option>
+                <option value="1000">1s (Slow)</option>
+                <option value="2000">2s (Very Slow)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="data-points">Data Points</label>
+            <input type="range" id="data-points" min="50" max="500" value="100">
+            <span id="data-points-value">100</span>
+        </div>
+
+        <div class="control-group">
+            <label>&nbsp;</label>
+            <button id="start-streaming" class="btn btn-success">Start Streaming</button>
+        </div>
+
+        <div class="control-group">
+            <label>&nbsp;</label>
+            <button id="stop-streaming" class="btn btn-danger">Stop Streaming</button>
+        </div>
+    </div>
+
+    <div class="charts-container">
+        <div class="chart-panel">
+            <h3>📈 Real-time Line Chart</h3>
+            <canvas id="line-chart" class="chart-canvas"></canvas>
+        </div>
+
+        <div class="chart-panel">
+            <h3>📊 Real-time Bar Chart</h3>
+            <canvas id="bar-chart" class="chart-canvas"></canvas>
+        </div>
+
+        <div class="chart-panel">
+            <h3>🔵 Real-time Scatter Plot</h3>
+            <canvas id="scatter-chart" class="chart-canvas"></canvas>
+        </div>
+
+        <div class="chart-panel">
+            <h3>🌊 Real-time Area Chart</h3>
+            <canvas id="area-chart" class="chart-canvas"></canvas>
+        </div>
+
+        <div class="metrics-panel">
+            <h3>📊 Live Performance Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h4>Connection Status</h4>
+                    <div class="value">
+                        <span id="connection-status" class="status-indicator status-disconnected"></span>
+                        <span id="connection-text">Disconnected</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <h4>Data Points/sec</h4>
+                    <div class="value" id="data-rate">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Render Time</h4>
+                    <div class="value" id="render-time">0ms</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Memory Usage</h4>
+                    <div class="value" id="memory-usage">0MB</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Total Points</h4>
+                    <div class="value" id="total-points">0</div>
+                </div>
+                <div class="metric-card">
+                    <h4>Uptime</h4>
+                    <div class="value" id="uptime">00:00:00</div>
+                </div>
+            </div>
+
+            <div class="log-container" id="log-container">
+                <div class="log-entry log-info">🚀 Helios Live Streaming Demo initialized</div>
+                <div class="log-entry log-info">📡 Ready to connect to data stream</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let isStreaming = false;
+        let websocket = null;
+        let streamingInterval = null;
+        let startTime = null;
+        let dataPoints = [];
+        let maxDataPoints = 100;
+        let updateFrequency = 500;
+        let dataSource = 'stock';
+        let renderTimes = [];
+        let dataRate = 0;
+        let lastDataTime = Date.now();
+        let serverStats = {};
+        let connectionStatus = 'disconnected';
+
+        // Chart canvases
+        const lineChart = document.getElementById('line-chart');
+        const barChart = document.getElementById('bar-chart');
+        const scatterChart = document.getElementById('scatter-chart');
+        const areaChart = document.getElementById('area-chart');
+
+        // Setup canvases
+        function setupCanvas(canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            return ctx;
+        }
+
+        // Initialize all canvases
+        const lineCtx = setupCanvas(lineChart);
+        const barCtx = setupCanvas(barChart);
+        const scatterCtx = setupCanvas(scatterChart);
+        const areaCtx = setupCanvas(areaChart);
+
+        // Data generation functions
+        function generateStockData() {
+            const basePrice = 100 + Math.random() * 50;
+            const volatility = 0.02;
+            const trend = (Math.random() - 0.5) * 0.001;
+            return {
+                price: basePrice * (1 + (Math.random() - 0.5) * volatility + trend),
+                volume: Math.random() * 1000000,
+                timestamp: Date.now()
+            };
+        }
+
+        function generateSensorData() {
+            return {
+                temperature: 20 + Math.random() * 15,
+                humidity: 40 + Math.random() * 40,
+                pressure: 1000 + Math.random() * 50,
+                timestamp: Date.now()
+            };
+        }
+
+        function generateNetworkData() {
+            return {
+                bandwidth: Math.random() * 1000,
+                latency: 10 + Math.random() * 50,
+                packets: Math.random() * 10000,
+                timestamp: Date.now()
+            };
+        }
+
+        function generateCryptoData() {
+            const basePrice = 50000 + Math.random() * 20000;
+            return {
+                price: basePrice * (1 + (Math.random() - 0.5) * 0.05),
+                volume: Math.random() * 1000000000,
+                marketCap: basePrice * (1000000 + Math.random() * 500000),
+                timestamp: Date.now()
+            };
+        }
+
+        function generateWeatherData() {
+            return {
+                temperature: 15 + Math.random() * 20,
+                humidity: 30 + Math.random() * 50,
+                windSpeed: Math.random() * 30,
+                pressure: 980 + Math.random() * 40,
+                timestamp: Date.now()
+            };
+        }
+
+        function generateData() {
+            switch (dataSource) {
+                case 'stock': return generateStockData();
+                case 'sensor': return generateSensorData();
+                case 'network': return generateNetworkData();
+                case 'crypto': return generateCryptoData();
+                case 'weather': return generateWeatherData();
+                default: return generateStockData();
+            }
+        }
+
+        // Chart rendering functions
+        function renderLineChart() {
+            const startTime = performance.now();
+            const ctx = lineCtx;
+            const canvas = lineChart;
+            const rect = canvas.getBoundingClientRect();
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            if (dataPoints.length < 2) return;
+
+            // Get data values based on source
+            let values = [];
+            switch (dataSource) {
+                case 'stock':
+                    values = dataPoints.map(d => d.data?.price || d.price || 0);
+                    break;
+                case 'sensor':
+                    values = dataPoints.map(d => d.data?.temperature || d.temperature || 0);
+                    break;
+                case 'network':
+                    values = dataPoints.map(d => d.data?.bandwidth || d.bandwidth || 0);
+                    break;
+                case 'crypto':
+                    values = dataPoints.map(d => d.data?.price || d.price || 0);
+                    break;
+                case 'weather':
+                    values = dataPoints.map(d => d.data?.temperature || d.temperature || 0);
+                    break;
+            }
+
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+            const valueRange = maxValue - minValue || 1;
+
+            const padding = 40;
+            const chartWidth = rect.width - padding * 2;
+            const chartHeight = rect.height - padding * 2;
+
+            // Draw grid
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const x = padding + (i / 5) * chartWidth;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, rect.height - padding);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i <= 4; i++) {
+                const y = padding + (i / 4) * chartHeight;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(rect.width - padding, y);
+                ctx.stroke();
+            }
+
+            // Draw line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            dataPoints.forEach((point, index) => {
+                const x = padding + (index / (dataPoints.length - 1)) * chartWidth;
+                const normalizedY = (values[index] - minValue) / valueRange;
+                const y = rect.height - padding - (normalizedY * chartHeight);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw data points
+            ctx.fillStyle = '#667eea';
+            dataPoints.forEach((point, index) => {
+                const x = padding + (index / (dataPoints.length - 1)) * chartWidth;
+                const normalizedY = (values[index] - minValue) / valueRange;
+                const y = rect.height - padding - (normalizedY * chartHeight);
+
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            // Draw title
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Real-time Line Chart', rect.width / 2, 20);
+
+            const renderTime = performance.now() - startTime;
+            renderTimes.push(renderTime);
+            if (renderTimes.length > 10) renderTimes.shift();
+        }
+
+        function renderBarChart() {
+            const startTime = performance.now();
+            const ctx = barCtx;
+            const canvas = barChart;
+            const rect = canvas.getBoundingClientRect();
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            if (dataPoints.length === 0) return;
+
+            // Get recent data points for bars
+            const recentPoints = dataPoints.slice(-20);
+            let values = [];
+            switch (dataSource) {
+                case 'stock':
+                    values = recentPoints.map(d => (d.data?.volume || d.volume || 0) / 10000);
+                    break;
+                case 'sensor':
+                    values = recentPoints.map(d => d.data?.humidity || d.humidity || 0);
+                    break;
+                case 'network':
+                    values = recentPoints.map(d => (d.data?.packets || d.packets || 0) / 100);
+                    break;
+                case 'crypto':
+                    values = recentPoints.map(d => (d.data?.volume || d.volume || 0) / 1000000);
+                    break;
+                case 'weather':
+                    values = recentPoints.map(d => d.data?.humidity || d.humidity || 0);
+                    break;
+            }
+
+            const maxValue = Math.max(...values) || 1;
+            const padding = 40;
+            const chartWidth = rect.width - padding * 2;
+            const chartHeight = rect.height - padding * 2;
+            const barWidth = chartWidth / values.length;
+
+            // Draw bars
+            values.forEach((value, index) => {
+                const barHeight = (value / maxValue) * chartHeight;
+                const x = padding + index * barWidth;
+                const y = rect.height - padding - barHeight;
+
+                const gradient = ctx.createLinearGradient(0, y, 0, rect.height - padding);
+                gradient.addColorStop(0, '#764ba2');
+                gradient.addColorStop(1, '#667eea');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y, barWidth - 2, barHeight);
+            });
+
+            // Draw title
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Real-time Bar Chart', rect.width / 2, 20);
+
+            const renderTime = performance.now() - startTime;
+            renderTimes.push(renderTime);
+            if (renderTimes.length > 10) renderTimes.shift();
+        }
+
+        function renderScatterChart() {
+            const startTime = performance.now();
+            const ctx = scatterCtx;
+            const canvas = scatterChart;
+            const rect = canvas.getBoundingClientRect();
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            if (dataPoints.length === 0) return;
+
+            // Get recent data points
+            const recentPoints = dataPoints.slice(-50);
+            let xValues = [], yValues = [];
+
+            switch (dataSource) {
+                case 'stock':
+                    xValues = recentPoints.map(d => d.data?.price || d.price || 0);
+                    yValues = recentPoints.map(d => (d.data?.volume || d.volume || 0) / 10000);
+                    break;
+                case 'sensor':
+                    xValues = recentPoints.map(d => d.data?.temperature || d.temperature || 0);
+                    yValues = recentPoints.map(d => d.data?.humidity || d.humidity || 0);
+                    break;
+                case 'network':
+                    xValues = recentPoints.map(d => d.data?.bandwidth || d.bandwidth || 0);
+                    yValues = recentPoints.map(d => d.data?.latency || d.latency || 0);
+                    break;
+                case 'crypto':
+                    xValues = recentPoints.map(d => d.data?.price || d.price || 0);
+                    yValues = recentPoints.map(d => (d.data?.volume || d.volume || 0) / 1000000);
+                    break;
+                case 'weather':
+                    xValues = recentPoints.map(d => d.data?.temperature || d.temperature || 0);
+                    yValues = recentPoints.map(d => d.data?.wind_speed || d.windSpeed || 0);
+                    break;
+            }
+
+            const minX = Math.min(...xValues);
+            const maxX = Math.max(...xValues);
+            const minY = Math.min(...yValues);
+            const maxY = Math.max(...yValues);
+            const rangeX = maxX - minX || 1;
+            const rangeY = maxY - minY || 1;
+
+            const padding = 40;
+            const chartWidth = rect.width - padding * 2;
+            const chartHeight = rect.height - padding * 2;
+
+            // Draw scatter points
+            recentPoints.forEach((point, index) => {
+                const x = padding + ((xValues[index] - minX) / rangeX) * chartWidth;
+                const y = rect.height - padding - ((yValues[index] - minY) / rangeY) * chartHeight;
+
+                const hue = (index / recentPoints.length) * 360;
+                ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            // Draw title
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Real-time Scatter Plot', rect.width / 2, 20);
+
+            const renderTime = performance.now() - startTime;
+            renderTimes.push(renderTime);
+            if (renderTimes.length > 10) renderTimes.shift();
+        }
+
+        function renderAreaChart() {
+            const startTime = performance.now();
+            const ctx = areaCtx;
+            const canvas = areaChart;
+            const rect = canvas.getBoundingClientRect();
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            if (dataPoints.length < 2) return;
+
+            // Get data values
+            let values = [];
+            switch (dataSource) {
+                case 'stock':
+                    values = dataPoints.map(d => d.data?.price || d.price || 0);
+                    break;
+                case 'sensor':
+                    values = dataPoints.map(d => d.data?.pressure || d.pressure || 0);
+                    break;
+                case 'network':
+                    values = dataPoints.map(d => d.data?.bandwidth || d.bandwidth || 0);
+                    break;
+                case 'crypto':
+                    values = dataPoints.map(d => (d.data?.market_cap || d.marketCap || 0) / 1000000);
+                    break;
+                case 'weather':
+                    values = dataPoints.map(d => d.data?.pressure || d.pressure || 0);
+                    break;
+            }
+
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+            const valueRange = maxValue - minValue || 1;
+
+            const padding = 40;
+            const chartWidth = rect.width - padding * 2;
+            const chartHeight = rect.height - padding * 2;
+
+            // Draw area
+            const gradient = ctx.createLinearGradient(0, padding, 0, rect.height - padding);
+            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.8)');
+            gradient.addColorStop(1, 'rgba(118, 75, 162, 0.3)');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+
+            dataPoints.forEach((point, index) => {
+                const x = padding + (index / (dataPoints.length - 1)) * chartWidth;
+                const normalizedY = (values[index] - minValue) / valueRange;
+                const y = rect.height - padding - (normalizedY * chartHeight);
+
+                if (index === 0) {
+                    ctx.moveTo(x, rect.height - padding);
+                    ctx.lineTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.lineTo(rect.width - padding, rect.height - padding);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            dataPoints.forEach((point, index) => {
+                const x = padding + (index / (dataPoints.length - 1)) * chartWidth;
+                const normalizedY = (values[index] - minValue) / valueRange;
+                const y = rect.height - padding - (normalizedY * chartHeight);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw title
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Real-time Area Chart', rect.width / 2, 20);
+
+            const renderTime = performance.now() - startTime;
+            renderTimes.push(renderTime);
+            if (renderTimes.length > 10) renderTimes.shift();
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            const now = Date.now();
+            const uptime = now - startTime;
+
+            // Update connection status
+            const statusEl = document.getElementById('connection-status');
+            const statusText = document.getElementById('connection-text');
+            if (isStreaming) {
+                statusEl.className = 'status-indicator status-connected';
+                statusText.textContent = 'Connected';
+            } else {
+                statusEl.className = 'status-indicator status-disconnected';
+                statusText.textContent = 'Disconnected';
+            }
+
+            // Update data rate
+            document.getElementById('data-rate').textContent = dataRate.toFixed(1);
+
+            // Update render time
+            const avgRenderTime = renderTimes.length > 0
+                ? renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length
+                : 0;
+            document.getElementById('render-time').textContent = avgRenderTime.toFixed(1) + 'ms';
+
+            // Update memory usage (simulated)
+            const memoryUsage = (dataPoints.length * 0.001).toFixed(1);
+            document.getElementById('memory-usage').textContent = memoryUsage + 'MB';
+
+            // Update total points
+            document.getElementById('total-points').textContent = dataPoints.length;
+
+            // Update uptime
+            const hours = Math.floor(uptime / 3600000);
+            const minutes = Math.floor((uptime % 3600000) / 60000);
+            const seconds = Math.floor((uptime % 60000) / 1000);
+            document.getElementById('uptime').textContent =
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Logging function
+        function logMessage(message, type = 'info') {
+            const logContainer = document.getElementById('log-container');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            // Keep only last 50 entries
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // WebSocket connection management
+        function connectWebSocket() {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                return Promise.resolve();
+            }
+
+            return new Promise((resolve, reject) => {
+                try {
+                    websocket = new WebSocket('ws://localhost:8083');
+
+                    websocket.onopen = () => {
+                        connectionStatus = 'connected';
+                        logMessage('🔗 WebSocket connected to streaming server', 'success');
+                        updateConnectionStatus();
+                        resolve();
+                    };
+
+                    websocket.onmessage = (event) => {
+                        try {
+                            const message = JSON.parse(event.data);
+                            handleWebSocketMessage(message);
+                        } catch (error) {
+                            logMessage(`❌ Error parsing WebSocket message: ${error.message}`, 'error');
+                        }
+                    };
+
+                    websocket.onclose = () => {
+                        connectionStatus = 'disconnected';
+                        logMessage('🔌 WebSocket connection closed', 'warning');
+                        updateConnectionStatus();
+                    };
+
+                    websocket.onerror = (error) => {
+                        connectionStatus = 'error';
+                        logMessage(`❌ WebSocket error: ${error.message || 'Connection failed'}`, 'error');
+                        updateConnectionStatus();
+                        reject(error);
+                    };
+
+                } catch (error) {
+                    logMessage(`❌ Failed to create WebSocket: ${error.message}`, 'error');
+                    reject(error);
+                }
+            });
+        }
+
+        function handleWebSocketMessage(message) {
+            switch (message.type) {
+                case 'welcome':
+                    logMessage(`👋 Welcome from server: ${message.client_id}`, 'success');
+                    serverStats = message.server_info || {};
+                    break;
+
+                case 'subscribed':
+                    logMessage(`📡 Subscribed to ${message.source} data stream`, 'success');
+                    break;
+
+                case 'data':
+                    handleStreamingData(message.data);
+                    break;
+
+                case 'server_stats':
+                    serverStats = message.stats;
+                    break;
+
+                case 'pong':
+                    // Handle ping response
+                    break;
+
+                default:
+                    logMessage(`📨 Received message: ${message.type}`, 'info');
+            }
+        }
+
+        function handleStreamingData(dataPoint) {
+            // Add new data point
+            dataPoints.push(dataPoint);
+
+            // Keep only recent data points
+            if (dataPoints.length > maxDataPoints) {
+                dataPoints.shift();
+            }
+
+            // Update data rate
+            const now = Date.now();
+            const timeDiff = now - lastDataTime;
+            dataRate = 1000 / timeDiff;
+            lastDataTime = now;
+
+            // Render all charts
+            renderLineChart();
+            renderBarChart();
+            renderScatterChart();
+            renderAreaChart();
+
+            // Update metrics
+            updateMetrics();
+        }
+
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connection-status');
+            const statusText = document.getElementById('connection-text');
+
+            if (connectionStatus === 'connected') {
+                statusEl.className = 'status-indicator status-connected';
+                statusText.textContent = 'Connected';
+            } else if (connectionStatus === 'error') {
+                statusEl.className = 'status-indicator status-disconnected';
+                statusText.textContent = 'Error';
+            } else {
+                statusEl.className = 'status-indicator status-disconnected';
+                statusText.textContent = 'Disconnected';
+            }
+        }
+
+        // Start streaming
+        async function startStreaming() {
+            if (isStreaming) return;
+
+            try {
+                logMessage('🚀 Starting data stream...', 'success');
+                logMessage(`📊 Data source: ${dataSource}`, 'info');
+                logMessage(`⏱️ Update frequency: ${updateFrequency}ms`, 'info');
+                logMessage(`📈 Max data points: ${maxDataPoints}`, 'info');
+
+                // Connect to WebSocket server
+                await connectWebSocket();
+
+                // Subscribe to data stream
+                const subscribeMessage = {
+                    type: 'subscribe',
+                    source: dataSource,
+                    frequency: updateFrequency
+                };
+
+                websocket.send(JSON.stringify(subscribeMessage));
+
+                isStreaming = true;
+                startTime = Date.now();
+                dataPoints = [];
+                renderTimes = [];
+                dataRate = 0;
+                lastDataTime = Date.now();
+
+                document.getElementById('start-streaming').disabled = true;
+                document.getElementById('stop-streaming').disabled = false;
+
+            } catch (error) {
+                logMessage(`❌ Failed to start streaming: ${error.message}`, 'error');
+                // Fallback to local data generation
+                startLocalStreaming();
+            }
+        }
+
+        function startLocalStreaming() {
+            logMessage('🔄 Falling back to local data generation', 'warning');
+
+            streamingInterval = setInterval(() => {
+                const newData = generateData();
+                handleStreamingData(newData);
+            }, updateFrequency);
+
+            isStreaming = true;
+            startTime = Date.now();
+            document.getElementById('start-streaming').disabled = true;
+            document.getElementById('stop-streaming').disabled = false;
+        }
+
+        // Stop streaming
+        function stopStreaming() {
+            if (!isStreaming) return;
+
+            isStreaming = false;
+
+            // Stop local streaming if running
+            if (streamingInterval) {
+                clearInterval(streamingInterval);
+                streamingInterval = null;
+            }
+
+            // Unsubscribe from WebSocket if connected
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                const unsubscribeMessage = {
+                    type: 'unsubscribe'
+                };
+                websocket.send(JSON.stringify(unsubscribeMessage));
+            }
+
+            logMessage('⏹️ Data stream stopped', 'warning');
+
+            document.getElementById('start-streaming').disabled = false;
+            document.getElementById('stop-streaming').disabled = true;
+        }
+
+        // Event listeners
+        document.getElementById('start-streaming').addEventListener('click', startStreaming);
+        document.getElementById('stop-streaming').addEventListener('click', stopStreaming);
+
+        document.getElementById('data-source').addEventListener('change', (e) => {
+            dataSource = e.target.value;
+            logMessage(`📊 Data source changed to: ${dataSource}`, 'info');
+        });
+
+        document.getElementById('update-frequency').addEventListener('change', (e) => {
+            updateFrequency = parseInt(e.target.value);
+            logMessage(`⏱️ Update frequency changed to: ${updateFrequency}ms`, 'info');
+        });
+
+        document.getElementById('data-points').addEventListener('input', (e) => {
+            maxDataPoints = parseInt(e.target.value);
+            document.getElementById('data-points-value').textContent = maxDataPoints;
+            logMessage(`📈 Max data points changed to: ${maxDataPoints}`, 'info');
+        });
+
+        // Initialize
+        document.getElementById('stop-streaming').disabled = true;
+        logMessage('🎯 Live streaming demo ready', 'success');
+        logMessage('💡 Select a data source and click "Start Streaming"', 'info');
+
+        // Update metrics every second
+        setInterval(updateMetrics, 1000);
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            setupCanvas(lineChart);
+            setupCanvas(barChart);
+            setupCanvas(scatterChart);
+            setupCanvas(areaChart);
+
+            if (isStreaming) {
+                renderLineChart();
+                renderBarChart();
+                renderScatterChart();
+                renderAreaChart();
+            }
+        });
+    </script>
+</body>
+</html>

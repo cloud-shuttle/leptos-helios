@@ -28,7 +28,12 @@ class DemoHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def guess_type(self, path):
         """Override to set correct MIME types"""
-        mimetype, encoding = super().guess_type(path)
+        result = super().guess_type(path)
+        if isinstance(result, tuple):
+            mimetype, encoding = result
+        else:
+            mimetype = result
+            encoding = None
 
         # Ensure proper MIME types for our demo files
         if path.endswith('.html'):

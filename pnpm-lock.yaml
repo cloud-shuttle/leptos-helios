@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@playwright/test':
-        specifier: ^1.40.0
+        specifier: 1.55.0
         version: 1.55.0
       '@wasm-tool/wasm-pack-plugin':
         specifier: ^1.6.0

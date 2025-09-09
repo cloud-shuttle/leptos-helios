@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>leptos-helios Demo Index</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .demo-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .demo-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .demo-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .demo-link:hover {
+            background: #5a6fd8;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 leptos-helios</h1>
+            <p>Demo Index - Choose a showcase to explore</p>
+        </div>
+
+        <div class="demo-grid">
+
+            <a href="comprehensive-showcase.html" class="demo-card">
+                <h3>Comprehensive Showcase</h3>
+                <p>Complete showcase of all leptos-helios features</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+            <a href="phase4-showcase.html" class="demo-card">
+                <h3>Phase 4 Showcase</h3>
+                <p>Phase 4 features: Security, Accessibility, Performance</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+            <a href="phase5-showcase.html" class="demo-card">
+                <h3>Phase 5 Showcase</h3>
+                <p>Phase 5 features: Theming and Analytics</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+            <a href="canvas2d-demo.html" class="demo-card">
+                <h3>Canvas2D Demo</h3>
+                <p>Canvas2D rendering capabilities</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+            <a href="webgpu-demo.html" class="demo-card">
+                <h3>WebGPU Demo</h3>
+                <p>WebGPU rendering capabilities</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+            <a href="webgpu-charts-demo.html" class="demo-card">
+                <h3>WebGPU Charts Demo</h3>
+                <p>WebGPU chart rendering</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+            <a href="simple-streaming-demo.html" class="demo-card">
+                <h3>Streaming Demo</h3>
+                <p>Real-time streaming visualizations</p>
+                <span class="demo-link">Launch Demo →</span>
+            </a>
+
+        </div>
+
+        <div class="status">
+            <p>Server running on port 8084 | Last updated: 2025-09-09 22:58:51</p>
+        </div>
+    </div>
+</body>
+</html>

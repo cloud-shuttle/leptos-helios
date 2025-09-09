@@ -1,6 +1,2992 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="2.18293">
-<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T06:50:49.550Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.755" errors="0">
-<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="1.755">
+<testsuites id="" name="" tests="730" failures="0" skipped="730" errors="0" time="0.29215399999999997">
+<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should render analytics chart with visible data" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should update chart when data size changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should show different analysis types" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should display metrics when analysis runs" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should render themed chart with visible content" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should update chart colors when theme changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should change theme when preset is selected" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on mobile viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on desktop viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should handle large datasets efficiently" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should update performance metrics" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="comprehensive-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="41" failures="0" skipped="41" time="0" errors="0">
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should load the comprehensive showcase page" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should display all feature cards" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should have responsive design" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should initialize interactivity demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate zoom functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate pan functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate tooltips" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate brush selection" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should initialize chart types demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display heatmap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display treemap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display Sankey diagram" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should clear chart" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should initialize performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate virtual scrolling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate data sampling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate WebGL rendering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should reset performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should initialize graph demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate force layout" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate clustering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate network analysis" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should clear graph" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should initialize animation demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate easing animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate tween animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate state transitions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should stop animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should initialize integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should run full integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate cross-feature interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate performance testing" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should reset integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should display performance metrics" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should update performance metrics over time" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper heading structure" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have accessible buttons" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper color contrast" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Cross-Browser Compatibility › should work in different browsers" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should adapt to mobile viewport" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should handle touch interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/canvas2d.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="Canvas2D Rendering Tests › Canvas2D demo loads successfully" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart canvas is present and visible" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart type selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Data size selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Render button works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Line chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Bar chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Scatter plot renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Performance with different data sizes" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart switching works smoothly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Canvas2D fallback works when WebGPU is not available" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/wasm-integration.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="WASM Integration Tests › WASM module loads successfully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Greet function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Data processing function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Chart creation function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WebGPU support detection works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › All WASM functions are accessible" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM functions return valid results" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM module handles errors gracefully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM performance is acceptable" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/webgpu.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="WebGPU Rendering Tests › WebGPU support detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Browser WebGPU API detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › WASM module loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Test results are recorded" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › WebGPU charts demo loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart controls are present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart canvas is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Performance metrics section is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart rendering works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart type switching works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Data size scaling works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU performance is acceptable" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU handles different chart types" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase1-interactivity.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="22" failures="0" skipped="22" time="0" errors="0">
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should initialize viewport with correct default values" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on zoom" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on pan" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply zoom transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply pan transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should track interaction count" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should increment interaction count for all demo buttons" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should display tooltip on demand" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should auto-hide tooltip after timeout" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should position tooltip correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should create brush selection overlay" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should position brush selection correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should auto-remove brush selection" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should render sample chart on canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should maintain canvas content during interactions" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should handle rapid interactions without errors" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should maintain smooth animations" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should have accessible button labels" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should support keyboard navigation" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Cross-Browser Compatibility › should work consistently across browsers" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should handle touch interactions on mobile" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should maintain touch responsiveness" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase5-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="chromium" tests="38" failures="0" skipped="38" time="0" errors="0">
+<testcase name="Helios Phase 5B Showcase › Page Structure › should load the Phase 5B showcase page" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have both showcase cards" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have system status section" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme presets" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme color preview" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have animation demo" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have responsive design indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have themed chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should change theme when preset is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should update theme colors when color picker changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should trigger animation when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have data size options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analysis type options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics buttons" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have metrics display" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have performance metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should generate data when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should run analysis when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should update metrics when analysis runs" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change data size when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change analysis type when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render themed chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render analytics chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should show different data when data size changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should update chart colors when theme changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system status indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show log messages" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should add new log messages when actions are performed" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on mobile viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on tablet viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on desktop viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load system status from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load themes from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should generate analytics data from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should render analytics chart with visible data" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should update chart when data size changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should show different analysis types" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should display metrics when analysis runs" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should render themed chart with visible content" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should update chart colors when theme changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should change theme when preset is selected" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on mobile viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on desktop viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should handle large datasets efficiently" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should update performance metrics" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="comprehensive-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="41" failures="0" skipped="41" time="0" errors="0">
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should load the comprehensive showcase page" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should display all feature cards" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should have responsive design" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should initialize interactivity demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate zoom functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate pan functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate tooltips" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate brush selection" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should initialize chart types demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display heatmap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display treemap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display Sankey diagram" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should clear chart" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should initialize performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate virtual scrolling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate data sampling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate WebGL rendering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should reset performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should initialize graph demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate force layout" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate clustering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate network analysis" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should clear graph" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should initialize animation demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate easing animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate tween animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate state transitions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should stop animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should initialize integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should run full integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate cross-feature interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate performance testing" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should reset integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should display performance metrics" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should update performance metrics over time" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper heading structure" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have accessible buttons" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper color contrast" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Cross-Browser Compatibility › should work in different browsers" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should adapt to mobile viewport" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should handle touch interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/canvas2d.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="Canvas2D Rendering Tests › Canvas2D demo loads successfully" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart canvas is present and visible" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart type selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Data size selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Render button works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Line chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Bar chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Scatter plot renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Performance with different data sizes" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart switching works smoothly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Canvas2D fallback works when WebGPU is not available" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/wasm-integration.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="WASM Integration Tests › WASM module loads successfully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Greet function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Data processing function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Chart creation function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WebGPU support detection works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › All WASM functions are accessible" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM functions return valid results" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM module handles errors gracefully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM performance is acceptable" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/webgpu.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="WebGPU Rendering Tests › WebGPU support detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Browser WebGPU API detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › WASM module loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Test results are recorded" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › WebGPU charts demo loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart controls are present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart canvas is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Performance metrics section is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart rendering works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart type switching works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Data size scaling works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU performance is acceptable" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU handles different chart types" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase1-interactivity.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="22" failures="0" skipped="22" time="0" errors="0">
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should initialize viewport with correct default values" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on zoom" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on pan" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply zoom transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply pan transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should track interaction count" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should increment interaction count for all demo buttons" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should display tooltip on demand" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should auto-hide tooltip after timeout" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should position tooltip correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should create brush selection overlay" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should position brush selection correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should auto-remove brush selection" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should render sample chart on canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should maintain canvas content during interactions" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should handle rapid interactions without errors" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should maintain smooth animations" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should have accessible button labels" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should support keyboard navigation" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Cross-Browser Compatibility › should work consistently across browsers" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should handle touch interactions on mobile" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should maintain touch responsiveness" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase5-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="firefox" tests="38" failures="0" skipped="38" time="0" errors="0">
+<testcase name="Helios Phase 5B Showcase › Page Structure › should load the Phase 5B showcase page" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have both showcase cards" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have system status section" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme presets" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme color preview" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have animation demo" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have responsive design indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have themed chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should change theme when preset is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should update theme colors when color picker changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should trigger animation when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have data size options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analysis type options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics buttons" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have metrics display" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have performance metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should generate data when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should run analysis when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should update metrics when analysis runs" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change data size when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change analysis type when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render themed chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render analytics chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should show different data when data size changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should update chart colors when theme changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system status indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show log messages" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should add new log messages when actions are performed" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on mobile viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on tablet viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on desktop viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load system status from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load themes from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should generate analytics data from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should render analytics chart with visible data" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should update chart when data size changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should show different analysis types" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should display metrics when analysis runs" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should render themed chart with visible content" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should update chart colors when theme changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should change theme when preset is selected" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on mobile viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on desktop viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should handle large datasets efficiently" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should update performance metrics" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="comprehensive-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="41" failures="0" skipped="41" time="0" errors="0">
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should load the comprehensive showcase page" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should display all feature cards" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should have responsive design" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should initialize interactivity demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate zoom functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate pan functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate tooltips" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate brush selection" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should initialize chart types demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display heatmap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display treemap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display Sankey diagram" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should clear chart" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should initialize performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate virtual scrolling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate data sampling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate WebGL rendering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should reset performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should initialize graph demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate force layout" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate clustering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate network analysis" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should clear graph" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should initialize animation demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate easing animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate tween animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate state transitions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should stop animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should initialize integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should run full integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate cross-feature interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate performance testing" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should reset integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should display performance metrics" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should update performance metrics over time" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper heading structure" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have accessible buttons" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper color contrast" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Cross-Browser Compatibility › should work in different browsers" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should adapt to mobile viewport" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should handle touch interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/canvas2d.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="Canvas2D Rendering Tests › Canvas2D demo loads successfully" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart canvas is present and visible" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart type selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Data size selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Render button works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Line chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Bar chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Scatter plot renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Performance with different data sizes" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart switching works smoothly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Canvas2D fallback works when WebGPU is not available" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/wasm-integration.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="WASM Integration Tests › WASM module loads successfully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Greet function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Data processing function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Chart creation function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WebGPU support detection works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › All WASM functions are accessible" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM functions return valid results" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM module handles errors gracefully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM performance is acceptable" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/webgpu.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="WebGPU Rendering Tests › WebGPU support detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Browser WebGPU API detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › WASM module loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Test results are recorded" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › WebGPU charts demo loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart controls are present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart canvas is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Performance metrics section is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart rendering works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart type switching works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Data size scaling works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU performance is acceptable" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU handles different chart types" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase1-interactivity.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="22" failures="0" skipped="22" time="0" errors="0">
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should initialize viewport with correct default values" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on zoom" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on pan" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply zoom transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply pan transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should track interaction count" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should increment interaction count for all demo buttons" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should display tooltip on demand" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should auto-hide tooltip after timeout" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should position tooltip correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should create brush selection overlay" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should position brush selection correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should auto-remove brush selection" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should render sample chart on canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should maintain canvas content during interactions" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should handle rapid interactions without errors" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should maintain smooth animations" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should have accessible button labels" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should support keyboard navigation" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Cross-Browser Compatibility › should work consistently across browsers" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should handle touch interactions on mobile" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should maintain touch responsiveness" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase5-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="webkit" tests="38" failures="0" skipped="38" time="0" errors="0">
+<testcase name="Helios Phase 5B Showcase › Page Structure › should load the Phase 5B showcase page" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have both showcase cards" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have system status section" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme presets" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme color preview" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have animation demo" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have responsive design indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have themed chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should change theme when preset is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should update theme colors when color picker changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should trigger animation when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have data size options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analysis type options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics buttons" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have metrics display" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have performance metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should generate data when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should run analysis when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should update metrics when analysis runs" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change data size when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change analysis type when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render themed chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render analytics chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should show different data when data size changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should update chart colors when theme changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system status indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show log messages" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should add new log messages when actions are performed" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on mobile viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on tablet viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on desktop viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load system status from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load themes from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should generate analytics data from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should render analytics chart with visible data" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should update chart when data size changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should show different analysis types" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should display metrics when analysis runs" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should render themed chart with visible content" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should update chart colors when theme changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should change theme when preset is selected" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on mobile viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on desktop viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should handle large datasets efficiently" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should update performance metrics" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="comprehensive-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="41" failures="0" skipped="41" time="0" errors="0">
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should load the comprehensive showcase page" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should display all feature cards" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should have responsive design" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should initialize interactivity demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate zoom functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate pan functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate tooltips" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate brush selection" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should initialize chart types demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display heatmap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display treemap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display Sankey diagram" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should clear chart" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should initialize performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate virtual scrolling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate data sampling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate WebGL rendering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should reset performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should initialize graph demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate force layout" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate clustering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate network analysis" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should clear graph" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should initialize animation demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate easing animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate tween animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate state transitions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should stop animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should initialize integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should run full integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate cross-feature interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate performance testing" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should reset integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should display performance metrics" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should update performance metrics over time" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper heading structure" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have accessible buttons" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper color contrast" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Cross-Browser Compatibility › should work in different browsers" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should adapt to mobile viewport" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should handle touch interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/canvas2d.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="Canvas2D Rendering Tests › Canvas2D demo loads successfully" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart canvas is present and visible" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart type selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Data size selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Render button works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Line chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Bar chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Scatter plot renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Performance with different data sizes" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart switching works smoothly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Canvas2D fallback works when WebGPU is not available" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/wasm-integration.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="WASM Integration Tests › WASM module loads successfully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Greet function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Data processing function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Chart creation function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WebGPU support detection works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › All WASM functions are accessible" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM functions return valid results" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM module handles errors gracefully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM performance is acceptable" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/webgpu.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="WebGPU Rendering Tests › WebGPU support detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Browser WebGPU API detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › WASM module loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Test results are recorded" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › WebGPU charts demo loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart controls are present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart canvas is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Performance metrics section is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart rendering works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart type switching works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Data size scaling works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU performance is acceptable" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU handles different chart types" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase1-interactivity.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="22" failures="0" skipped="22" time="0" errors="0">
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should initialize viewport with correct default values" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on zoom" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on pan" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply zoom transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply pan transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should track interaction count" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should increment interaction count for all demo buttons" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should display tooltip on demand" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should auto-hide tooltip after timeout" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should position tooltip correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should create brush selection overlay" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should position brush selection correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should auto-remove brush selection" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should render sample chart on canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should maintain canvas content during interactions" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should handle rapid interactions without errors" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should maintain smooth animations" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should have accessible button labels" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should support keyboard navigation" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Cross-Browser Compatibility › should work consistently across browsers" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should handle touch interactions on mobile" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should maintain touch responsiveness" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase5-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Chrome" tests="38" failures="0" skipped="38" time="0" errors="0">
+<testcase name="Helios Phase 5B Showcase › Page Structure › should load the Phase 5B showcase page" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have both showcase cards" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have system status section" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme presets" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme color preview" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have animation demo" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have responsive design indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have themed chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should change theme when preset is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should update theme colors when color picker changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should trigger animation when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have data size options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analysis type options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics buttons" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have metrics display" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have performance metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should generate data when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should run analysis when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should update metrics when analysis runs" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change data size when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change analysis type when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render themed chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render analytics chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should show different data when data size changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should update chart colors when theme changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system status indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show log messages" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should add new log messages when actions are performed" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on mobile viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on tablet viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on desktop viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load system status from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load themes from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should generate analytics data from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="12" failures="0" skipped="12" time="0" errors="0">
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should render analytics chart with visible data" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should update chart when data size changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should show different analysis types" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should display metrics when analysis runs" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should render themed chart with visible content" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should update chart colors when theme changes" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Themed Chart Rendering › should change theme when preset is selected" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on mobile viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Responsiveness › should render charts on desktop viewport" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should handle large datasets efficiently" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 5B Chart Functionality › Chart Performance › should update performance metrics" classname="chart-functionality.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="comprehensive-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="41" failures="0" skipped="41" time="0" errors="0">
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should load the comprehensive showcase page" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should display all feature cards" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Page Structure and Loading › should have responsive design" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should initialize interactivity demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate zoom functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate pan functionality" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate tooltips" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 1: Core Interactivity › should demonstrate brush selection" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should initialize chart types demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display heatmap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display treemap" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should display Sankey diagram" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 2: Advanced Chart Types › should clear chart" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should initialize performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate virtual scrolling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate data sampling" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should demonstrate WebGL rendering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 3: Performance Optimizations › should reset performance demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should initialize graph demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate force layout" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate clustering" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should demonstrate network analysis" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 4: Advanced Graph Features › should clear graph" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should initialize animation demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate easing animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate tween animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should demonstrate state transitions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Phase 5: Smooth Animations › should stop animations" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should initialize integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should run full integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate cross-feature interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should demonstrate performance testing" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Integration Demo › should reset integration demo" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should display performance metrics" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Performance Monitoring › should update performance metrics over time" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper heading structure" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have accessible buttons" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Accessibility › should have proper color contrast" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Cross-Browser Compatibility › should work in different browsers" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should adapt to mobile viewport" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="leptos-helios Comprehensive Showcase › Mobile Responsiveness › should handle touch interactions" classname="comprehensive-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/canvas2d.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="Canvas2D Rendering Tests › Canvas2D demo loads successfully" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart canvas is present and visible" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart type selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Data size selector works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Render button works" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Line chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Bar chart renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Scatter plot renders correctly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Performance with different data sizes" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Chart switching works smoothly" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Canvas2D Rendering Tests › Canvas2D fallback works when WebGPU is not available" classname="e2e/canvas2d.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/wasm-integration.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testcase name="WASM Integration Tests › WASM module loads successfully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Greet function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Data processing function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › Chart creation function works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WebGPU support detection works" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › All WASM functions are accessible" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM functions return valid results" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM module handles errors gracefully" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WASM Integration Tests › WASM performance is acceptable" classname="e2e/wasm-integration.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="e2e/webgpu.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="13" failures="0" skipped="13" time="0" errors="0">
+<testcase name="WebGPU Rendering Tests › WebGPU support detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Browser WebGPU API detection works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › WASM module loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Rendering Tests › Test results are recorded" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › WebGPU charts demo loads successfully" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart controls are present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart canvas is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Performance metrics section is present" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart rendering works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Chart type switching works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Charts Demo › Data size scaling works" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU performance is acceptable" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="WebGPU Performance Tests › WebGPU handles different chart types" classname="e2e/webgpu.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase1-interactivity.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="22" failures="0" skipped="22" time="0" errors="0">
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should initialize viewport with correct default values" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on zoom" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should update viewport info on pan" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply zoom transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Viewport Management › should apply pan transformation to canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should track interaction count" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Interaction Tracking › should increment interaction count for all demo buttons" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should display tooltip on demand" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should auto-hide tooltip after timeout" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Tooltip System › should position tooltip correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should create brush selection overlay" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should position brush selection correctly" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Brush Selection › should auto-remove brush selection" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should render sample chart on canvas" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Canvas Rendering › should maintain canvas content during interactions" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should handle rapid interactions without errors" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Performance › should maintain smooth animations" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should have accessible button labels" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Accessibility › should support keyboard navigation" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Cross-Browser Compatibility › should work consistently across browsers" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should handle touch interactions on mobile" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Phase 1: Core Interactivity E2E Tests › Mobile Touch Support › should maintain touch responsiveness" classname="phase1-interactivity.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="phase5-showcase.spec.js" timestamp="2025-09-09T12:02:15.347Z" hostname="Mobile Safari" tests="38" failures="0" skipped="38" time="0" errors="0">
+<testcase name="Helios Phase 5B Showcase › Page Structure › should load the Phase 5B showcase page" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have both showcase cards" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Page Structure › should have system status section" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme presets" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have theme color preview" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have animation demo" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have responsive design indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should have themed chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should change theme when preset is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should update theme colors when color picker changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Theming System › should trigger animation when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics controls" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have data size options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analysis type options" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics buttons" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have metrics display" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have performance metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should have analytics chart" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should generate data when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should run analysis when button is clicked" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should update metrics when analysis runs" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change data size when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Advanced Analytics Engine › should change analysis type when option is selected" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render themed chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should render analytics chart with data" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should show different data when data size changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Chart Functionality › should update chart colors when theme changes" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system status indicators" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show system metrics" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should show log messages" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › System Status › should add new log messages when actions are performed" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on mobile viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on tablet viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › Responsive Design › should work on desktop viewport" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load system status from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should load themes from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Helios Phase 5B Showcase › API Integration › should generate analytics data from API" classname="phase5-showcase.spec.js" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
 </testsuites>
