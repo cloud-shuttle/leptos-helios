@@ -96,24 +96,24 @@ pub use renderer::{
 
 // Core modules with specific exports to avoid conflicts
 pub use accessibility::*;
-pub use advanced_analytics::*;
-pub use algorithm_registry::*;
-pub use animation_engine::*;
-pub use anomaly_detection::*;
-pub use custom_components::*;
+// pub use advanced_analytics::*;
+// pub use algorithm_registry::*;
+// pub use animation_engine::*;
+// pub use anomaly_detection::*;
+// pub use custom_components::*;
 pub use data_sources::*;
 pub use debugger::*;
 pub use dev_tools::*;
 pub use export_system::*;
-pub use forecasting_engine::*;
+// pub use forecasting_engine::*;
 pub use ml_intelligence::*;
 pub use performance::*;
 pub use plugin_system::*;
-pub use responsive_design::*;
+// pub use responsive_design::*;
 pub use security::*;
 pub use streaming::*;
 pub use styling::*;
-pub use theme_engine::*;
+// pub use theme_engine::*;
 
 // Other modules (no conflicts)
 pub use advanced_memory::*;
