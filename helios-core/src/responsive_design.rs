@@ -37,7 +37,7 @@ pub struct ViewportSize {
 }
 
 /// Device type
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum DeviceType {
     Mobile,
     Tablet,
@@ -209,7 +209,6 @@ pub struct FlexLayout {
 }
 
 /// Responsive manager
-#[derive(Debug)]
 pub struct ResponsiveManager {
     config: ResponsiveConfig,
     state: Arc<Mutex<ResponsiveState>>,

@@ -130,7 +130,6 @@ pub struct ForecastingEngine {
 }
 
 /// Preprocessing pipeline for forecasting
-#[derive(Debug)]
 pub struct PreprocessingPipeline {
     steps: Vec<Box<dyn PreprocessingStep>>,
 }
@@ -150,7 +149,6 @@ pub struct PreprocessingStepInfo {
 }
 
 /// Postprocessing pipeline for forecasting
-#[derive(Debug)]
 pub struct PostprocessingPipeline {
     steps: Vec<Box<dyn PostprocessingStep>>,
 }
