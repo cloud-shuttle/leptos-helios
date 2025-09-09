@@ -1,0 +1,6 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="2.18293">
+<testsuite name="chart-functionality.spec.js" timestamp="2025-09-09T06:50:49.550Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.755" errors="0">
+<testcase name="Phase 5B Chart Functionality › Analytics Chart Rendering › should generate new data when Generate Data button is clicked" classname="chart-functionality.spec.js" time="1.755">
+</testcase>
+</testsuite>
+</testsuites>

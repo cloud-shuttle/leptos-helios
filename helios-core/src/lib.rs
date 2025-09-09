@@ -32,13 +32,18 @@
 //! - **Interactive**: Sub-millisecond hover detection
 
 pub mod accessibility;
+pub mod advanced_analytics;
 pub mod advanced_charts;
 pub mod advanced_memory;
+pub mod algorithm_registry;
+pub mod animation_engine;
+pub mod anomaly_detection;
 pub mod canvas2d_renderer;
 pub mod canvas_surface;
 pub mod chart;
 pub mod chart_config;
 pub mod cross_browser;
+pub mod custom_components;
 pub mod data_minimal;
 pub mod data_pipeline;
 pub mod data_sources;
@@ -46,6 +51,7 @@ pub mod debugger;
 pub mod dev_server;
 pub mod dev_tools;
 pub mod export_system;
+pub mod forecasting_engine;
 pub mod gpu_accelerator;
 pub mod headless_renderer;
 pub mod helios_chart;
@@ -58,9 +64,11 @@ pub mod production;
 pub mod profiler;
 pub mod render_simple;
 pub mod renderer;
+pub mod responsive_design;
 pub mod security;
 pub mod streaming;
 pub mod styling;
+pub mod theme_engine;
 pub mod wasm_optimizer;
 pub mod webgpu_real;
 pub mod webgpu_renderer;
@@ -88,16 +96,24 @@ pub use renderer::{
 
 // Core modules with specific exports to avoid conflicts
 pub use accessibility::*;
+pub use advanced_analytics::*;
+pub use algorithm_registry::*;
+pub use animation_engine::*;
+pub use anomaly_detection::*;
+pub use custom_components::*;
 pub use data_sources::*;
 pub use debugger::*;
 pub use dev_tools::*;
 pub use export_system::*;
+pub use forecasting_engine::*;
 pub use ml_intelligence::*;
 pub use performance::*;
 pub use plugin_system::*;
+pub use responsive_design::*;
 pub use security::*;
 pub use streaming::*;
 pub use styling::*;
+pub use theme_engine::*;
 
 // Other modules (no conflicts)
 pub use advanced_memory::*;
