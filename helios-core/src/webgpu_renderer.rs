@@ -40,46 +40,65 @@ pub struct BufferPool {
 /// Memory usage tracking for WebGPU resources
 #[derive(Debug, Clone)]
 pub struct MemoryUsage {
+    /// Total bytes used by WebGPU resources
     pub used_bytes: usize,
+    /// Number of allocated buffers
     pub allocated_buffers: usize,
+    /// Number of shader modules
     pub shader_modules: usize,
+    /// Number of render pipelines
     pub render_pipelines: usize,
+    /// Number of textures
     pub textures: usize,
 }
 
 /// Buffer pool statistics
 #[derive(Debug, Clone)]
 pub struct BufferPoolStats {
+    /// Total number of buffer allocations
     pub total_allocations: usize,
+    /// Total number of buffer deallocations
     pub total_deallocations: usize,
+    /// Current number of active allocations
     pub current_allocations: usize,
+    /// Total bytes allocated across all buffers
     pub allocated_bytes: u64,
+    /// Number of vertex buffers
     pub vertex_buffers: usize,
+    /// Number of index buffers
     pub index_buffers: usize,
+    /// Number of uniform buffers
     pub uniform_buffers: usize,
 }
 
 /// WebGPU-specific errors
 #[derive(Error, Debug)]
 pub enum WebGpuError {
+    /// WebGPU device initialization failed
     #[error("WebGPU device initialization failed: {0}")]
     DeviceInit(String),
 
+    /// Surface creation failed
     #[error("Surface creation failed: {0}")]
     SurfaceCreation(String),
 
+    /// Shader compilation failed
     #[error("Shader compilation failed: {0}")]
     ShaderCompilation(String),
 
+    /// Pipeline creation failed
     #[error("Render pipeline creation failed: {0}")]
     PipelineCreation(String),
 
+    /// Buffer allocation failed
     #[error("Buffer allocation failed: {0}")]
     BufferAllocation(String),
 
+    /// Render pass failed
     #[error("Render pass failed: {0}")]
     RenderPass(String),
 
+    /// WebGPU is not supported on this platform
     #[error("WebGPU not supported on this platform")]
     NotSupported,
 }
@@ -94,9 +113,13 @@ impl From<wgpu::RequestAdapterError> for WebGpuError {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct ChartUniforms {
+    /// Model-view-projection matrix for transformations
     pub mvp_matrix: [[f32; 4]; 4],
+    /// Color values (RGBA)
     pub color: [f32; 4],
+    /// Viewport dimensions (width, height)
     pub viewport: [f32; 2],
+    /// Padding to maintain alignment
     pub _padding: [f32; 2],
 }
 
@@ -108,6 +131,16 @@ pub struct WebGpuShader {
 }
 
 impl WebGpuShader {
+    /// Creates a new WebGPU shader with the given module and ID
+    ///
+    /// # Arguments
+    ///
+    /// * `module` - The compiled shader module
+    /// * `id` - Unique identifier for the shader
+    ///
+    /// # Returns
+    ///
+    /// Returns a new `WebGpuShader` instance
     pub fn new(module: wgpu::ShaderModule, id: String) -> Self {
         Self {
             module,
@@ -116,14 +149,29 @@ impl WebGpuShader {
         }
     }
 
+    /// Returns the unique identifier of the shader
+    ///
+    /// # Returns
+    ///
+    /// Returns a string slice containing the shader ID
     pub fn id(&self) -> &str {
         &self.id
     }
 
+    /// Returns whether the shader has been optimized
+    ///
+    /// # Returns
+    ///
+    /// Returns `true` if the shader is optimized, `false` otherwise
     pub fn is_optimized(&self) -> bool {
         self.optimized
     }
 
+    /// Returns a reference to the underlying shader module
+    ///
+    /// # Returns
+    ///
+    /// Returns a reference to the `wgpu::ShaderModule`
     pub fn module(&self) -> &wgpu::ShaderModule {
         &self.module
     }
@@ -356,6 +404,16 @@ impl BufferPool {
 }
 
 impl WebGpuRenderer {
+    /// Renders a line chart using WebGPU
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - Array of 2D data points to render
+    /// * `_config` - Line chart configuration
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the render result or an error
     pub fn render_line_chart(
         &self,
         data: &[[f32; 2]],
@@ -370,6 +428,16 @@ impl WebGpuRenderer {
         })
     }
 
+    /// Renders a bar chart using WebGPU
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - Array of 2D data points to render
+    /// * `_config` - Bar chart configuration
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the render result or an error
     pub fn render_bar_chart(
         &self,
         data: &[[f32; 2]],
@@ -384,6 +452,16 @@ impl WebGpuRenderer {
         })
     }
 
+    /// Renders a scatter plot using WebGPU
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - Array of 2D data points to render
+    /// * `_config` - Scatter plot configuration
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the render result or an error
     pub fn render_scatter_plot(
         &self,
         data: &[[f32; 2]],
@@ -398,6 +476,16 @@ impl WebGpuRenderer {
         })
     }
 
+    /// Renders a heatmap using WebGPU
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - Array of 2D data points to render
+    /// * `_config` - Heatmap configuration
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the render result or an error
     pub fn render_heatmap(
         &self,
         data: &[[f32; 2]],
@@ -419,6 +507,11 @@ pub struct Buffer {
 }
 
 impl Buffer {
+    /// Returns the size of the buffer in bytes
+    ///
+    /// # Returns
+    ///
+    /// Returns the buffer size in bytes
     pub fn size(&self) -> usize {
         self.size
     }

@@ -90,7 +90,9 @@ pub use chart::{
     BarWidth, ChartConfig, ChartSpec, ChartSpecBuilder, DataReference, Encoding, Interpolation,
     MarkType,
 };
-pub use chart_config::*;
+pub use chart_config::{
+    ChartRenderResult, RenderResult as ChartConfigRenderResult, WebGpuRenderResult,
+};
 pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use data_pipeline::{DataPipeline, GpuBuffers, PipelineError, PipelineResult};
 pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
@@ -121,7 +123,10 @@ pub use smooth_animations::*;
 // pub use forecasting_engine::*;
 pub use ml_intelligence::*;
 pub use performance::*;
-pub use plugin_system::*;
+pub use plugin_system::{
+    ChartPlugin, DataSourcePlugin, ExportPlugin, MLPlugin, PluginError, PluginManager,
+    PluginMetadata, RenderResult as PluginRenderResult, ThemePlugin, TransformPlugin,
+};
 // pub use responsive_design::*;
 pub use security::*;
 pub use streaming::*;

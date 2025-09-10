@@ -327,14 +327,14 @@ startxref
         image_data: &mut [u8],
         width: u32,
         height: u32,
-        spec: &ChartSpec,
-        data: &DataFrame,
+        _spec: &ChartSpec,
+        _data: &DataFrame,
     ) {
         // Mock chart data generation based on chart type
         // In real implementation, this would render the actual chart
 
-        let center_x = width / 2;
-        let center_y = height / 2;
+        let _center_x = width / 2;
+        let _center_y = height / 2;
 
         // Generate a simple pattern based on data
         for y in 0..height {
@@ -358,7 +358,7 @@ startxref
 
     fn generate_svg_content(
         &self,
-        spec: &ChartSpec,
+        _spec: &ChartSpec,
         data: &DataFrame,
         width: u32,
         height: u32,
@@ -439,7 +439,7 @@ startxref
         spec: &ChartSpec,
         data: &DataFrame,
         include_data: bool,
-        config: &ExportConfig,
+        _config: &ExportConfig,
     ) -> String {
         let data_section = if include_data {
             format!("data-chart-data='{}'", self.serialize_dataframe(data))

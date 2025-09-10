@@ -196,7 +196,7 @@ impl InteractionManager {
             return Ok(None);
         }
 
-        let viewport = chart_state.viewport();
+        let _viewport = chart_state.viewport();
 
         // For simplicity, we'll use a basic distance calculation in screen space
         // In a real implementation, this would properly transform coordinates
@@ -244,7 +244,7 @@ impl InteractionManager {
             return Ok(None);
         }
 
-        let viewport = chart_state.viewport();
+        let _viewport = chart_state.viewport();
 
         // For simplicity, we'll use a basic distance calculation in screen space
         // In a real implementation, this would properly transform coordinates
@@ -636,7 +636,7 @@ impl InteractionManager {
     /// Handle hover with enhanced tooltip
     pub fn handle_hover_with_tooltip(
         &self,
-        chart_state: &ChartState,
+        _chart_state: &ChartState,
         position: [f32; 2],
         data: &[(f64, f64, Option<String>)],
         tooltip_config: &TooltipConfig,
@@ -724,7 +724,7 @@ impl InteractionManager {
     /// Update momentum panning
     pub fn update_momentum_pan(
         &mut self,
-        chart_state: &mut ChartState,
+        _chart_state: &mut ChartState,
         pan_config: &PanConfig,
     ) -> Result<(), ChartRenderError> {
         if pan_config.momentum {
@@ -739,9 +739,9 @@ impl InteractionManager {
     /// Handle gesture recognition
     pub fn handle_gesture(
         &mut self,
-        chart_state: &mut ChartState,
+        _chart_state: &mut ChartState,
         touch_points: &[TouchPoint],
-        gesture_config: &GestureConfig,
+        _gesture_config: &GestureConfig,
     ) -> Result<Option<GestureInfo>, ChartRenderError> {
         if touch_points.len() == 0 {
             return Ok(None);
@@ -749,7 +749,7 @@ impl InteractionManager {
 
         // Simple gesture recognition
         if touch_points.len() == 1 {
-            let point = &touch_points[0];
+            let _point = &touch_points[0];
             Ok(Some(GestureInfo {
                 gesture_type: GestureType::Tap,
                 start_points: touch_points.to_vec(),
@@ -780,7 +780,7 @@ impl InteractionManager {
     /// Create a selection
     pub fn create_selection(
         &self,
-        chart_state: &ChartState,
+        _chart_state: &ChartState,
         start: [f32; 2],
         end: [f32; 2],
         selection_config: &SelectionConfig,

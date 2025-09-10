@@ -145,7 +145,9 @@ impl WasmBundleOptimizer {
 /// Code chunk for splitting optimization
 #[derive(Debug, Clone)]
 pub struct CodeChunk {
+    /// Name of the code chunk
     pub name: String,
+    /// Size of the chunk in bytes
     pub size: usize,
 }
 

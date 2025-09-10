@@ -4,7 +4,6 @@
 //! virtual scrolling, data sampling, WebGL/WebGPU acceleration, and memory optimization.
 
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 // ============================================================================
@@ -263,7 +262,7 @@ impl WebGLRenderer {
     }
 
     /// Clear the render target
-    pub fn clear(&mut self, color: Color) -> Result<(), String> {
+    pub fn clear(&mut self, _color: Color) -> Result<(), String> {
         if !self.is_initialized {
             return Err("WebGL renderer not initialized".to_string());
         }

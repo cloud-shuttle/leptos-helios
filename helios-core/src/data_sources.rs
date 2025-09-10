@@ -613,7 +613,6 @@ impl DataSource for ParquetAdapter {
 }
 
 /// Mock implementations for testing and compilation
-
 /// Mock connection pool for PostgreSQL
 pub struct MockConnectionPool;
 

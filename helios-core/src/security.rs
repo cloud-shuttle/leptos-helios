@@ -953,8 +953,8 @@ impl RBACProvider {
 
     fn evaluate_condition(
         &self,
-        user: &User,
-        context: &AuthorizationContext,
+        _user: &User,
+        _context: &AuthorizationContext,
         condition: &PolicyCondition,
     ) -> bool {
         // Mock condition evaluation - would implement full condition logic

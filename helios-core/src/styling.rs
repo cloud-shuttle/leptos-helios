@@ -32,39 +32,58 @@ pub struct ThemeColors {
 /// Typography configuration
 #[derive(Debug, Clone)]
 pub struct Typography {
+    /// Font family name
     pub font_family: String,
+    /// Base font size in pixels
     pub font_size_base: f32,
+    /// Small font size in pixels
     pub font_size_small: f32,
+    /// Large font size in pixels
     pub font_size_large: f32,
+    /// Normal font weight
     pub font_weight_normal: u16,
+    /// Bold font weight
     pub font_weight_bold: u16,
+    /// Line height multiplier
     pub line_height: f32,
 }
 
 /// Spacing configuration
 #[derive(Debug, Clone)]
 pub struct Spacing {
+    /// Extra small spacing in pixels
     pub xs: f32,
+    /// Small spacing in pixels
     pub sm: f32,
+    /// Medium spacing in pixels
     pub md: f32,
+    /// Large spacing in pixels
     pub lg: f32,
+    /// Extra large spacing in pixels
     pub xl: f32,
 }
 
 /// Border radius configuration
 #[derive(Debug, Clone)]
 pub struct BorderRadius {
+    /// Small border radius in pixels
     pub sm: f32,
+    /// Medium border radius in pixels
     pub md: f32,
+    /// Large border radius in pixels
     pub lg: f32,
+    /// Extra large border radius in pixels
     pub xl: f32,
 }
 
 /// Shadows configuration
 #[derive(Debug, Clone)]
 pub struct Shadows {
+    /// Small shadow CSS value
     pub sm: String,
+    /// Medium shadow CSS value
     pub md: String,
+    /// Large shadow CSS value
     pub lg: String,
 }
 
@@ -75,6 +94,11 @@ pub struct ThemeManager {
 }
 
 impl ThemeManager {
+    /// Creates a new theme manager
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the new manager or a `ChartRenderError`
     pub fn new() -> Result<Self, ChartRenderError> {
         Ok(Self {
             themes: HashMap::new(),
@@ -82,6 +106,15 @@ impl ThemeManager {
         })
     }
 
+    /// Registers a new theme with the manager
+    ///
+    /// # Arguments
+    ///
+    /// * `theme` - The theme to register
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating success or failure
     pub fn register_theme(&mut self, theme: Theme) -> Result<(), ChartRenderError> {
         self.themes.insert(theme.name.clone(), theme);
         Ok(())
@@ -379,7 +412,7 @@ impl ResponsiveManager {
         if let Some(responsive_cfg) = &self.config {
             if responsive_cfg.fluid_typography {
                 // Adjust font sizes based on screen size
-                let scale_factor = (width as f32 / 800.0).min(2.0).max(0.5);
+                let _scale_factor = (width as f32 / 800.0).min(2.0).max(0.5);
                 responsive_config.base.title =
                     format!("{} ({}x{})", config.base.title, width, height);
             }
@@ -624,18 +657,26 @@ impl ExportStylingManager {
 /// Style validation configuration
 #[derive(Debug, Clone)]
 pub struct StyleValidationConfig {
+    /// Whether to validate color formats and values
     pub validate_colors: bool,
+    /// Whether to validate color contrast ratios for accessibility
     pub validate_contrast: bool,
+    /// Whether to validate accessibility guidelines compliance
     pub validate_accessibility: bool,
+    /// Whether to validate performance-related style properties
     pub validate_performance: bool,
+    /// Whether to treat warnings as errors during validation
     pub warnings_as_errors: bool,
 }
 
 /// Style validation result
 #[derive(Debug, Clone)]
 pub struct StyleValidationResult {
+    /// Whether the style configuration passed all validation checks
     pub is_valid: bool,
+    /// List of validation warnings
     pub warnings: Vec<String>,
+    /// List of validation errors
     pub errors: Vec<String>,
 }
 
@@ -645,10 +686,24 @@ pub struct StyleValidationManager {
 }
 
 impl StyleValidationManager {
+    /// Creates a new style validation manager
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the new manager or a `ChartRenderError`
     pub fn new() -> Result<Self, ChartRenderError> {
         Ok(Self { config: None })
     }
 
+    /// Sets the validation configuration for the manager
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - The validation configuration to use
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating success or failure
     pub fn set_validation_config(
         &mut self,
         config: StyleValidationConfig,
@@ -657,6 +712,15 @@ impl StyleValidationManager {
         Ok(())
     }
 
+    /// Validates the styles of a line chart configuration
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - The line chart configuration to validate
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the validation result or an error
     pub fn validate_styles(
         &self,
         config: &LineChartConfig,
@@ -695,20 +759,30 @@ impl StyleValidationManager {
 /// Style performance configuration
 #[derive(Debug, Clone)]
 pub struct StylePerformanceConfig {
+    /// Whether to measure rendering time
     pub measure_render_time: bool,
+    /// Whether to measure memory usage
     pub measure_memory_usage: bool,
+    /// Whether to measure GPU usage
     pub measure_gpu_usage: bool,
+    /// Target frames per second for performance validation
     pub target_fps: u32,
+    /// Maximum allowed memory usage in megabytes
     pub max_memory_mb: u32,
 }
 
 /// Style performance result
 #[derive(Debug, Clone)]
 pub struct StylePerformanceResult {
+    /// Rendering time in milliseconds
     pub render_time_ms: f64,
+    /// Memory usage in megabytes
     pub memory_usage_mb: f64,
+    /// GPU usage as a percentage
     pub gpu_usage_percent: f64,
+    /// Whether the target FPS was met
     pub meets_target_fps: bool,
+    /// Whether the memory limit was respected
     pub meets_memory_limit: bool,
 }
 
@@ -718,10 +792,24 @@ pub struct StylePerformanceManager {
 }
 
 impl StylePerformanceManager {
+    /// Creates a new style performance manager
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the new manager or a `ChartRenderError`
     pub fn new() -> Result<Self, ChartRenderError> {
         Ok(Self { config: None })
     }
 
+    /// Sets the performance configuration for the manager
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - The performance configuration to use
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` indicating success or failure
     pub fn set_performance_config(
         &mut self,
         config: StylePerformanceConfig,
@@ -730,6 +818,15 @@ impl StylePerformanceManager {
         Ok(())
     }
 
+    /// Measures the performance of a line chart configuration
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - The line chart configuration to measure
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` containing the performance metrics or an error
     pub fn measure_performance(
         &self,
         config: &LineChartConfig,

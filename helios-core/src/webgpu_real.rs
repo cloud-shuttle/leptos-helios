@@ -8,23 +8,30 @@ use std::sync::Arc;
 use thiserror::Error;
 use wgpu::*;
 
+/// Errors that can occur during WebGPU operations
 #[derive(Error, Debug)]
 pub enum WebGpuRealError {
+    /// WebGPU is not supported on this platform
     #[error("WebGPU not supported: {0}")]
     NotSupported(String),
 
+    /// Failed to initialize the WebGPU device
     #[error("Device initialization failed: {0}")]
     DeviceInit(String),
 
+    /// Failed to create a WebGPU surface
     #[error("Surface creation failed: {0}")]
     SurfaceCreation(String),
 
+    /// Failed to compile a shader
     #[error("Shader compilation failed: {0}")]
     ShaderCompilation(String),
 
+    /// Failed to create a WebGPU buffer
     #[error("Buffer creation failed: {0}")]
     BufferCreation(String),
 
+    /// Failed to create a render pipeline
     #[error("Render pipeline creation failed: {0}")]
     PipelineCreation(String),
 }

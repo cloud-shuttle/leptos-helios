@@ -386,8 +386,8 @@ impl Canvas2DRenderer {
     /// Draw a line chart
     fn draw_line_chart(
         &self,
-        data: &LineChartData,
-        spec: &LineChartSpec,
+        _data: &LineChartData,
+        _spec: &LineChartSpec,
     ) -> Result<(), Canvas2DError> {
         #[cfg(target_arch = "wasm32")]
         {
@@ -563,28 +563,33 @@ impl Canvas2DRenderer {
 // Data Structures and Types for Canvas2D Rendering
 // =============================================================================
 
+/// 2D coordinate point for chart data
 #[derive(Debug, Clone)]
 pub struct DataPoint {
     pub x: f64,
     pub y: f64,
 }
 
+/// Data collection for line chart rendering
 #[derive(Debug, Clone)]
 pub struct LineChartData {
     pub points: Vec<DataPoint>,
 }
 
+/// Individual bar data for bar charts
 #[derive(Debug, Clone)]
 pub struct BarData {
     pub category: String,
     pub value: f64,
 }
 
+/// Data collection for bar chart rendering
 #[derive(Debug, Clone)]
 pub struct BarChartData {
     pub bars: Vec<BarData>,
 }
 
+/// Point data for scatter plot visualization
 #[derive(Debug, Clone)]
 pub struct ScatterPoint {
     pub x: f64,
@@ -593,11 +598,13 @@ pub struct ScatterPoint {
     pub color: Option<String>,
 }
 
+/// Data collection for scatter plot rendering
 #[derive(Debug, Clone)]
 pub struct ScatterPlotData {
     pub points: Vec<ScatterPoint>,
 }
 
+/// Styling configuration for line rendering
 #[derive(Debug, Clone)]
 pub struct LineStyle {
     pub width: f64,
@@ -605,26 +612,38 @@ pub struct LineStyle {
     pub dash: Option<Vec<f64>>,
 }
 
+/// Line interpolation methods for smooth rendering
 #[derive(Debug, Clone)]
 pub enum InterpolationMethod {
+    /// Linear interpolation between points
     Linear,
+    /// Step function interpolation
     Step,
+    /// Smooth curve interpolation
     Smooth,
 }
 
+/// Orientation options for bar charts
 #[derive(Debug, Clone)]
 pub enum BarOrientation {
+    /// Bars extend vertically
     Vertical,
+    /// Bars extend horizontally
     Horizontal,
 }
 
+/// Bar grouping strategies for multi-series data
 #[derive(Debug, Clone)]
 pub enum BarGrouping {
+    /// Bars grouped side by side
     Grouped,
+    /// Bars stacked on top of each other
     Stacked,
+    /// Bars normalized to 100%
     Normalized,
 }
 
+/// Configuration for point rendering in charts
 #[derive(Debug, Clone)]
 pub struct PointConfig {
     pub shape: PointShape,
@@ -632,6 +651,7 @@ pub struct PointConfig {
     pub opacity: f64,
 }
 
+/// Available shapes for data points
 #[derive(Debug, Clone)]
 pub enum PointShape {
     Circle,
@@ -639,6 +659,7 @@ pub enum PointShape {
     Triangle,
 }
 
+/// Color scheme types for data visualization
 #[derive(Debug, Clone)]
 pub enum ColorScheme {
     Categorical(Vec<String>),
@@ -646,6 +667,7 @@ pub enum ColorScheme {
     Diverging(Vec<String>),
 }
 
+/// Performance optimization strategies for rendering
 #[derive(Debug, Clone)]
 pub enum OptimizationStrategy {
     LevelOfDetail,
@@ -654,6 +676,7 @@ pub enum OptimizationStrategy {
     BatchRendering,
 }
 
+/// Viewport bounds for chart rendering area
 #[derive(Debug, Clone)]
 pub struct Viewport {
     pub x_min: f64,

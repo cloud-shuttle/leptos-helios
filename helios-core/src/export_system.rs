@@ -673,7 +673,6 @@ struct ChartExport {
 }
 
 /// Helper functions
-
 fn serialize_dataframe(df: &DataFrame) -> Result<serde_json::Value, ExportError> {
     // Mock serialization - in real implementation would properly serialize DataFrame
     let mut rows = Vec::new();

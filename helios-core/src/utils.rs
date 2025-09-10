@@ -156,13 +156,20 @@ pub mod performance {
         }
     }
 
+    /// Results from performance benchmarking
     #[derive(Debug, Clone)]
     pub struct BenchmarkResult {
+        /// Minimum execution time
         pub min: Duration,
+        /// Maximum execution time
         pub max: Duration,
+        /// Mean execution time
         pub mean: Duration,
+        /// Median execution time
         pub median: Duration,
+        /// 95th percentile execution time
         pub p95: Duration,
+        /// 99th percentile execution time
         pub p99: Duration,
     }
 }
@@ -184,6 +191,11 @@ pub mod memory {
     }
 
     impl MemoryTracker {
+        /// Creates a new memory tracker
+        ///
+        /// # Returns
+        ///
+        /// Returns a new `MemoryTracker` instance
         pub const fn new() -> Self {
             Self {
                 allocated: AtomicUsize::new(0),
@@ -191,14 +203,29 @@ pub mod memory {
             }
         }
 
+        /// Returns the current allocated memory in bytes
+        ///
+        /// # Returns
+        ///
+        /// Returns the number of bytes currently allocated
         pub fn allocated(&self) -> usize {
             self.allocated.load(Ordering::Relaxed)
         }
 
+        /// Returns the peak memory usage in bytes
+        ///
+        /// # Returns
+        ///
+        /// Returns the maximum number of bytes allocated at any point
         pub fn peak(&self) -> usize {
             self.peak.load(Ordering::Relaxed)
         }
 
+        /// Records a memory allocation
+        ///
+        /// # Arguments
+        ///
+        /// * `size` - The size of the allocation in bytes
         pub fn record_allocation(&self, size: usize) {
             let current = self.allocated.fetch_add(size, Ordering::Relaxed);
             let new_total = current + size;
@@ -217,11 +244,17 @@ pub mod memory {
             }
         }
 
+        /// Records a memory deallocation
+        ///
+        /// # Arguments
+        ///
+        /// * `size` - The size of the deallocation in bytes
         pub fn record_deallocation(&self, size: usize) {
             self.allocated.fetch_sub(size, Ordering::Relaxed);
         }
     }
 
+    /// Global memory tracker instance
     pub static MEMORY_TRACKER: MemoryTracker = MemoryTracker::new();
 }
 
@@ -423,6 +456,11 @@ pub mod test_utils {
 
 // Add extension trait for Encoding to get field encodings
 impl crate::chart::Encoding {
+    /// Returns a vector of field encodings with their names
+    ///
+    /// # Returns
+    ///
+    /// Returns a vector of tuples containing field names and their position encodings
     pub fn get_field_encodings(&self) -> Vec<(String, &crate::chart::PositionEncoding)> {
         let mut encodings = Vec::new();
 
@@ -439,6 +477,11 @@ impl crate::chart::Encoding {
 
 // Add extension trait for PositionEncoding to get data type
 impl crate::chart::PositionEncoding {
+    /// Returns the data type of the position encoding
+    ///
+    /// # Returns
+    ///
+    /// Returns a reference to the data type
     pub fn data_type(&self) -> &crate::chart::DataType {
         &self.data_type
     }

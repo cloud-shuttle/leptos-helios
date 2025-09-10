@@ -61,7 +61,7 @@ impl Default for AccessibilityConfig {
     }
 }
 
-/// Screen reader support configuration
+/// Screen reader support configuration for enhanced accessibility
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScreenReaderSupport {
     pub enabled: bool,
@@ -425,8 +425,9 @@ impl AccessibilitySystem {
         self.performance_monitor.start_monitoring(operation_name)
     }
 
+    /*
     /// Generate accessibility enhancements HTML
-    /*pub fn _generate_accessibility_html(
+    pub fn _generate_accessibility_html(
             &self,
             spec: &ChartSpec,
             data: &DataFrame,
@@ -722,7 +723,7 @@ impl ComplianceValidator {
 
     fn validate(
         &self,
-        spec: &ChartSpec,
+        _spec: &ChartSpec,
         data: &DataFrame,
         config: &AccessibilityConfig,
     ) -> Result<ComplianceReport, AccessibilityError> {

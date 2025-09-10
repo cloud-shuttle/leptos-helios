@@ -287,7 +287,7 @@ impl FileWatcher {
         })
     }
 
-    fn on_change<F>(&mut self, callback: F)
+    fn on_change<F>(&mut self, _callback: F)
     where
         F: Fn(FileChangeEvent) + Send + 'static,
     {

@@ -4,7 +4,6 @@
 //! force-directed layouts, graph clustering, interactive manipulation, and network analysis.
 
 use std::collections::{HashMap, HashSet};
-use std::time::{Duration, Instant};
 
 // ============================================================================
 // Force-Directed Layout
@@ -371,7 +370,7 @@ impl GraphClusterer {
                 let mut best_modularity_gain = 0.0;
 
                 // Try moving the node to each community
-                for (i, community) in communities.iter().enumerate() {
+                for (i, _community) in communities.iter().enumerate() {
                     let modularity_gain =
                         self.calculate_modularity_gain(node, &communities, edges, i);
                     if modularity_gain > best_modularity_gain {
@@ -905,7 +904,7 @@ impl NetworkAnalyzer {
         &mut self,
         source: &str,
         target: &str,
-        nodes: &[GraphNode],
+        _nodes: &[GraphNode],
         edges: &[GraphEdge],
     ) -> Option<Vec<String>> {
         let cache_key = (source.to_string(), target.to_string());
@@ -1062,7 +1061,7 @@ impl NetworkAnalyzer {
         let mut crossings = 0;
 
         for i in 0..edges.len() {
-            for j in (i + 1)..edges.len() {
+            for _j in (i + 1)..edges.len() {
                 // Simplified edge crossing detection
                 // In practice, this would check if line segments intersect
                 crossings += 1; // Placeholder

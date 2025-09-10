@@ -12,6 +12,11 @@ impl Default for GpuManager {
 }
 
 impl GpuManager {
+    /// Creates a new GPU manager
+    ///
+    /// # Returns
+    ///
+    /// Returns a new `GpuManager` instance
     pub fn new() -> Self {
         Self {}
     }

@@ -38,7 +38,7 @@
 //! plugin_manager.register_chart_plugin(Box::new(CustomChartPlugin::new()));
 //! ```
 
-use crate::chart::{ChartSpec, MarkType, PointShape};
+use crate::chart::{ChartSpec, MarkType};
 use crate::data_sources::DataSource;
 use crate::export_system::{ExportFormat, ExportResult};
 use crate::styling::Theme;

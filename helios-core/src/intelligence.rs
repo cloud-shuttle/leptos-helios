@@ -6,96 +6,137 @@ use std::f64;
 /// Machine Learning error types
 #[derive(Debug, thiserror::Error)]
 pub enum MLError {
+    /// Training process failed
     #[error("Training failed: {0}")]
     TrainingFailed(String),
 
+    /// Prediction process failed
     #[error("Prediction failed: {0}")]
     PredictionFailed(String),
 
+    /// Invalid data provided
     #[error("Invalid data: {0}")]
     InvalidData(String),
 
+    /// Model has not been trained yet
     #[error("Model not trained")]
     ModelNotTrained,
 
+    /// Insufficient data for the operation
     #[error("Insufficient data: {0}")]
     InsufficientData(String),
 }
 
 /// Machine Learning Pipeline for data analysis and forecasting
 pub struct MLPipeline {
+    /// Name of the ML pipeline
     pub name: String,
+    /// Type of machine learning model
     pub model_type: ModelType,
+    /// Model parameters and hyperparameters
     pub parameters: HashMap<String, f64>,
+    /// Whether the model has been trained
     pub trained: bool,
 }
 
 /// Types of ML models supported
 #[derive(Debug, Clone, PartialEq)]
 pub enum ModelType {
+    /// Linear regression model
     LinearRegression,
+    /// Polynomial regression model
     PolynomialRegression,
+    /// Time series forecasting model
     TimeSeriesForecast,
+    /// Anomaly detection model
     AnomalyDetection,
+    /// Clustering model
     Clustering,
+    /// Classification model
     Classification,
 }
 
 /// Configuration for ML pipeline
 #[derive(Debug, Clone)]
 pub struct MLConfig {
+    /// Type of machine learning model to use
     pub model_type: ModelType,
+    /// Model parameters and hyperparameters
     pub parameters: HashMap<String, f64>,
+    /// Fraction of data to use for validation (0.0 to 1.0)
     pub validation_split: f64,
+    /// Maximum number of training iterations
     pub max_iterations: usize,
 }
 
 /// Results from ML operations
 #[derive(Debug, Clone)]
 pub struct MLResults {
+    /// Predicted values from the model
     pub predictions: Vec<f64>,
+    /// Model accuracy score (if applicable)
     pub accuracy: Option<f64>,
+    /// Confidence score for predictions
     pub confidence: Option<f64>,
+    /// Indices of detected anomalies (if applicable)
     pub anomalies: Option<Vec<usize>>,
+    /// Cluster assignments for data points (if applicable)
     pub clusters: Option<Vec<usize>>,
 }
 
 /// Time series forecasting capabilities
 pub struct TimeSeriesForecaster {
+    /// Size of the sliding window for analysis
     pub window_size: usize,
+    /// Number of future periods to forecast
     pub forecast_horizon: usize,
+    /// Seasonal period for seasonal models (if applicable)
     pub seasonal_period: Option<usize>,
 }
 
 /// Anomaly detection system
 pub struct AnomalyDetector {
+    /// Threshold for anomaly detection
     pub threshold: f64,
+    /// Method used for anomaly detection
     pub method: AnomalyMethod,
+    /// Sensitivity level for detection (0.0 to 1.0)
     pub sensitivity: f64,
 }
 
 /// Methods for anomaly detection
 #[derive(Debug, Clone, PartialEq)]
 pub enum AnomalyMethod {
+    /// Statistical methods (Z-score, IQR)
     Statistical,
+    /// Isolation Forest algorithm
     IsolationForest,
+    /// Local Outlier Factor algorithm
     LocalOutlierFactor,
+    /// One-Class Support Vector Machine
     OneClassSVM,
 }
 
 /// Data clustering capabilities
 pub struct ClusterAnalyzer {
+    /// Number of clusters to create
     pub n_clusters: usize,
+    /// Clustering algorithm to use
     pub algorithm: ClusteringAlgorithm,
+    /// Maximum number of iterations for convergence
     pub max_iterations: usize,
 }
 
 /// Clustering algorithms
 #[derive(Debug, Clone, PartialEq)]
 pub enum ClusteringAlgorithm {
+    /// K-Means clustering
     KMeans,
+    /// DBSCAN density-based clustering
     DBSCAN,
+    /// Hierarchical clustering
     Hierarchical,
+    /// Gaussian Mixture Model
     GaussianMixture,
 }
 

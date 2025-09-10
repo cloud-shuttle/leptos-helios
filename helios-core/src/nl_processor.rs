@@ -7,25 +7,29 @@ use crate::chart::{
     ChartSpec, ChartSpecBuilder, ColorEncoding, DataType, Encoding, Intelligence, MarkType,
     PositionEncoding, SizeEncoding,
 };
-use chrono::NaiveDate;
 use polars::prelude::*;
 use std::collections::HashMap;
 
 /// Natural Language Query Processing errors
 #[derive(Debug, thiserror::Error)]
 pub enum NLError {
+    /// Failed to parse the natural language query
     #[error("Failed to parse query: {0}")]
     ParseError(String),
 
+    /// Unsupported chart type requested
     #[error("Unsupported chart type: {0}")]
     UnsupportedChartType(String),
 
+    /// Missing required field in the query
     #[error("Missing required field: {0}")]
     MissingField(String),
 
+    /// Invalid reference to data field
     #[error("Invalid data reference: {0}")]
     InvalidDataReference(String),
 
+    /// Query is ambiguous and needs clarification
     #[error("Ambiguous query: {0}")]
     AmbiguousQuery(String),
 }
@@ -33,9 +37,13 @@ pub enum NLError {
 /// Configuration for natural language processing
 #[derive(Debug, Clone)]
 pub struct NLConfig {
+    /// Whether to enable fuzzy matching for queries
     pub fuzzy_matching: bool,
+    /// Whether to provide automatic suggestions
     pub auto_suggestions: bool,
+    /// Minimum confidence threshold for matches (0.0 to 1.0)
     pub confidence_threshold: f64,
+    /// Maximum number of suggestions to provide
     pub max_suggestions: usize,
 }
 
@@ -53,50 +61,85 @@ impl Default for NLConfig {
 /// Intelligence configuration extracted from natural language
 #[derive(Debug, Clone)]
 pub struct IntelligenceConfig {
+    /// Forecast configuration if forecasting is requested
     pub forecast: Option<ForecastConfig>,
+    /// Anomaly detection configuration if requested
     pub anomaly_detection: Option<AnomalyConfig>,
+    /// Whether to perform trend analysis
     pub trend_analysis: bool,
+    /// Clustering configuration if clustering is requested
     pub clustering: Option<ClusteringConfig>,
 }
 
+/// Configuration for forecasting operations
 #[derive(Debug, Clone)]
 pub struct ForecastConfig {
+    /// Number of periods to forecast into the future
     pub periods: u32,
+    /// Confidence level for the forecast (0.0 to 1.0)
     pub confidence: f64,
+    /// Forecasting method to use
     pub method: ForecastMethod,
 }
 
+/// Methods available for forecasting
 #[derive(Debug, Clone)]
 pub enum ForecastMethod {
+    /// Automatically select the best method
     Auto,
+    /// Linear trend forecasting
     Linear,
+    /// Seasonal forecasting
     Seasonal,
-    ARIMA { p: u32, d: u32, q: u32 },
+    /// ARIMA model with specified parameters
+    ARIMA {
+        /// Autoregressive order
+        p: u32,
+        /// Differencing order
+        d: u32,
+        /// Moving average order
+        q: u32,
+    },
 }
 
+/// Configuration for anomaly detection
 #[derive(Debug, Clone)]
 pub struct AnomalyConfig {
+    /// Anomaly detection method to use
     pub method: String,
+    /// Threshold for anomaly detection
     pub threshold: f64,
+    /// Sensitivity level for detection (0.0 to 1.0)
     pub sensitivity: f64,
 }
 
+/// Configuration for clustering operations
 #[derive(Debug, Clone)]
 pub struct ClusteringConfig {
+    /// Clustering method to use
     pub method: String,
+    /// Number of clusters (if specified)
     pub n_clusters: Option<usize>,
+    /// Whether to automatically determine the number of clusters
     pub auto_clusters: bool,
 }
 
 /// Query pattern matching result
 #[derive(Debug, Clone)]
 pub struct QueryMatch {
+    /// Confidence score for the match (0.0 to 1.0)
     pub confidence: f64,
+    /// Detected chart type
     pub chart_type: MarkType,
+    /// X-axis field name (if specified)
     pub x_field: Option<String>,
+    /// Y-axis field name (if specified)
     pub y_field: Option<String>,
+    /// Color field name (if specified)
     pub color_field: Option<String>,
+    /// Size field name (if specified)
     pub size_field: Option<String>,
+    /// Intelligence configuration (if requested)
     pub intelligence: Option<IntelligenceConfig>,
 }
 

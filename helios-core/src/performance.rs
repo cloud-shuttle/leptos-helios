@@ -76,6 +76,7 @@ pub struct WebWorkerProcessor {
     processing_queue: Vec<ProcessingTask>,
 }
 
+/// Background processing task for web workers
 #[derive(Debug, Clone)]
 pub struct ProcessingTask {
     pub id: String,
@@ -83,6 +84,7 @@ pub struct ProcessingTask {
     pub callback: String,
 }
 
+/// Result from background processing task
 #[derive(Debug, Clone)]
 pub struct ProcessingResult {
     pub task_id: String,
@@ -140,6 +142,7 @@ pub struct LodSystem {
     viewport_scale: f64,
 }
 
+/// Configuration for a specific Level of Detail
 #[derive(Debug, Clone)]
 pub struct LodLevel {
     pub level: usize,
@@ -219,6 +222,7 @@ pub struct AdvancedMemoryPool {
     max_memory: usize,
 }
 
+/// Memory buffer pool for efficient allocation
 #[derive(Debug, Clone)]
 pub struct BufferPool {
     pub pool_name: String,
@@ -227,6 +231,7 @@ pub struct BufferPool {
     buffer_size: usize,
 }
 
+/// Individual memory buffer
 #[derive(Debug, Clone)]
 pub struct Buffer {
     pub id: String,
@@ -408,7 +413,7 @@ impl RenderingPipelineOptimizer {
         let mut metrics = PerformanceMetrics::new();
 
         // Calculate rendering parameters
-        let batches = (data.len() + self.batch_size - 1) / self.batch_size;
+        let _batches = (data.len() + self.batch_size - 1) / self.batch_size;
         // metrics.draw_calls = batches; // Field removed
         // metrics.vertices_rendered = data.len(); // Field removed
 

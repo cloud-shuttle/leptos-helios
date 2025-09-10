@@ -476,6 +476,7 @@ pub fn count_treemap_nodes(node: &TreemapNode) -> usize {
 pub mod sample_data {
     use super::*;
 
+    /// Creates sample radar chart data for testing and examples
     pub fn create_sample_radar_data() -> Vec<RadarDataPoint> {
         vec![
             RadarDataPoint {
@@ -506,6 +507,7 @@ pub mod sample_data {
         ]
     }
 
+    /// Creates sample sankey diagram data with nodes and links
     pub fn create_sample_sankey_data() -> (Vec<SankeyNode>, Vec<SankeyLink>) {
         let nodes = vec![
             SankeyNode {
@@ -561,6 +563,7 @@ pub mod sample_data {
         (nodes, links)
     }
 
+    /// Creates sample hierarchical treemap data for visualization
     pub fn create_sample_treemap_data() -> TreemapNode {
         TreemapNode {
             id: "root".to_string(),
@@ -615,6 +618,7 @@ pub mod sample_data {
         }
     }
 
+    /// Creates sample violin plot data for statistical visualization
     pub fn create_sample_violin_data() -> Vec<ViolinDataPoint> {
         vec![
             ViolinDataPoint {

@@ -156,7 +156,7 @@ impl OptimizedGpuRenderer {
     }
 
     /// Render with fallback support
-    pub fn render_fallback(&self, points: &[Point2D]) -> Result<(), String> {
+    pub fn render_fallback(&self, _points: &[Point2D]) -> Result<(), String> {
         // Simulate optimized fallback rendering
         let start = Instant::now();
 
@@ -323,7 +323,7 @@ impl GpuAccelerationEngine {
         let start = std::time::Instant::now();
 
         // Simulate GPU processing
-        let processed_data: Vec<f64> = data.iter().map(|&x| x * viewport_scale).collect();
+        let _processed_data: Vec<f64> = data.iter().map(|&x| x * viewport_scale).collect();
 
         let processing_time = start.elapsed();
 
