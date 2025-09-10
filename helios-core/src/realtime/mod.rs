@@ -4,10 +4,18 @@
 //! including WebSocket integration, collaborative editing, live updates,
 //! and conflict resolution.
 
+pub mod collaborative_editing;
 pub mod message_protocol;
 pub mod websocket_connection;
 
 // Re-export main types for convenience
+pub use collaborative_editing::{
+    CollaborationError, CollaborationSession, CollaborationSettings, CollaborationStats,
+    CollaborativeEditor, Collaborator, ConflictResolutionStrategy, EditOperation,
+    EditOperationType, ElementChanges as CollaborationElementChanges,
+    ElementStyle as CollaborationElementStyle, Size as CollaborationSize, UserPermissions,
+};
+
 pub use websocket_connection::{
     ChartElement, ChartOperation, ConnectionState, ConnectionStats, DataPoint, ElementChanges,
     ElementType, Position, UserStatus, WebSocketConfig, WebSocketConnection, WebSocketError,
