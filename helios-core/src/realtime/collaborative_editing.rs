@@ -80,6 +80,18 @@ pub struct ElementChanges {
     pub metadata: Option<HashMap<String, String>>,
 }
 
+impl Default for ElementChanges {
+    fn default() -> Self {
+        Self {
+            position: None,
+            size: None,
+            style: None,
+            data: None,
+            metadata: None,
+        }
+    }
+}
+
 /// Size information for elements
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Size {

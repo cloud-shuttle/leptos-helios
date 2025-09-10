@@ -5,6 +5,7 @@
 //! and conflict resolution.
 
 pub mod collaborative_editing;
+pub mod conflict_resolution;
 pub mod live_updates;
 pub mod message_protocol;
 pub mod websocket_connection;
@@ -15,6 +16,12 @@ pub use collaborative_editing::{
     CollaborativeEditor, Collaborator, ConflictResolutionStrategy, EditOperation,
     EditOperationType, ElementChanges as CollaborationElementChanges,
     ElementStyle as CollaborationElementStyle, Size as CollaborationSize, UserPermissions,
+};
+
+pub use conflict_resolution::{
+    Conflict, ConflictResolution, ConflictResolutionError, ConflictResolutionManager,
+    ConflictSeverity, ConflictStats, ConflictType, ResolutionStrategy, TransformContext,
+    TransformResult,
 };
 
 pub use live_updates::{
