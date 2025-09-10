@@ -8,6 +8,7 @@ pub mod collaborative_editing;
 pub mod conflict_resolution;
 pub mod live_updates;
 pub mod message_protocol;
+pub mod touch_interactions;
 pub mod websocket_connection;
 
 // Re-export main types for convenience
@@ -28,6 +29,11 @@ pub use live_updates::{
     AuthConfig, AuthType, DataFilter, DataSourceConfig, DataSourceType, DataTransform,
     FilterOperator, LiveDataSource, LiveUpdate, LiveUpdateError, LiveUpdateManager,
     LiveUpdateStats, TransformType, UpdatePriority, UpdateSubscription, UpdateType,
+};
+
+pub use touch_interactions::{
+    Gesture, GestureType, SwipeDirection, TouchConfig, TouchInteractionError,
+    TouchInteractionManager, TouchPoint, TouchStats,
 };
 
 pub use websocket_connection::{

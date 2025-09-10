@@ -11,7 +11,8 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use thiserror::Error;
 use tokio::sync::{mpsc, RwLock};
 
-use super::collaborative_editing::{EditOperation, EditOperationType, ElementChanges};
+use super::collaborative_editing::ElementChanges;
+use super::collaborative_editing::{EditOperation, EditOperationType};
 
 /// Represents a conflict between two operations
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

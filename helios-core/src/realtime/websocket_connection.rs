@@ -106,7 +106,7 @@ pub enum UserStatus {
 }
 
 /// Position for cursor tracking
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct Position {
     pub x: f64,
     pub y: f64,
