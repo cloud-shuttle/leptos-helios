@@ -47,6 +47,8 @@ rand = { workspace = true }
 hex = "0.4"
 num_cpus = "1.0"
 bytemuck = "1.14"
+base64 = "0.22"
+flate2 = "1.0"
 
 # Performance optimization
 rayon = "1.8"

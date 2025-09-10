@@ -83,6 +83,7 @@ pub use render_simple as render;
 pub mod gpu;
 pub mod intelligence;
 pub mod nl_processor;
+pub mod realtime;
 pub mod utils;
 
 // Core chart types
@@ -143,6 +144,7 @@ pub use intelligence::*;
 pub use interactions::*;
 pub use nl_processor::*;
 pub use profiler::*;
+pub use realtime::*;
 pub use render::*;
 pub use utils::*;
 
@@ -169,13 +171,21 @@ pub enum HeliosError {
 
     #[error("Performance budget exceeded: {details}")]
     PerformanceBudget { details: String },
+
+    #[error("Real-time error: {0}")]
+    Realtime(#[from] realtime::WebSocketError),
+
+    #[error("Message protocol error: {0}")]
+    MessageProtocol(#[from] realtime::MessageProtocolError),
 }
 
 impl HeliosError {
     pub fn is_recoverable(&self) -> bool {
         matches!(
             self,
-            HeliosError::Configuration(_) | HeliosError::PerformanceBudget { .. }
+            HeliosError::Configuration(_)
+                | HeliosError::PerformanceBudget { .. }
+                | HeliosError::Realtime(_)
         )
     }
 
@@ -190,6 +200,8 @@ impl HeliosError {
             HeliosError::PerformanceBudget { details } => {
                 format!("Performance limit exceeded: {}", details)
             }
+            HeliosError::Realtime(e) => format!("Real-time connection failed: {}", e),
+            HeliosError::MessageProtocol(e) => format!("Message protocol error: {}", e),
         }
     }
 
@@ -229,6 +241,16 @@ impl HeliosError {
                 "Reduce data size".to_string(),
                 "Enable performance mode".to_string(),
                 "Use streaming for large datasets".to_string(),
+            ],
+            HeliosError::Realtime(_) => vec![
+                "Check network connection".to_string(),
+                "Verify WebSocket server is running".to_string(),
+                "Try reconnecting".to_string(),
+            ],
+            HeliosError::MessageProtocol(_) => vec![
+                "Check message format".to_string(),
+                "Verify protocol version".to_string(),
+                "Check message size limits".to_string(),
             ],
         }
     }
