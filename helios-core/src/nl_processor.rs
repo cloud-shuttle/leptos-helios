@@ -1045,9 +1045,9 @@ mod tests {
 
         // Create time series data with proper date types
         let dates = vec![
-            NaiveDate::from_ymd_opt(2024, 1, 1).unwrap(),
-            NaiveDate::from_ymd_opt(2024, 1, 2).unwrap(),
-            NaiveDate::from_ymd_opt(2024, 1, 3).unwrap(),
+            chrono::NaiveDate::from_ymd_opt(2024, 1, 1).unwrap(),
+            chrono::NaiveDate::from_ymd_opt(2024, 1, 2).unwrap(),
+            chrono::NaiveDate::from_ymd_opt(2024, 1, 3).unwrap(),
         ];
         let values = vec![100.0, 150.0, 120.0];
 

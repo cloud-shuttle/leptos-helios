@@ -885,7 +885,7 @@ mod tests {
             vec![MarkType::Point {
                 size: Some(5.0),
                 opacity: Some(1.0),
-                shape: Some(PointShape::Circle),
+                shape: Some(crate::canvas2d_renderer::PointShape::Circle),
             }]
         }
 
