@@ -5,6 +5,7 @@
 //! and conflict resolution.
 
 pub mod collaborative_editing;
+pub mod live_updates;
 pub mod message_protocol;
 pub mod websocket_connection;
 
@@ -16,6 +17,12 @@ pub use collaborative_editing::{
     ElementStyle as CollaborationElementStyle, Size as CollaborationSize, UserPermissions,
 };
 
+pub use live_updates::{
+    AuthConfig, AuthType, DataFilter, DataSourceConfig, DataSourceType, DataTransform,
+    FilterOperator, LiveDataSource, LiveUpdate, LiveUpdateError, LiveUpdateManager,
+    LiveUpdateStats, TransformType, UpdatePriority, UpdateSubscription, UpdateType,
+};
+
 pub use websocket_connection::{
     ChartElement, ChartOperation, ConnectionState, ConnectionStats, DataPoint, ElementChanges,
     ElementType, Position, UserStatus, WebSocketConfig, WebSocketConnection, WebSocketError,
@@ -23,9 +30,9 @@ pub use websocket_connection::{
 };
 
 pub use message_protocol::{
-    AcknowledgmentStatus, ActivityType, DataFilter, DataUpdateType, ElementStyle, FilterOperator,
-    Message, MessagePayload, MessageProtocol, MessageProtocolError, MessageType, SessionUpdateType,
-    Size, StreamConfig,
+    AcknowledgmentStatus, ActivityType, DataFilter as MessageDataFilter, DataUpdateType,
+    ElementStyle, FilterOperator as MessageFilterOperator, Message, MessagePayload,
+    MessageProtocol, MessageProtocolError, MessageType, SessionUpdateType, Size, StreamConfig,
 };
 
 /// Real-time collaboration manager

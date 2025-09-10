@@ -88,7 +88,7 @@ pub enum WebSocketMessage {
 }
 
 /// Data point for real-time updates
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DataPoint {
     pub x: f64,
     pub y: f64,
