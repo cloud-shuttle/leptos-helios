@@ -308,7 +308,7 @@ impl PerformanceOptimizer {
 
     /// Get cached result
     pub fn get_cached(&self, key: &str) -> Option<&String> {
-        if !self.config.enable_monitoring {
+        if !self.config.enabled {
             return None;
         }
 
@@ -323,7 +323,7 @@ impl PerformanceOptimizer {
 
     /// Cache a result
     pub fn cache_result(&mut self, key: String, data: String) {
-        if !self.config.enable_monitoring {
+        if !self.config.enabled {
             return;
         }
 
