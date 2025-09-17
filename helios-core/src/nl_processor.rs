@@ -325,15 +325,11 @@ impl NLProcessor {
         }
 
         if let Some(color_field) = &spec.encoding.color {
-            if let Some(field) = &color_field.field {
-                explanation.push_str(&format!(", colored by {}", field));
-            }
+            explanation.push_str(&format!(", colored by {}", color_field.field));
         }
 
         if let Some(size_field) = &spec.encoding.size {
-            if let Some(field) = &size_field.field {
-                explanation.push_str(&format!(", with size representing {}", field));
-            }
+            explanation.push_str(&format!(", with size representing {}", size_field.field));
         }
 
         // Explain intelligence features

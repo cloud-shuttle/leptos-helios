@@ -39,18 +39,18 @@ pub mod advanced_memory;
 // pub mod animation_engine;
 // pub mod anomaly_detection;
 pub mod advanced_chart_types;
-pub mod advanced_graph_features;
 pub mod canvas2d_renderer;
 pub mod canvas_surface;
 pub mod chart;
 pub mod chart_config;
 pub mod cross_browser;
+pub mod graph_features;
 pub mod interactivity;
 pub mod performance_optimizations;
 pub mod smooth_animations;
 // pub mod custom_components;
-pub mod data_minimal;
 pub mod data_pipeline;
+pub mod data_processing;
 pub mod data_sources;
 pub mod debugger;
 pub mod dev_server;
@@ -67,10 +67,10 @@ pub mod performance;
 pub mod plugin_system;
 pub mod production;
 pub mod profiler;
-pub mod render_simple;
 pub mod renderer;
+pub mod rendering;
 // pub mod responsive_design;
-// pub mod security; // Temporarily disabled due to async issues
+pub mod security;
 // pub mod streaming; // Temporarily disabled due to async issues
 pub mod styling;
 // pub mod theme_engine;
@@ -78,8 +78,8 @@ pub mod wasm_optimizer;
 pub mod webgpu_real;
 pub mod webgpu_renderer;
 
-pub use data_minimal as data;
-pub use render_simple as render;
+pub use data_processing as data;
+pub use rendering as render;
 pub mod gpu;
 pub mod intelligence;
 pub mod nl_processor;
@@ -97,9 +97,9 @@ pub use chart::{
 pub use chart_config::{
     ChartRenderResult, RenderResult as ChartConfigRenderResult, WebGpuRenderResult,
 };
-pub use data::{DataFormat, DataProcessor, WindowOp};
 pub use data_pipeline::{DataPipeline, GpuBuffers, PipelineError, PipelineResult};
 pub use helios_chart::{create_helios_chart, HeliosChart, HeliosChartProps};
+pub use polars::prelude::DataFrame;
 pub use renderer::{
     Canvas2DRenderer, RenderStatus, Renderer as ChartRenderer, RendererBackend, WebGl2Renderer,
     WebGpuRenderer,
@@ -117,7 +117,7 @@ pub use interactivity::*;
 
 pub use performance_optimizations::*;
 
-pub use advanced_graph_features::*;
+pub use graph_features::*;
 
 pub use data_sources::*;
 pub use debugger::*;
@@ -158,10 +158,10 @@ pub use utils::*;
 #[derive(Debug, thiserror::Error)]
 pub enum HeliosError {
     #[error("Data processing error: {0}")]
-    DataProcessing(#[from] data_minimal::DataError),
+    DataProcessing(#[from] data_processing::DataError),
 
     #[error("Rendering error: {0}")]
-    Rendering(#[from] render_simple::RenderError),
+    Rendering(#[from] rendering::RenderError),
 
     #[error("Validation error: {0}")]
     Validation(#[from] chart::ValidationError),
@@ -262,7 +262,6 @@ impl HeliosError {
 pub type Result<T> = std::result::Result<T, HeliosError>;
 
 /// Common type aliases
-pub type DataFrame = polars::prelude::DataFrame;
 pub type LazyFrame = polars::prelude::LazyFrame;
 pub type Color = [f32; 4]; // RGBA
 pub type Point2D = [f32; 2];
