@@ -81,7 +81,10 @@
             <button onclick="testDataProcessing()">Test Data Processing</button>
             <button onclick="testChartCreation()">Test Chart Creation</button>
             <button onclick="testWebGPU()">Test WebGPU Support</button>
-            <button onclick="renderSampleChart()" style="background: #ff6b6b;">🎨 Render Sample Chart</button>
+            <button onclick="renderLineChart()" style="background: #00d4ff;">📈 Line Chart</button>
+            <button onclick="renderBarChart()" style="background: #ff6b6b;">📊 Bar Chart</button>
+            <button onclick="renderScatterChart()" style="background: #51cf66;">🔵 Scatter Plot</button>
+            <button onclick="renderAreaChart()" style="background: #ffd43b;">📈 Area Chart</button>
             <div id="results"></div>
         </div>
 
@@ -140,7 +143,7 @@
 
                 // Automatically create and render a chart
                 setTimeout(() => {
-                    testChartCreation();
+                    renderBarChart(); // Start with a colorful bar chart
                 }, 1000);
 
             } catch (error) {
@@ -208,7 +211,7 @@
             }
         };
 
-        function renderChart(chartData) {
+        function renderChart(chartData, chartType = 'line') {
             const canvas = document.getElementById('chartCanvas');
             const ctx = canvas.getContext('2d');
             const chartInfo = document.getElementById('chartInfo');
@@ -217,7 +220,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Set up chart dimensions
-            const margin = 50;
+            const margin = 60;
             const chartWidth = canvas.width - 2 * margin;
             const chartHeight = canvas.height - 2 * margin;
 
@@ -231,14 +234,13 @@
             const maxValue = Math.max(...data);
             const valueRange = maxValue - minValue;
 
-            // Set up colors
-            ctx.strokeStyle = '#00d4ff';
-            ctx.fillStyle = '#00d4ff';
-            ctx.lineWidth = 2;
+            // Draw background
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw axes
             ctx.strokeStyle = '#666';
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2;
 
             // Y-axis
             ctx.beginPath();
@@ -255,6 +257,7 @@
             // Draw grid lines
             ctx.strokeStyle = '#333';
             ctx.setLineDash([2, 2]);
+            ctx.lineWidth = 1;
 
             // Horizontal grid lines
             for (let i = 0; i <= 5; i++) {
@@ -276,32 +279,20 @@
 
             ctx.setLineDash([]);
 
-            // Draw the line chart
-            ctx.strokeStyle = '#00d4ff';
-            ctx.fillStyle = '#00d4ff';
-            ctx.lineWidth = 3;
-
-            ctx.beginPath();
-            for (let i = 0; i < data.length; i++) {
-                const x = margin + (chartWidth / (labels.length - 1)) * i;
-                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
-
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            }
-            ctx.stroke();
-
-            // Draw data points
-            for (let i = 0; i < data.length; i++) {
-                const x = margin + (chartWidth / (labels.length - 1)) * i;
-                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
-
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, 2 * Math.PI);
-                ctx.fill();
+            // Render based on chart type
+            switch (chartType) {
+                case 'line':
+                    renderLineChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange);
+                    break;
+                case 'bar':
+                    renderBarChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange);
+                    break;
+                case 'scatter':
+                    renderScatterChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange);
+                    break;
+                case 'area':
+                    renderAreaChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange);
+                    break;
             }
 
             // Draw labels
@@ -325,43 +316,208 @@
 
             // Chart title
             ctx.fillStyle = '#fff';
-            ctx.font = '16px Arial';
+            ctx.font = '18px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(dataset.label, canvas.width / 2, 30);
 
             // Update chart info
             chartInfo.innerHTML = `
-                <strong>Chart Type:</strong> ${chartData.type} |
+                <strong>Chart Type:</strong> ${chartType.toUpperCase()} |
                 <strong>Data Points:</strong> ${data.length} |
-                <strong>Range:</strong> ${minValue.toFixed(1)} - ${maxValue.toFixed(1)}
+                <strong>Range:</strong> ${minValue.toFixed(1)} - ${maxValue.toFixed(1)} |
+                <strong>Max Value:</strong> ${maxValue} |
+                <strong>Min Value:</strong> ${minValue}
             `;
 
-            console.log('Chart rendered successfully!');
+            console.log(`${chartType} chart rendered successfully!`);
         }
 
-        function renderSampleChart() {
-            // Create a sample chart data structure
-            const sampleChartData = {
+        function renderLineChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange) {
+            const canvas = document.getElementById('chartCanvas');
+            ctx.strokeStyle = '#00d4ff';
+            ctx.fillStyle = '#00d4ff';
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            for (let i = 0; i < data.length; i++) {
+                const x = margin + (chartWidth / (labels.length - 1)) * i;
+                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            // Draw data points
+            for (let i = 0; i < data.length; i++) {
+                const x = margin + (chartWidth / (labels.length - 1)) * i;
+                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Add glow effect
+                ctx.shadowColor = '#00d4ff';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function renderBarChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange) {
+            const barWidth = chartWidth / (labels.length * 2);
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+
+            for (let i = 0; i < data.length; i++) {
+                const x = margin + (chartWidth / labels.length) * i + barWidth / 2;
+                const barHeight = ((data[i] - minValue) / valueRange) * chartHeight;
+                const y = canvas.height - margin - barHeight;
+
+                // Draw bar
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Draw bar border
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, barWidth, barHeight);
+
+                // Add value label on top
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(data[i].toString(), x + barWidth / 2, y - 5);
+            }
+        }
+
+        function renderScatterChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange) {
+            const canvas = document.getElementById('chartCanvas');
+            const colors = ['#51cf66', '#ffd43b', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
+
+            for (let i = 0; i < data.length; i++) {
+                const x = margin + (chartWidth / (labels.length - 1)) * i;
+                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
+
+                // Draw circle with gradient
+                const gradient = ctx.createRadialGradient(x, y, 0, x, y, 8);
+                gradient.addColorStop(0, colors[i % colors.length]);
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, 2 * Math.PI);
+                ctx.fill();
+
+                // Draw border
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function renderAreaChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange) {
+            const canvas = document.getElementById('chartCanvas');
+            // Create gradient for area fill
+            const gradient = ctx.createLinearGradient(0, margin, 0, canvas.height - margin);
+            gradient.addColorStop(0, 'rgba(255, 211, 59, 0.8)');
+            gradient.addColorStop(1, 'rgba(255, 211, 59, 0.1)');
+
+            // Draw area
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(margin, canvas.height - margin);
+
+            for (let i = 0; i < data.length; i++) {
+                const x = margin + (chartWidth / (labels.length - 1)) * i;
+                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
+                ctx.lineTo(x, y);
+            }
+
+            ctx.lineTo(canvas.width - margin, canvas.height - margin);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw line on top
+            ctx.strokeStyle = '#ffd43b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i < data.length; i++) {
+                const x = margin + (chartWidth / (labels.length - 1)) * i;
+                const y = canvas.height - margin - ((data[i] - minValue) / valueRange) * chartHeight;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+        }
+
+        function renderLineChart() {
+            const chartData = {
                 type: "line",
+                data: {
+                    labels: ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"],
+                    datasets: [{
+                        label: "Revenue Growth",
+                        data: [45, 67, 89, 123, 156, 198]
+                    }]
+                }
+            };
+            renderChart(chartData, 'line');
+            resultsDiv.innerHTML = `<div class="status success">📈 Line Chart Rendered!</div>`;
+        }
+
+        function renderBarChart() {
+            const chartData = {
+                type: "bar",
+                data: {
+                    labels: ["Sales", "Marketing", "Development", "Support", "Admin"],
+                    datasets: [{
+                        label: "Department Budget",
+                        data: [120, 85, 200, 75, 60]
+                    }]
+                }
+            };
+            renderChart(chartData, 'bar');
+            resultsDiv.innerHTML = `<div class="status success">📊 Bar Chart Rendered!</div>`;
+        }
+
+        function renderScatterChart() {
+            const chartData = {
+                type: "scatter",
+                data: {
+                    labels: ["A", "B", "C", "D", "E", "F"],
+                    datasets: [{
+                        label: "Performance Metrics",
+                        data: [23, 45, 67, 89, 34, 78]
+                    }]
+                }
+            };
+            renderChart(chartData, 'scatter');
+            resultsDiv.innerHTML = `<div class="status success">🔵 Scatter Plot Rendered!</div>`;
+        }
+
+        function renderAreaChart() {
+            const chartData = {
+                type: "area",
                 data: {
                     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
                     datasets: [{
-                        label: "Sample Sales Data",
+                        label: "User Engagement",
                         data: [12, 19, 3, 5, 2, 3]
                     }]
                 }
             };
-
-            // Render the sample chart
-            renderChart(sampleChartData);
-
-            // Update results
-            resultsDiv.innerHTML = `
-                <div class="status success">Sample Chart Rendered!</div>
-                <p>This is a sample chart rendered with Canvas2D. The WASM module generates the data structure, and JavaScript renders it visually.</p>
-            `;
-
-            console.log('Sample chart rendered!');
+            renderChart(chartData, 'area');
+            resultsDiv.innerHTML = `<div class="status success">📈 Area Chart Rendered!</div>`;
         }
 
         function testWebGPU() {
