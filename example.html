@@ -371,6 +371,7 @@
         }
 
         function renderBarChartInternal(ctx, data, labels, margin, chartWidth, chartHeight, minValue, valueRange) {
+            const canvas = document.getElementById('chartCanvas');
             const barWidth = chartWidth / (labels.length * 2);
             const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
 
@@ -546,6 +547,10 @@
         window.testDataProcessing = testDataProcessing;
         window.testChartCreation = testChartCreation;
         window.testWebGPU = testWebGPU;
+        window.renderLineChart = renderLineChart;
+        window.renderBarChart = renderBarChart;
+        window.renderScatterChart = renderScatterChart;
+        window.renderAreaChart = renderAreaChart;
     </script>
 </body>
 </html>
