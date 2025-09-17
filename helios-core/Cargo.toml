@@ -48,6 +48,9 @@ hex = "0.4"
 num_cpus = "1.0"
 bytemuck = "1.14"
 base64 = "0.22"
+
+# Styling
+tailwind-rs-core = "0.6.1"
 urlencoding = "2.1"
 flate2 = "1.0"
 
