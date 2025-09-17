@@ -280,7 +280,7 @@ pub async fn init() -> Result<()> {
     let _renderer = ChartRenderer::auto_detect()?;
 
     // Initialize data processing pipeline
-    let _data_processor = DataProcessor::new()?;
+    // let _data_processor = DataProcessor::new()?;
 
     // Initialize ML pipeline if available
     #[cfg(feature = "ml")]

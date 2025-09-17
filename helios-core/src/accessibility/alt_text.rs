@@ -134,7 +134,7 @@ impl AltTextGenerator {
         Ok(DataTable {
             title,
             summary,
-            headers: headers.into_iter().map(|h| h.to_string()).collect(),
+            headers: headers.clone().into_iter().map(|h| h.to_string()).collect(),
             rows,
             caption: Some(format!(
                 "Data table for {} chart",

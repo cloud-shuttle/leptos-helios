@@ -95,7 +95,7 @@ impl PerformanceMonitor {
 
     /// Start monitoring an operation
     pub fn start_monitoring(&mut self, operation_name: &str) -> PerformanceMonitor {
-        if !self.config.enabled {
+        if !self.config.enable_monitoring {
             return PerformanceMonitor {
                 config: self.config.clone(),
                 metrics: HashMap::new(),
@@ -119,7 +119,7 @@ impl PerformanceMonitor {
         operation_name: &str,
         success: bool,
     ) -> Result<PerformanceMetric, AccessibilityError> {
-        if !self.config.enabled {
+        if !self.config.enable_monitoring {
             return Err(AccessibilityError::PerformanceBudgetExceeded(
                 "Performance monitoring is disabled".to_string(),
             ));
@@ -139,10 +139,12 @@ impl PerformanceMonitor {
         let duration_ms = duration.as_millis() as u64;
 
         // Check if operation exceeded budget
-        if duration_ms > self.config.budget_ms {
+        if duration_ms > self.config.max_execution_time.as_millis() as u64 {
             return Err(AccessibilityError::PerformanceBudgetExceeded(format!(
                 "Operation '{}' exceeded budget: {}ms > {}ms",
-                operation_name, duration_ms, self.config.budget_ms
+                operation_name,
+                duration_ms,
+                self.config.max_execution_time.as_millis()
             )));
         }
 
@@ -158,7 +160,7 @@ impl PerformanceMonitor {
             .insert(operation_name.to_string(), metric.clone());
 
         // Log performance if enabled
-        if self.config.monitoring.log_performance {
+        if self.config.enable_monitoring {
             self.log_performance(&metric);
         }
 
@@ -196,22 +198,28 @@ impl PerformanceMonitor {
         };
 
         for metric in self.metrics.values() {
-            if metric.duration_ms > self.config.budget_ms {
+            if metric.duration_ms > self.config.max_execution_time.as_millis() as u64 {
                 report.overall_compliant = false;
                 report.violations.push(BudgetViolation {
                     operation: metric.operation_name.clone(),
                     actual_ms: metric.duration_ms,
-                    budget_ms: self.config.budget_ms,
-                    severity: if metric.duration_ms > self.config.budget_ms * 2 {
+                    budget_ms: self.config.max_execution_time.as_millis() as u64,
+                    severity: if metric.duration_ms
+                        > self.config.max_execution_time.as_millis() as u64 * 2
+                    {
                         PerformanceViolationSeverity::Critical
                     } else {
                         PerformanceViolationSeverity::High
                     },
                 });
-            } else if metric.duration_ms > self.config.budget_ms * 0.8 {
+            } else if metric.duration_ms
+                > (self.config.max_execution_time.as_millis() as u64 * 8) / 10
+            {
                 report.warnings.push(format!(
                     "Operation '{}' is approaching budget limit: {}ms / {}ms",
-                    metric.operation_name, metric.duration_ms, self.config.budget_ms
+                    metric.operation_name,
+                    metric.duration_ms,
+                    self.config.max_execution_time.as_millis()
                 ));
             }
         }
@@ -300,7 +308,7 @@ impl PerformanceOptimizer {
 
     /// Get cached result
     pub fn get_cached(&self, key: &str) -> Option<&String> {
-        if !self.config.enabled {
+        if !self.config.enable_monitoring {
             return None;
         }
 
@@ -315,7 +323,7 @@ impl PerformanceOptimizer {
 
     /// Cache a result
     pub fn cache_result(&mut self, key: String, data: String) {
-        if !self.config.enabled {
+        if !self.config.enable_monitoring {
             return;
         }
 

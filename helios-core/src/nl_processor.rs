@@ -215,7 +215,9 @@ impl NLProcessor {
                 data_type: DataType::Quantitative,
                 scale: None,
                 axis: None,
+                legend: None,
                 bin: None,
+                aggregate: None,
                 sort: None,
             });
         }
@@ -226,7 +228,9 @@ impl NLProcessor {
                 data_type: DataType::Quantitative,
                 scale: None,
                 axis: None,
+                legend: None,
                 bin: None,
+                aggregate: None,
                 sort: None,
             });
         }
@@ -239,27 +243,29 @@ impl NLProcessor {
         // Add intelligence configuration
         if let Some(intelligence_config) = query_match.intelligence {
             spec.intelligence = Some(Intelligence {
+                features: vec![],
+                parameters: std::collections::HashMap::new(),
                 forecast: intelligence_config
                     .forecast
                     .map(|fc| crate::chart::ForecastConfig {
-                        periods: fc.periods,
-                        confidence: Some(fc.confidence as f32),
-                        method: Some(format!("{:?}", fc.method)),
+                        enabled: true,
+                        horizon: Some(fc.periods),
+                        confidence_interval: Some(fc.confidence as f64),
                     }),
                 anomaly_detection: intelligence_config.anomaly_detection.map(|ac| {
                     crate::chart::AnomalyConfig {
-                        method: ac.method,
-                        threshold: ac.threshold as f32,
-                        sensitivity: Some(ac.sensitivity as f32),
+                        enabled: true,
+                        threshold: Some(ac.threshold as f64),
+                        method: Some(ac.method),
                     }
                 }),
                 trend_analysis: Some(intelligence_config.trend_analysis),
                 clustering: intelligence_config
                     .clustering
                     .map(|cc| crate::chart::ClusterConfig {
-                        k: cc.n_clusters.unwrap_or(3) as u32,
-                        method: cc.method,
-                        features: vec![],
+                        enabled: true,
+                        algorithm: Some(cc.method),
+                        num_clusters: Some(cc.n_clusters.unwrap_or(3) as u32),
                     }),
             });
         }
@@ -752,7 +758,9 @@ impl NLProcessor {
                     data_type: crate::chart::DataType::Temporal,
                     scale: None,
                     axis: None,
+                    legend: None,
                     bin: None,
+                    aggregate: None,
                     sort: None,
                 });
                 break;
@@ -773,7 +781,9 @@ impl NLProcessor {
                     data_type: crate::chart::DataType::Quantitative,
                     scale: None,
                     axis: None,
+                    legend: None,
                     bin: None,
+                    aggregate: None,
                     sort: None,
                 });
                 break;
@@ -806,7 +816,9 @@ impl NLProcessor {
                     data_type: crate::chart::DataType::Nominal,
                     scale: None,
                     axis: None,
+                    legend: None,
                     bin: None,
+                    aggregate: None,
                     sort: None,
                 });
                 break;
@@ -828,7 +840,9 @@ impl NLProcessor {
                     data_type: crate::chart::DataType::Quantitative,
                     scale: None,
                     axis: None,
+                    legend: None,
                     bin: None,
+                    aggregate: None,
                     sort: None,
                 });
                 break;
@@ -868,7 +882,9 @@ impl NLProcessor {
                 data_type: crate::chart::DataType::Quantitative,
                 scale: None,
                 axis: None,
+                legend: None,
                 bin: None,
+                aggregate: None,
                 sort: None,
             });
             encoding.y = Some(PositionEncoding {
@@ -876,7 +892,9 @@ impl NLProcessor {
                 data_type: crate::chart::DataType::Quantitative,
                 scale: None,
                 axis: None,
+                legend: None,
                 bin: None,
+                aggregate: None,
                 sort: None,
             });
         }
@@ -909,10 +927,14 @@ impl NLProcessor {
 
         if let Some(first_cat) = categorical_fields.first() {
             encoding.color = Some(ColorEncoding {
-                field: Some(first_cat.clone()),
-                data_type: Some(crate::chart::DataType::Nominal),
+                field: first_cat.clone(),
+                data_type: crate::chart::DataType::Nominal,
                 scale: None,
-                condition: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
             });
         }
 
@@ -926,9 +948,14 @@ impl NLProcessor {
                     | polars::prelude::DataType::Float32
             ) {
                 encoding.size = Some(SizeEncoding {
-                    field: Some(name.to_string()),
-                    data_type: Some(crate::chart::DataType::Quantitative),
+                    field: name.to_string(),
+                    data_type: crate::chart::DataType::Quantitative,
                     scale: None,
+                    axis: None,
+                    legend: None,
+                    bin: None,
+                    aggregate: None,
+                    sort: None,
                 });
                 break;
             }
@@ -1074,7 +1101,9 @@ mod tests {
                     data_type: crate::chart::DataType::Temporal,
                     scale: None,
                     axis: None,
+                    legend: None,
                     bin: None,
+                    aggregate: None,
                     sort: None,
                 }),
                 y: Some(PositionEncoding {
@@ -1082,7 +1111,9 @@ mod tests {
                     data_type: crate::chart::DataType::Quantitative,
                     scale: None,
                     axis: None,
+                    legend: None,
                     bin: None,
+                    aggregate: None,
                     sort: None,
                 }),
                 color: Some(ColorEncoding {

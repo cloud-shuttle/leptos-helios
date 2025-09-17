@@ -90,7 +90,7 @@ impl DataProcessingEngine {
 
         // Process data with selected strategy
         let result = match strategy {
-            ProcessingStrategy::CPU(config) => self.process_with_cpu(data, &config).await,
+            ProcessingStrategy::CPU(ref config) => self.process_with_cpu(data, config).await,
             ProcessingStrategy::GPU(ref config) => self.process_with_gpu(data, config).await,
             ProcessingStrategy::Streaming(ref config) => {
                 self.process_with_streaming(data, config).await

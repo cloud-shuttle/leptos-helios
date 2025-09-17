@@ -99,7 +99,7 @@ impl ScreenReaderManager {
         }
 
         Ok(DataTable {
-            title,
+            title: title.clone(),
             summary,
             headers: headers.into_iter().map(|h| h.to_string()).collect(),
             rows,
@@ -128,7 +128,8 @@ impl ScreenReaderManager {
 
         // Data points
         for (i, row) in data.iter().enumerate() {
-            let point_label = self.generate_point_label(&spec.mark, &row, i);
+            let row_values: Vec<_> = row.iter().map(|v| v.clone()).collect();
+            let point_label = self.generate_point_label(&spec.mark, &row_values, i);
             labels.insert(format!("data-point-{}", i), point_label);
         }
 
