@@ -1,13 +1,15 @@
 //! Streaming Data Tests
 //! Tests for real-time data updates and streaming functionality
 
+use leptos_helios::streaming::DataPoint;
+use leptos_helios::streaming::DataType;
+use leptos_helios::streaming::StreamConfig;
 use leptos_helios::*;
-use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 /// Helper function to create a base chart config
-fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {
-    BaseChartConfig {
+fn create_base_config(title: &str, width: u32, height: u32) -> ChartConfig {
+    ChartConfig {
         width,
         height,
         title: title.to_string(),

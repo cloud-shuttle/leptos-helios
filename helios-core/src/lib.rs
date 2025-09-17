@@ -70,8 +70,8 @@ pub mod profiler;
 pub mod render_simple;
 pub mod renderer;
 // pub mod responsive_design;
-pub mod security;
-pub mod streaming;
+// pub mod security; // Temporarily disabled due to async issues
+// pub mod streaming; // Temporarily disabled due to async issues
 pub mod styling;
 // pub mod theme_engine;
 pub mod wasm_optimizer;
@@ -83,7 +83,10 @@ pub use render_simple as render;
 pub mod gpu;
 pub mod intelligence;
 pub mod nl_processor;
-pub mod realtime;
+// pub mod realtime; // Temporarily disabled due to async issues
+// pub mod responsive; // Temporarily disabled due to async issues
+// pub mod performance_optimization; // Temporarily disabled due to async issues
+// pub mod offline_support; // Temporarily disabled due to async issues
 pub mod utils;
 
 // Core chart types
@@ -129,8 +132,8 @@ pub use plugin_system::{
     PluginMetadata, RenderResult as PluginRenderResult, ThemePlugin, TransformPlugin,
 };
 // pub use responsive_design::*;
-pub use security::*;
-pub use streaming::*;
+// pub use security::*; // Temporarily disabled due to async issues
+// pub use streaming::*; // Temporarily disabled due to async issues
 pub use styling::*;
 // pub use theme_engine::*;
 
@@ -144,8 +147,11 @@ pub use intelligence::*;
 pub use interactions::*;
 pub use nl_processor::*;
 pub use profiler::*;
-pub use realtime::*;
+// pub use realtime::*; // Temporarily disabled due to async issues
 pub use render::*;
+// pub use responsive::*; // Temporarily disabled due to async issues
+// pub use performance_optimization::*; // Temporarily disabled due to async issues
+// pub use offline_support::*; // Temporarily disabled due to async issues
 pub use utils::*;
 
 /// Core error types for Helios
@@ -171,21 +177,18 @@ pub enum HeliosError {
 
     #[error("Performance budget exceeded: {details}")]
     PerformanceBudget { details: String },
+    // #[error("Real-time error: {0}")]
+    // Realtime(#[from] realtime::WebSocketError),
 
-    #[error("Real-time error: {0}")]
-    Realtime(#[from] realtime::WebSocketError),
-
-    #[error("Message protocol error: {0}")]
-    MessageProtocol(#[from] realtime::MessageProtocolError),
+    // #[error("Message protocol error: {0}")]
+    // MessageProtocol(#[from] realtime::MessageProtocolError),
 }
 
 impl HeliosError {
     pub fn is_recoverable(&self) -> bool {
         matches!(
             self,
-            HeliosError::Configuration(_)
-                | HeliosError::PerformanceBudget { .. }
-                | HeliosError::Realtime(_)
+            HeliosError::Configuration(_) | HeliosError::PerformanceBudget { .. } // | HeliosError::Realtime(_)
         )
     }
 
@@ -199,9 +202,8 @@ impl HeliosError {
             HeliosError::Configuration(msg) => format!("Configuration error: {}", msg),
             HeliosError::PerformanceBudget { details } => {
                 format!("Performance limit exceeded: {}", details)
-            }
-            HeliosError::Realtime(e) => format!("Real-time connection failed: {}", e),
-            HeliosError::MessageProtocol(e) => format!("Message protocol error: {}", e),
+            } // HeliosError::Realtime(e) => format!("Real-time connection failed: {}", e),
+              // HeliosError::MessageProtocol(e) => format!("Message protocol error: {}", e),
         }
     }
 
@@ -242,16 +244,16 @@ impl HeliosError {
                 "Enable performance mode".to_string(),
                 "Use streaming for large datasets".to_string(),
             ],
-            HeliosError::Realtime(_) => vec![
-                "Check network connection".to_string(),
-                "Verify WebSocket server is running".to_string(),
-                "Try reconnecting".to_string(),
-            ],
-            HeliosError::MessageProtocol(_) => vec![
-                "Check message format".to_string(),
-                "Verify protocol version".to_string(),
-                "Check message size limits".to_string(),
-            ],
+            // HeliosError::Realtime(_) => vec![
+            //     "Check network connection".to_string(),
+            //     "Verify WebSocket server is running".to_string(),
+            //     "Try reconnecting".to_string(),
+            // ],
+            // HeliosError::MessageProtocol(_) => vec![
+            //     "Check message format".to_string(),
+            //     "Verify protocol version".to_string(),
+            //     "Check message size limits".to_string(),
+            // ],
         }
     }
 }

@@ -1,11 +1,14 @@
 //! Additional Chart Types Tests
 //! Tests for bar, scatter, and area chart implementations
 
+use leptos_helios::canvas2d_renderer::PointShape;
+use leptos_helios::chart::Interpolation;
+use leptos_helios::chart_config::*;
 use leptos_helios::*;
 
 /// Helper function to create a base chart config
-fn create_base_config(title: &str, width: u32, height: u32) -> BaseChartConfig {
-    BaseChartConfig {
+fn create_base_config(title: &str, width: u32, height: u32) -> ChartConfig {
+    ChartConfig {
         width,
         height,
         title: title.to_string(),
@@ -28,7 +31,7 @@ fn test_bar_chart_rendering() {
         ("Category E".to_string(), 20.0),
     ];
 
-    let config = BarChartConfig {
+    let config = ChartConfig {
         base: create_base_config("Test Bar Chart", 800, 600),
         colors: vec![
             "#00d4ff".to_string(),
@@ -71,7 +74,7 @@ fn test_horizontal_bar_chart() {
         ("Category D".to_string(), 45.0),
     ];
 
-    let config = BarChartConfig {
+    let config = ChartConfig {
         base: create_base_config("Horizontal Bar Chart", 800, 600),
         colors: vec![
             "#00d4ff".to_string(),
@@ -114,7 +117,7 @@ fn test_scatter_plot_rendering() {
         (6.0, 3.0, Some("Point F".to_string())),
     ];
 
-    let config = ScatterPlotConfig {
+    let config = ChartConfig {
         base: create_base_config("Test Scatter Plot", 800, 600),
         point_color: "#00d4ff".to_string(),
         point_size: 6.0,
@@ -153,7 +156,7 @@ fn test_scatter_plot_with_different_shapes() {
         (4.0, 4.0, Some("Diamond".to_string())),
     ];
 
-    let config = ScatterPlotConfig {
+    let config = ChartConfig {
         base: create_base_config("Scatter with Shapes", 800, 600),
         point_color: "#00d4ff".to_string(),
         point_size: 8.0,
@@ -190,13 +193,13 @@ fn test_area_chart_rendering() {
         (6.0, 3.5),
     ];
 
-    let config = AreaChartConfig {
+    let config = ChartConfig {
         base: create_base_config("Test Area Chart", 800, 600),
         fill_color: "#00d4ff".to_string(),
         stroke_color: "#0066cc".to_string(),
         stroke_width: 2.0,
         opacity: 0.7,
-        interpolation: InterpolationType::Smooth,
+        interpolation: Interpolation::Smooth,
         show_legend: true,
         gradient: Some(GradientConfig {
             start_color: "#00d4ff".to_string(),
@@ -254,7 +257,7 @@ fn test_stacked_area_chart() {
         },
     ];
 
-    let config = StackedAreaChartConfig {
+    let config = ChartConfig {
         base: create_base_config("Stacked Area Chart", 800, 600),
         colors: vec![
             "#00d4ff".to_string(),
@@ -263,7 +266,7 @@ fn test_stacked_area_chart() {
         ],
         stroke_width: 1.0,
         opacity: 0.8,
-        interpolation: InterpolationType::Smooth,
+        interpolation: Interpolation::Smooth,
         show_legend: true,
     };
 
@@ -381,7 +384,7 @@ fn test_chart_rendering_performance() {
         stroke_color: "#0066cc".to_string(),
         stroke_width: 1.0,
         opacity: 0.7,
-        interpolation: InterpolationType::Linear,
+        interpolation: Interpolation::Linear,
         show_legend: false,
         gradient: None,
     };
@@ -438,7 +441,7 @@ fn test_chart_rendering_performance() {
 fn test_chart_error_handling() {
     // Given: Invalid configurations
     let empty_data: Vec<(String, f64)> = vec![];
-    let config = BarChartConfig {
+    let config = ChartConfig {
         base: create_base_config("Error Test", 800, 600),
         colors: vec![],
         bar_width: 0.8,

@@ -420,6 +420,7 @@ async fn setup_full_webgpu_context() -> Option<(
         present_mode: wgpu::PresentMode::Fifo,
         alpha_mode: wgpu::CompositeAlphaMode::Auto,
         view_formats: vec![],
+        desired_maximum_frame_latency: 2,
     };
 
     Some((device, queue, surface, surface_config))
