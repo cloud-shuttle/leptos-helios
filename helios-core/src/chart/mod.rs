@@ -34,6 +34,44 @@ impl ChartSpec {
     /// Create a new chart specification
     pub fn new() -> Self {
         ChartSpecBuilder::default()
+            .data(DataReference {
+                source: "default".to_string(),
+                format: DataFormat::Inline,
+                schema: None,
+            })
+            .mark(MarkType::Point { size: None, shape: None, opacity: None })
+            .encoding(Encoding {
+                x: Some(EncodingDef {
+                    field: "x".to_string(),
+                    data_type: DataType::Number,
+                    scale: None,
+                    axis: None,
+                    legend: None,
+                    bin: None,
+                    aggregate: None,
+                    sort: None,
+                }),
+                y: Some(EncodingDef {
+                    field: "y".to_string(),
+                    data_type: DataType::Number,
+                    scale: None,
+                    axis: None,
+                    legend: None,
+                    bin: None,
+                    aggregate: None,
+                    sort: None,
+                }),
+                color: None,
+                size: None,
+                shape: None,
+                opacity: None,
+                text: None,
+                tooltip: None,
+                detail: None,
+                order: None,
+                row: None,
+                column: None,
+            })
             .build()
             .expect("Failed to build default chart spec")
     }

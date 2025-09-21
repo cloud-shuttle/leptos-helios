@@ -3,31 +3,80 @@
 //! This module demonstrates basic usage without complex dependencies.
 
 use leptos_helios::chart::*;
-// use leptos_helios::data::*;
-use leptos_helios::DataFrame;
 
-/// Create a simple line chart example using empty DataFrame
+/// Create a simple line chart example
 pub fn create_simple_line_chart() -> Result<ChartSpec, Box<dyn std::error::Error>> {
-    // Create empty DataFrame for testing
-    let df = DataFrame::empty();
 
     // Create chart specification using defaults
     let chart_spec = ChartSpecBuilder::default()
-        .data(DataReference::DataFrame(df))
+        .data(DataReference {
+            source: "test_data".to_string(),
+            format: DataFormat::Inline,
+            schema: None,
+        })
         .mark(MarkType::Line {
             interpolate: None,
             stroke_width: None,
             stroke_dash: None,
         })
-        .encoding(Encoding::default())
-        .config(ChartConfig {
-            title: Some(TitleConfig {
-                text: "Simple Line Chart".to_string(),
-                font_size: None,
-                font_family: None,
-                color: None,
+        .encoding(Encoding {
+            x: Some(EncodingDef {
+                field: "x".to_string(),
+                data_type: DataType::Number,
+                scale: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
             }),
-            ..Default::default()
+            y: Some(EncodingDef {
+                field: "y".to_string(),
+                data_type: DataType::Number,
+                scale: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
+            }),
+            color: None,
+            size: None,
+            shape: None,
+            opacity: None,
+            text: None,
+            tooltip: None,
+            detail: None,
+            order: None,
+            row: None,
+            column: None,
+        })
+        .config(ChartConfig {
+            title: "Simple Line Chart".to_string(),
+            description: "A simple line chart example".to_string(),
+            width: None,
+            height: None,
+            padding: None,
+            background: None,
+            viewport: None,
+            legend: None,
+            axis: None,
+            mark: None,
+            selection: None,
+            scale: None,
+            range: None,
+            facet: None,
+            header: None,
+            overlay: None,
+            style: None,
+            signals: None,
+            data: None,
+            layout: None,
+            projection: None,
+            encoding: None,
+            resolve: None,
+            autosize: None,
+            usermeta: None,
         })
         .build()?;
 
@@ -36,28 +85,77 @@ pub fn create_simple_line_chart() -> Result<ChartSpec, Box<dyn std::error::Error
 
 /// Create a simple scatter plot example
 pub fn create_simple_scatter_plot() -> Result<ChartSpec, Box<dyn std::error::Error>> {
-    // Create empty DataFrame for testing
-    let df = DataFrame::empty();
 
     // Create chart specification using defaults
     let chart_spec = ChartSpecBuilder::default()
-        .data(DataReference::DataFrame(df))
-        .mark(MarkType::Scatter {
+        .data(DataReference {
+            source: "test_data".to_string(),
+            format: DataFormat::Inline,
+            schema: None,
+        })
+        .mark(MarkType::Point {
             size: None,
             shape: None,
             opacity: None,
-            jitter: None,
-            trend_line: None,
         })
-        .encoding(Encoding::default())
-        .config(ChartConfig {
-            title: Some(TitleConfig {
-                text: "Simple Scatter Plot".to_string(),
-                font_size: None,
-                font_family: None,
-                color: None,
+        .encoding(Encoding {
+            x: Some(EncodingDef {
+                field: "x".to_string(),
+                data_type: DataType::Number,
+                scale: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
             }),
-            ..Default::default()
+            y: Some(EncodingDef {
+                field: "y".to_string(),
+                data_type: DataType::Number,
+                scale: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
+            }),
+            color: None,
+            size: None,
+            shape: None,
+            opacity: None,
+            text: None,
+            tooltip: None,
+            detail: None,
+            order: None,
+            row: None,
+            column: None,
+        })
+        .config(ChartConfig {
+            title: "Simple Scatter Plot".to_string(),
+            description: "A simple scatter plot example".to_string(),
+            width: None,
+            height: None,
+            padding: None,
+            background: None,
+            viewport: None,
+            legend: None,
+            axis: None,
+            mark: None,
+            selection: None,
+            scale: None,
+            range: None,
+            facet: None,
+            header: None,
+            overlay: None,
+            style: None,
+            signals: None,
+            data: None,
+            layout: None,
+            projection: None,
+            encoding: None,
+            resolve: None,
+            autosize: None,
+            usermeta: None,
         })
         .build()?;
 
@@ -66,25 +164,76 @@ pub fn create_simple_scatter_plot() -> Result<ChartSpec, Box<dyn std::error::Err
 
 /// Create a simple bar chart example
 pub fn create_simple_bar_chart() -> Result<ChartSpec, Box<dyn std::error::Error>> {
-    // Create empty DataFrame for testing
-    let df = DataFrame::empty();
 
     // Create chart specification using defaults
     let chart_spec = ChartSpecBuilder::default()
-        .data(DataReference::DataFrame(df))
+        .data(DataReference {
+            source: "test_data".to_string(),
+            format: DataFormat::Inline,
+            schema: None,
+        })
         .mark(MarkType::Bar {
             width: None,
             corner_radius: None,
         })
-        .encoding(Encoding::default())
-        .config(ChartConfig {
-            title: Some(TitleConfig {
-                text: "Simple Bar Chart".to_string(),
-                font_size: None,
-                font_family: None,
-                color: None,
+        .encoding(Encoding {
+            x: Some(EncodingDef {
+                field: "category".to_string(),
+                data_type: DataType::String,
+                scale: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
             }),
-            ..Default::default()
+            y: Some(EncodingDef {
+                field: "value".to_string(),
+                data_type: DataType::Number,
+                scale: None,
+                axis: None,
+                legend: None,
+                bin: None,
+                aggregate: None,
+                sort: None,
+            }),
+            color: None,
+            size: None,
+            shape: None,
+            opacity: None,
+            text: None,
+            tooltip: None,
+            detail: None,
+            order: None,
+            row: None,
+            column: None,
+        })
+        .config(ChartConfig {
+            title: "Simple Bar Chart".to_string(),
+            description: "A simple bar chart example".to_string(),
+            width: None,
+            height: None,
+            padding: None,
+            background: None,
+            viewport: None,
+            legend: None,
+            axis: None,
+            mark: None,
+            selection: None,
+            scale: None,
+            range: None,
+            facet: None,
+            header: None,
+            overlay: None,
+            style: None,
+            signals: None,
+            data: None,
+            layout: None,
+            projection: None,
+            encoding: None,
+            resolve: None,
+            autosize: None,
+            usermeta: None,
         })
         .build()?;
 
@@ -119,7 +268,7 @@ mod tests {
             MarkType::Line { .. } => assert!(true),
             _ => assert!(false, "Should be a line chart"),
         }
-        assert!(chart_spec.config.title.is_some());
+        assert!(!chart_spec.config.title.is_empty());
     }
 
     #[test]
@@ -132,7 +281,7 @@ mod tests {
 
         let chart_spec = chart.unwrap();
         match chart_spec.mark {
-            MarkType::Scatter { .. } => assert!(true),
+            MarkType::Point { .. } => assert!(true),
             _ => assert!(false, "Should be a scatter plot"),
         }
     }
@@ -169,7 +318,7 @@ mod tests {
             _ => assert!(false, "First chart should be a line chart"),
         }
         match charts[1].mark {
-            MarkType::Scatter { .. } => assert!(true),
+            MarkType::Point { .. } => assert!(true),
             _ => assert!(false, "Second chart should be a scatter plot"),
         }
         match charts[2].mark {

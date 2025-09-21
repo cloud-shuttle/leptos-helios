@@ -237,7 +237,11 @@ mod tests {
     #[test]
     fn test_chart_styler_creation() {
         let styler = ChartStyler::new();
-        assert!(styler.tailwind.is_ok());
+        // Test that styler can be created without panicking
+        // Test that it can generate classes
+        let theme = ChartTheme::dark();
+        let container_class = styler.chart_container(&theme);
+        assert!(container_class.contains("bg-gray-900"));
     }
 
     #[test]

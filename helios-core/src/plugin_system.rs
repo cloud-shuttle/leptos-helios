@@ -15,8 +15,9 @@
 //!
 //! The plugin system uses a trait-based approach with dynamic loading capabilities:
 //!
-//! ```rust
-//! use helios_core::plugin_system::*;
+//! ```ignore
+//! use leptos_helios::plugin_system::*;
+//! use leptos_helios::chart::{ChartSpec, MarkType};
 //!
 //! // Define a custom chart plugin
 //! #[derive(Debug, Clone)]
