@@ -11,9 +11,9 @@ categories.workspace = true
 
 [dependencies]
 # Core dependencies
-leptos-helios = { path = "../helios-core" }
-leptos-helios-components = { path = "../helios-leptos" }
-leptos-helios-macros = { path = "../helios-macros" }
+leptos-helios = { version = "0.8.0", path = "../helios-core" }
+leptos-helios-components = { version = "0.8.0", path = "../helios-leptos" }
+leptos-helios-macros = { version = "0.8.0", path = "../helios-macros" }
 leptos = { workspace = true }
 # polars = { version = "0.50", features = ["lazy"] }
 

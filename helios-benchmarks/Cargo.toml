@@ -13,7 +13,7 @@ categories.workspace = true
 
 [dependencies]
 # Core dependencies
-leptos-helios = { path = "../helios-core" }
+leptos-helios = { version = "0.8.0", path = "../helios-core" }
 
 # Benchmarking
 criterion = { workspace = true }

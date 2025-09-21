@@ -11,7 +11,7 @@ categories.workspace = true
 
 [dependencies]
 # Core dependencies
-leptos-helios = { version = "0.1.0-beta" }
+leptos-helios = { version = "0.8.0", path = "../helios-core" }
 leptos = { workspace = true }
 
 # Web and WASM
