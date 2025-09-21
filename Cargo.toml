@@ -82,3 +82,9 @@ strip = true
 
 [profile.release.package."*"]
 opt-level = "z"
+
+[profile.dev]
+panic = "abort"  # Faster compilation for dev
+
+[profile.test]
+opt-level = 1  # Faster test compilation

@@ -4,11 +4,10 @@
 //! for creating modern, responsive visualizations.
 
 use serde::{Deserialize, Serialize};
-use tailwind_rs_core::Tailwind;
 
 /// Tailwind CSS class generator for chart components
 pub struct ChartStyler {
-    tailwind: Tailwind,
+    // TODO: Implement Tailwind integration when available
 }
 
 /// Chart theme configuration
@@ -66,7 +65,7 @@ impl ChartStyler {
     /// Create a new chart styler
     pub fn new() -> Self {
         Self {
-            tailwind: Tailwind::new(),
+            // TODO: Initialize Tailwind when available
         }
     }
 

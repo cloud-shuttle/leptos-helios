@@ -41,7 +41,7 @@
 use crate::chart::{ChartSpec, MarkType};
 use crate::data_sources::DataSource;
 use crate::export_system::{ExportFormat, ExportResult};
-use crate::styling::Theme;
+use crate::styling::ChartTheme;
 use serde::{Deserialize, Serialize};
 use std::any::TypeId;
 use std::collections::HashMap;
@@ -326,7 +326,7 @@ pub trait ThemePlugin: Plugin {
         &self,
         theme_name: &str,
         config: &HashMap<String, String>,
-    ) -> Result<Theme, PluginError>;
+    ) -> Result<ChartTheme, PluginError>;
 
     /// Validate theme configuration
     fn validate_theme_config(

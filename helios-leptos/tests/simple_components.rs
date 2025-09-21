@@ -200,9 +200,9 @@ fn test_dashboard_different_layouts() {
 fn test_component_error_handling() {
     // RED: Test component error handling
     // Test invalid chart spec - create one with non-empty data that will fail validation
-    let mut invalid_spec = ChartSpec::new();
+    let invalid_spec = ChartSpec::new();
     // Create a DataFrame with some data to trigger validation
-    let mut df = DataFrame::empty();
+    let _df = DataFrame::empty();
     // Add some mock data to make it non-empty
     // For now, we'll test with a different approach - test DataLoader error handling instead
     let invalid_chart = HeliosChart::new(invalid_spec);

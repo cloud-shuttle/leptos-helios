@@ -7,9 +7,38 @@
 
 **High-performance, enterprise-grade data visualization library built with Rust and WebAssembly**
 
+## ⚠️ DEVELOPMENT STATUS WARNING
+
+**IMPORTANT**: This library is in early development. Many features described below are planned but not yet implemented.
+
+### ✅ Currently Working
+- Basic project structure
+- Type definitions and API surface
+- Some unit tests (compilation only)
+
+### 🚧 In Development
+- WebGPU rendering pipeline
+- Chart rendering functionality
+- Data processing pipeline
+
+### 📋 Planned
+- All advanced features (ML, enterprise security, etc.)
+- Production-ready stability
+- Complete documentation
+
+**For production use, consider established alternatives like D3.js, Chart.js, or Plotly while this library matures.**
+
+---
+
 Leptos Helios is a comprehensive charting library that combines the power of Rust's performance with modern web technologies. It provides GPU-accelerated rendering, enterprise security features, accessibility compliance, and extensive customization options for building sophisticated data visualizations.
 
 ## ✨ Features
+
+## Feature Status Legend
+- ✅ **Implemented**: Ready for use
+- 🚧 **In Progress**: Partially implemented
+- 📋 **Planned**: Not yet started
+- ❌ **Deprecated**: Being removed
 
 ### 🚀 **High Performance**
 - **WebGPU Rendering** - GPU-accelerated chart rendering for maximum performance

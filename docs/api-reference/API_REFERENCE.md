@@ -1,5 +1,10 @@
 # Leptos Helios API Reference
 
+## ⚠️ Implementation Status
+- **Status**: 📋 Planned - Most features are type definitions only
+- **ETA**: Q1-Q2 2026
+- **Current State**: API surface defined, implementation pending
+
 ## Overview
 
 Leptos Helios is a high-performance, enterprise-grade charting library built with Rust and WebAssembly. It provides comprehensive data visualization capabilities with advanced features including WebGPU rendering, accessibility compliance, enterprise security, and extensive customization options.

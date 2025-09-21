@@ -1,0 +1,14 @@
+[advisories]
+db-path = "~/.cargo/advisory-db"
+db-urls = ["https://github.com/rustsec/advisory-db"]
+
+# Note: RSA vulnerability RUSTSEC-2023-0071 is in transitive dependency sqlx
+# This is a known issue with no fix available yet. Impact is low for our use case.
+# We'll monitor for updates and consider alternatives in future versions.
+
+[licenses]
+allow = ["MIT", "Apache-2.0", "BSD-3-Clause"]
+deny = ["GPL-3.0", "AGPL-3.0"]
+
+[bans]
+multiple-versions = "warn"

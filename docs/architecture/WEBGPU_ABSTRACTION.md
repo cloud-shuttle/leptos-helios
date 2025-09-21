@@ -1,5 +1,10 @@
 # WebGPU Abstraction and Fallback Strategy
 
+## ⚠️ Implementation Status
+- **Status**: 📋 Planned - Core rendering pipeline not yet implemented
+- **ETA**: Q1 2026
+- **Current State**: Type definitions and API surface only
+
 ## Overview
 
 Leptos Helios implements a sophisticated WebGPU abstraction layer with comprehensive fallback support to ensure maximum browser compatibility and performance. This document outlines our approach to handling different rendering backends and the graceful degradation strategy.
