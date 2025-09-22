@@ -113,7 +113,7 @@ impl DataProcessingEngine {
     async fn process_with_cpu(
         &self,
         data: DataFrame,
-        config: &RayonConfig,
+        _config: &RayonConfig,
     ) -> DataResult<DataFrame> {
         // Mock CPU processing implementation
         // In a real implementation, this would use Rayon for parallel processing
@@ -124,7 +124,7 @@ impl DataProcessingEngine {
     async fn process_with_gpu(
         &self,
         data: DataFrame,
-        config: &ComputeConfig,
+        _config: &ComputeConfig,
     ) -> DataResult<DataFrame> {
         // Mock GPU processing implementation
         // In a real implementation, this would use WebGPU or CUDA
@@ -135,7 +135,7 @@ impl DataProcessingEngine {
     async fn process_with_streaming(
         &self,
         data: DataFrame,
-        config: &StreamConfig,
+        _config: &StreamConfig,
     ) -> DataResult<DataFrame> {
         // Mock streaming processing implementation
         // In a real implementation, this would process data in chunks
@@ -146,7 +146,7 @@ impl DataProcessingEngine {
     async fn process_with_hybrid(
         &self,
         data: DataFrame,
-        config: &HybridConfig,
+        _config: &HybridConfig,
     ) -> DataResult<DataFrame> {
         // Mock hybrid processing implementation
         // In a real implementation, this would combine CPU and GPU processing
@@ -308,7 +308,7 @@ pub mod utils {
             .with_row_count(df.height())
             .with_memory_size(df.estimated_size());
 
-        for (i, column) in df.get_columns().iter().enumerate() {
+        for (_i, column) in df.get_columns().iter().enumerate() {
             let column_spec =
                 ColumnSpec::new(column.name().to_string(), column.dtype().to_string())
                     .with_nullable(column.null_count() > 0);

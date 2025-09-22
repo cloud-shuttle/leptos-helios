@@ -237,7 +237,7 @@ impl AltTextGenerator {
 
         // Add range information if possible
         if let Some(first_col_name) = data.get_column_names().first() {
-            if let Ok(first_col) = data.column(first_col_name) {
+            if let Ok(_first_col) = data.column(first_col_name) {
                 // Note: Column doesn't have min/max methods directly, would need to convert to Series
                 // For now, just add basic info
                 summary.push_str(&format!("First column: {}.", first_col_name));
@@ -250,7 +250,7 @@ impl AltTextGenerator {
     /// Generate key insights
     fn generate_key_insights(
         &self,
-        spec: &ChartSpec,
+        _spec: &ChartSpec,
         data: &DataFrame,
     ) -> Result<String, AccessibilityError> {
         let mut insights = String::new();
@@ -289,7 +289,7 @@ impl AltTextGenerator {
     fn describe_visual_elements(
         &self,
         spec: &ChartSpec,
-        data: &DataFrame,
+        _data: &DataFrame,
     ) -> Result<String, AccessibilityError> {
         let mut description = String::new();
 

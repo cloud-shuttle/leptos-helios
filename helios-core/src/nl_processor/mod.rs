@@ -14,9 +14,10 @@ use query_parser::QueryParser;
 use intelligence_extractor::IntelligenceExtractor;
 use data_analyzer::DataAnalyzer;
 
-use crate::chart::{ChartSpec, Intelligence, MarkType, Encoding, EncodingDef, DataType};
+use crate::chart::{ChartSpec, MarkType, EncodingDef, DataType};
+// use crate::chart::{Intelligence, Encoding}; // Currently unused
 use polars::prelude::*;
-use std::collections::HashMap;
+// use std::collections::HashMap; // Currently unused
 
 /// Main natural language processor
 pub struct NLProcessor {

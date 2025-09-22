@@ -98,7 +98,7 @@ impl OAuth2Provider {
         })
     }
 
-    pub async fn get_user_info(&self, access_token: &str) -> Result<OAuth2UserInfo, SecurityError> {
+    pub async fn get_user_info(&self, _access_token: &str) -> Result<OAuth2UserInfo, SecurityError> {
         // Mock implementation - in real scenario, make HTTP request
         Ok(OAuth2UserInfo {
             sub: "user123".to_string(),
@@ -308,7 +308,7 @@ impl SAMLProvider {
                 self.entity_id)
     }
 
-    pub async fn process_saml_response(&self, saml_response: &str) -> Result<User, SecurityError> {
+    pub async fn process_saml_response(&self, _saml_response: &str) -> Result<User, SecurityError> {
         // Mock SAML response processing - in real scenario, parse and validate XML
         let user = User::new(
             "saml_user_123".to_string(),

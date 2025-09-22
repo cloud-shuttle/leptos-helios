@@ -100,7 +100,7 @@ impl QueryParser {
     /// Extract the next word after an indicator
     pub fn extract_next_word(&self, text: &str) -> Option<String> {
         let words: Vec<&str> = text.split_whitespace().collect();
-        for (i, word) in words.iter().enumerate() {
+        for (i, _word) in words.iter().enumerate() {
             if i + 1 < words.len() {
                 return Some(words[i + 1].to_string());
             }

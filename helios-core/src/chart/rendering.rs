@@ -2,7 +2,8 @@
 //!
 //! This module provides chart rendering functionality.
 
-use super::{ChartConfig, ChartSpec, Encoding, MarkType};
+use super::ChartSpec;
+// use super::{ChartConfig, Encoding, MarkType}; // Currently unused
 use crate::chart::validation::ValidationError;
 
 /// Chart renderer

@@ -127,12 +127,12 @@ impl PostgresConnection {
 
 #[async_trait]
 impl Connection for PostgresConnection {
-    async fn execute_query(&self, query: &str) -> Result<DataFrame, DataSourceError> {
+    async fn execute_query(&self, _query: &str) -> Result<DataFrame, DataSourceError> {
         let start_time = std::time::Instant::now();
 
         #[cfg(feature = "database")]
         {
-            let rows = sqlx::query(query)
+            let rows = sqlx::query(_query)
                 .fetch_all(&*self.pool)
                 .await
                 .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
@@ -202,12 +202,12 @@ impl Connection for PostgresConnection {
         self.execute_query(query).await
     }
 
-    async fn execute_statement(&self, statement: &str) -> Result<u64, DataSourceError> {
+    async fn execute_statement(&self, _statement: &str) -> Result<u64, DataSourceError> {
         let start_time = std::time::Instant::now();
 
         #[cfg(feature = "database")]
         {
-            let result = sqlx::query(statement)
+            let result = sqlx::query(_statement)
                 .execute(&*self.pool)
                 .await
                 .map_err(|e| DataSourceError::QueryFailed(e.to_string()))?;
@@ -408,7 +408,7 @@ impl ClickHouseConnection {
 
 #[async_trait]
 impl Connection for ClickHouseConnection {
-    async fn execute_query(&self, query: &str) -> Result<DataFrame, DataSourceError> {
+    async fn execute_query(&self, _query: &str) -> Result<DataFrame, DataSourceError> {
         let start_time = std::time::Instant::now();
 
         // Mock implementation for now
@@ -430,7 +430,7 @@ impl Connection for ClickHouseConnection {
         self.execute_query(query).await
     }
 
-    async fn execute_statement(&self, statement: &str) -> Result<u64, DataSourceError> {
+    async fn execute_statement(&self, _statement: &str) -> Result<u64, DataSourceError> {
         let start_time = std::time::Instant::now();
         let execution_time = start_time.elapsed();
         self.stats

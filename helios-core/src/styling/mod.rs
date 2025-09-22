@@ -197,7 +197,7 @@ pub enum LogLevel {
 
 /// Generate a complete Tailwind CSS class string for a component
 pub fn generate_component_classes(component: ComponentType, theme: &ChartTheme) -> String {
-    let styler = ChartStyler::new();
+    let _styler = ChartStyler::new();
 
     match component {
         ComponentType::MainContainer => {

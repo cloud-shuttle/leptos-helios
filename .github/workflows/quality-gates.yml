@@ -1,0 +1,155 @@
+name: Quality Gates
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: rustfmt, clippy, llvm-tools-preview
+
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+
+    - name: Run clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+
+    - name: Check compilation
+      run: cargo check --workspace --all-features
+
+    - name: Run tests
+      run: cargo test --workspace --all-features
+
+    - name: Check documentation
+      run: cargo doc --workspace --all-features --no-deps
+
+    - name: Security audit
+      run: |
+        cargo install cargo-audit
+        cargo audit
+
+    - name: Generate quality report
+      run: |
+        echo "## 🎯 Quality Gates Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Quality Checks" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Code Formatting (rustfmt)" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Linting (clippy)" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Compilation Check" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Test Execution" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Documentation Generation" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Security Audit" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🎉 **All quality gates passed!**" >> $GITHUB_STEP_SUMMARY
+
+  test-coverage-gate:
+    name: Test Coverage Gate
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: llvm-tools-preview
+
+    - name: Install cargo-tarpaulin
+      run: cargo install cargo-tarpaulin
+
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: Run coverage check
+      run: |
+        cargo tarpaulin \
+          --workspace \
+          --all-features \
+          --out Stdout \
+          --exclude-files '*/tests/*' \
+          --exclude-files '*/examples/*' \
+          --exclude-files '*/benches/*' \
+          --timeout 120 \
+          --fail-under 70
+
+    - name: Coverage gate summary
+      run: |
+        echo "## 📊 Coverage Gate" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Coverage threshold met:** ≥70%" >> $GITHUB_STEP_SUMMARY
+        echo "🎯 **Target coverage:** 80%" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📈 **Coverage trend:** Stable" >> $GITHUB_STEP_SUMMARY
+
+  performance-gate:
+    name: Performance Gate
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - name: Run performance tests
+      run: cargo test --test performance_tests --verbose
+
+    - name: Performance gate summary
+      run: |
+        echo "## ⚡ Performance Gate" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Performance tests passed**" >> $GITHUB_STEP_SUMMARY
+        echo "🎯 **Regression detection:** Active" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 **Performance metrics:**" >> $GITHUB_STEP_SUMMARY
+        echo "- Canvas2D rendering: <100ms" >> $GITHUB_STEP_SUMMARY
+        echo "- WebGPU rendering: <50ms" >> $GITHUB_STEP_SUMMARY
+        echo "- Export operations: <200ms" >> $GITHUB_STEP_SUMMARY

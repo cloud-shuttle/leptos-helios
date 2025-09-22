@@ -7,7 +7,7 @@ use super::errors::*;
 
 // WebGPU integration
 #[cfg(feature = "webgpu")]
-use wgpu::*;
+// use wgpu::*; // Currently unused
 
 /// Real WebGPU device implementation for testing
 #[cfg(feature = "webgpu")]

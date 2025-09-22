@@ -2,7 +2,7 @@
 //!
 //! This module provides WCAG 2.1 compliance checking and reporting.
 
-use super::{AccessibilityError, DataTable};
+// use super::{AccessibilityError, DataTable}; // Currently unused
 use crate::chart::{ChartSpec, MarkType};
 use polars::prelude::DataFrame;
 use serde::{Deserialize, Serialize};
@@ -75,8 +75,8 @@ impl WCAGChecker {
     /// Check compliance for a chart specification
     pub fn check_compliance(&self, spec: &ChartSpec, data: &DataFrame) -> ComplianceReport {
         let mut violations = Vec::new();
-        let mut warnings = Vec::new();
-        let mut recommendations = Vec::new();
+        let warnings = Vec::new();
+        let recommendations = Vec::new();
         let mut tested_criteria = Vec::new();
 
         for (criterion_id, criterion) in &self.criteria {
@@ -225,7 +225,7 @@ impl WCAGChecker {
     }
 
     /// Test for contrast
-    fn test_contrast(spec: &ChartSpec, _data: &DataFrame) -> Result<(), String> {
+    fn test_contrast(_spec: &ChartSpec, _data: &DataFrame) -> Result<(), String> {
         // Check if text elements meet contrast requirements
         // This would typically involve checking actual color values
         Ok(())

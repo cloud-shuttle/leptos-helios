@@ -119,8 +119,8 @@ impl HeadlessRenderer {
         data: &DataFrame,
         width: u32,
         height: u32,
-        dpi: Option<u32>,
-        config: &ExportConfig,
+        _dpi: Option<u32>,
+        _config: &ExportConfig,
     ) -> Result<Vec<u8>, HeadlessError> {
         if !self.browser_initialized {
             return Err(HeadlessError::BrowserInitFailed(
@@ -155,11 +155,11 @@ impl HeadlessRenderer {
     /// Render chart to PDF
     pub async fn render_to_pdf(
         &mut self,
-        spec: &ChartSpec,
-        data: &DataFrame,
+        _spec: &ChartSpec,
+        _data: &DataFrame,
         width: f32,
         height: f32,
-        config: &ExportConfig,
+        _config: &ExportConfig,
     ) -> Result<Vec<u8>, HeadlessError> {
         if !self.browser_initialized {
             return Err(HeadlessError::BrowserInitFailed(
@@ -385,12 +385,12 @@ startxref
     fn generate_standalone_html(
         &self,
         spec: &ChartSpec,
-        data: &DataFrame,
-        include_data: bool,
+        _data: &DataFrame,
+        _include_data: bool,
         config: &ExportConfig,
     ) -> String {
-        let data_section = if include_data {
-            format!("const chartData = {};", self.serialize_dataframe(data))
+        let data_section = if _include_data {
+            format!("const chartData = {};", self.serialize_dataframe(_data))
         } else {
             "// Data not included in standalone export".to_string()
         };

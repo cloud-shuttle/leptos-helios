@@ -102,7 +102,7 @@ impl BufferPool {
     }
 
     /// Deallocate a buffer (mark for cleanup)
-    pub fn deallocate_buffer(&mut self, buffer: &wgpu::Buffer) {
+    pub fn deallocate_buffer(&mut self, _buffer: &wgpu::Buffer) {
         // In a real implementation, we would track buffer IDs and remove them
         // For now, we just update statistics
         self.total_deallocations += 1;

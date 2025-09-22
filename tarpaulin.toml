@@ -1,0 +1,87 @@
+[tool.tarpaulin]
+# Coverage configuration for Leptos Helios
+
+# Minimum coverage threshold
+fail_under = 70
+
+# Output formats
+out = ["Html", "Xml", "Stdout"]
+
+# Output directory
+output_dir = "./coverage"
+
+# Exclude patterns
+exclude_files = [
+    "*/tests/*",
+    "*/examples/*", 
+    "*/benches/*",
+    "*/src/bin/*",
+    "*/target/*",
+    "*/node_modules/*"
+]
+
+# Exclude patterns for specific crates
+exclude_globs = [
+    "**/tests/**",
+    "**/examples/**",
+    "**/benches/**",
+    "**/src/bin/**"
+]
+
+# Timeout for tests (in seconds)
+timeout = 120
+
+# Number of threads for parallel execution
+jobs = 4
+
+# Verbose output
+verbose = true
+
+# Include test coverage
+include_tests = false
+
+# Include examples
+include_examples = false
+
+# Include benchmarks
+include_benches = false
+
+# Coverage types to include
+types = ["Line", "Branch"]
+
+# Ignore panics in tests
+ignore_panics = false
+
+# Follow execution
+follow_exec = false
+
+# Count branches
+count = true
+
+# Include source files
+include_src = true
+
+# Coverage report title
+title = "Leptos Helios Test Coverage Report"
+
+# Coverage report description
+description = "Comprehensive test coverage report for the Leptos Helios visualization library"
+
+# HTML report configuration
+html_title = "Leptos Helios Coverage Report"
+html_description = "Test coverage analysis for Leptos Helios"
+
+# XML report configuration (for CI integration)
+xml_name = "cobertura.xml"
+
+# Coverage thresholds by crate
+[tool.tarpaulin.thresholds]
+# Core library should have high coverage
+"helios-core" = 80
+"helios-leptos" = 75
+"helios-wasm" = 70
+"helios-examples" = 60
+"helios-benchmarks" = 50
+
+# Overall workspace threshold
+workspace = 70

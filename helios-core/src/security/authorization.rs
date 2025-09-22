@@ -440,7 +440,7 @@ impl PolicyProvider {
 impl AuthorizationProvider for PolicyProvider {
     async fn authorize(
         &self,
-        user: &User,
+        _user: &User,
         context: &AuthorizationContext,
     ) -> Result<bool, SecurityError> {
         let policies = self.policies.read().await;

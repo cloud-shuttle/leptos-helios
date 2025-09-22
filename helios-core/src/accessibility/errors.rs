@@ -2,7 +2,7 @@
 //!
 //! This module defines error types for accessibility operations.
 
-use thiserror::Error;
+// use thiserror::Error; // Currently unused
 
 /// Accessibility system errors
 #[derive(Debug, thiserror::Error)]

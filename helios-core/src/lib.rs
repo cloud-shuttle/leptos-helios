@@ -32,7 +32,7 @@
 //! - **Interactive**: Sub-millisecond hover detection
 
 pub mod accessibility;
-// pub mod advanced_analytics;
+pub mod advanced_analytics;
 pub mod advanced_charts;
 pub mod advanced_memory;
 // pub mod algorithm_registry;
@@ -106,27 +106,67 @@ pub use renderer::{
 };
 
 // Core modules with specific exports to avoid conflicts
-pub use accessibility::*;
-// pub use advanced_analytics::*;
+pub use accessibility::{
+    AltTextGenerator, AccessibilityError, AccessibilityConfig, AlternativeFormats,
+    KeyboardManager, ScreenReaderManager, WCAGChecker, WCAGLevel, ComplianceReport,
+    PerformanceConfig as AccessibilityPerformanceConfig, PerformanceMonitor as AccessibilityPerformanceMonitor,
+};
+pub use advanced_analytics::{
+    AnalyticsError, MLModel, MLPipeline, StatisticalAnalyzer, TimeSeriesAnalysis,
+    CorrelationAnalysis, DataPoint, DataSeries, ModelInfo, ModelType,
+};
 // pub use algorithm_registry::*;
 // pub use animation_engine::*;
 // pub use anomaly_detection::*;
 // pub use custom_components::*;
 pub use advanced_chart_types::*;
-pub use interactivity::*;
+pub use interactivity::{
+    Viewport as InteractivityViewport, Tooltip, TooltipStyle as InteractivityTooltipStyle,
+    TooltipData as InteractivityTooltipData, BrushSelection, CrossFilter, FilterEvent,
+    DataPoint as InteractivityDataPoint, InteractiveChart,
+};
 
-pub use performance_optimizations::*;
+pub use performance_optimizations::{
+    VirtualScroller, DataSampler, WebGLRenderer, WebGPURenderer, Buffer as PerformanceBuffer,
+    RenderBatch, MemoryPool, PerformanceMonitor as PerformanceOptimizationsMonitor,
+    PerformanceMetric as PerformanceOptimizationsMetric, PerformanceReport,
+};
 
-pub use graph_features::*;
+pub use graph_features::{
+    GraphNode, GraphEdge, CentralityMeasures, NetworkMetrics, VisualizationMetrics,
+    ForceDirectedLayout, GraphAlgorithms, GraphClusterer, ClusteringAlgorithm as GraphClusteringAlgorithm,
+    NetworkAnalyzer, GraphManipulator,
+};
 
-pub use data_sources::*;
+pub use data_sources::{
+    DataSourceManager, DataSourceFactory, DataSourceConfigBuilder, DataSource as DataSourceTrait,
+    Connection, Transaction, DataStream, PostgresAdapter, ClickHouseAdapter, ConnectionConfig,
+    Credentials, TableInfo, ColumnInfo, QueryResult, DataSourceStats,
+};
 pub use debugger::*;
-pub use dev_tools::*;
+pub use dev_tools::{
+    DevToolsError, ProfileData, CodeTemplate, LiveReloadConfig, HeliosDev, DevToolsConfig,
+    PerformanceProfiler as DevToolsPerformanceProfiler, ProfileScope, CodeGenerator,
+    CodeLinter, LintRule, LintResult,
+};
 pub use export_system::*;
-pub use smooth_animations::*;
+pub use smooth_animations::{
+    EasingFunctions, TweenAnimation, EasingType, StateTransition, AnimationOrchestrator,
+    AnimationRenderer, AnimationBatch, Color as AnimationColor, Point2D as AnimationPoint2D,
+    Size as AnimationSize, PerformanceMetrics as AnimationPerformanceMetrics,
+};
 // pub use forecasting_engine::*;
-pub use ml_intelligence::*;
-pub use performance::*;
+pub use ml_intelligence::{
+    TimeSeriesPoint, ForecastResult, ChartRecommendation, MLForecaster, ChartRecommendationEngine,
+    DataAnalysis as MLDataAnalysis, DataType as MLDataType, TrendType as MLTrendType,
+    DataAnalyzer as MLDataAnalyzer, MLPerformanceMonitor, MLPerformanceStats,
+};
+pub use performance::{
+    SimdDataProcessor, WebWorkerProcessor, ProcessingTask, ProcessingResult, LodSystem, LodLevel,
+    AdvancedMemoryPool as PerformanceAdvancedMemoryPool, BufferPool,
+    PerformanceMetrics as PerformanceModuleMetrics, RenderingPipelineOptimizer, PerformanceConfig,
+    PerformanceProfiler as PerformanceModuleProfiler, PerformanceManager, HighPerformanceEngine,
+};
 pub use plugin_system::{
     ChartPlugin, DataSourcePlugin, ExportPlugin, MLPlugin, PluginError, PluginManager,
     PluginMetadata, RenderResult as PluginRenderResult, ThemePlugin, TransformPlugin,
@@ -142,8 +182,20 @@ pub use advanced_memory::*;
 pub use cross_browser::*;
 pub use dev_server::*;
 pub use gpu::*;
-pub use gpu_accelerator::*;
-pub use intelligence::*;
+pub use gpu_accelerator::{
+    GpuMemoryUsage, BufferPoolStats, PerformanceMetrics as GpuPerformanceMetrics,
+    GpuBuffer, OptimizedGpuBuffer, OptimizedGpuRenderer, Point2D as GpuPoint2D,
+    GpuAccelerationEngine,
+};
+pub use intelligence::{
+    ClusterAnalyzer, ClusteringAlgorithm as IntelligenceClusteringAlgorithm, ClusteringResults,
+    ClusterStats, ClusteringConfig as IntelligenceClusteringConfig, AnomalyDetector, AnomalyMethod,
+    DataStatistics, AnomalyPoint, AnomalyReason, AnomalyResults, TimeSeriesForecaster,
+    TrendAnalysis as IntelligenceTrendAnalysis, TrendType as IntelligenceTrendType,
+    TrendDirection as IntelligenceTrendDirection, SeasonalityAnalysis, TimeSeriesDecomposition,
+    MLPipeline as IntelligenceMLPipeline, ModelType as IntelligenceModelType, MLConfig, MLResults,
+    MLError,
+};
 pub use interactions::*;
 pub use nl_processor::*;
 pub use profiler::*;

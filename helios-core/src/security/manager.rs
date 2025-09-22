@@ -2,7 +2,8 @@
 
 use super::audit::AuditLogger;
 use super::session::SessionManager;
-use super::{AuthProvider, AuthorizationProvider, SecurityError, User, Credentials, Permission, Resource};
+use super::{AuthProvider, AuthorizationProvider, SecurityError, User, Credentials, Permission};
+// use super::Resource; // Currently unused
 use std::collections::HashMap;
 use std::sync::Arc;
 

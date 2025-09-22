@@ -3,9 +3,10 @@
 //! This module provides validation functionality for chart specifications.
 
 use super::{
-    ChartSpec, DataReference, DataType, Encoding, EncodingDef, Intelligence, MarkType, Selection,
+    ChartSpec, DataReference, Encoding, Intelligence, MarkType, Selection,
     Transform,
 };
+// use super::{DataType, EncodingDef}; // Currently unused
 use thiserror::Error;
 
 /// Validation error types

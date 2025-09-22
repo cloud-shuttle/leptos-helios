@@ -273,7 +273,7 @@ pub mod validation {
         // Note: DataReference doesn't directly contain DataFrame, would need to load data
         // For now, skip this validation
         if false {
-            for (field, encoding) in spec.encoding.get_field_encodings() {
+            for (_field, _encoding) in spec.encoding.get_field_encodings() {
                 // Would need to load data from DataReference first
                 // For now, skip validation
             }

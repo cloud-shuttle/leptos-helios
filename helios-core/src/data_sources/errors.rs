@@ -3,7 +3,7 @@
 //! This module provides comprehensive error handling for data source connections,
 //! including database connectivity, query execution, and schema introspection errors.
 
-use std::time::Duration;
+// use std::time::Duration; // Currently unused
 
 /// Data source connection errors
 #[derive(Debug, thiserror::Error)]

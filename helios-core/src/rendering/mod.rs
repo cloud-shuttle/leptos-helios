@@ -18,13 +18,13 @@ pub use performance::*;
 pub use renderer::*;
 pub use webgpu_device::*;
 
-use std::collections::HashMap;
+// use std::collections::HashMap; // Currently unused
 use std::sync::Arc;
-use std::time::{Duration, Instant};
+// use std::time::{Duration, Instant}; // Currently unused
 
 // WebGPU integration
 #[cfg(feature = "webgpu")]
-use wgpu::*;
+// use wgpu::*; // Currently unused
 
 /// Render configuration
 #[derive(Debug, Clone)]

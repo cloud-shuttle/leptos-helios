@@ -162,7 +162,7 @@ impl ScreenReaderManager {
     pub fn generate_navigation_structure(
         &self,
         spec: &ChartSpec,
-        data: &DataFrame,
+        _data: &DataFrame,
     ) -> Result<NavigationStructure, AccessibilityError> {
         if !self.config.structured_navigation {
             return Err(AccessibilityError::ScreenReaderError(

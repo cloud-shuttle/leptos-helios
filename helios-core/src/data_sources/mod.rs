@@ -25,7 +25,7 @@ pub use traits::*;
 pub use types::*;
 
 use polars::prelude::*;
-use serde::{Deserialize, Serialize};
+// use serde::{Deserialize, Serialize}; // Currently unused
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -91,7 +91,7 @@ impl DataSourceManager {
 
         let start_time = std::time::Instant::now();
         let result = connection.read().await.execute_query(query).await;
-        let execution_time = start_time.elapsed();
+        let _execution_time = start_time.elapsed();
 
         match result {
             Ok(df) => {
@@ -124,7 +124,7 @@ impl DataSourceManager {
             .await
             .execute_query_with_params(query, params)
             .await;
-        let execution_time = start_time.elapsed();
+        let _execution_time = start_time.elapsed();
 
         match result {
             Ok(df) => {
@@ -219,7 +219,7 @@ impl DataSourceFactory {
 
     /// Create a data source manager with default adapters
     pub fn create_manager_with_defaults() -> DataSourceManager {
-        let mut manager = DataSourceManager::new();
+        let manager = DataSourceManager::new();
 
         // Add default adapters (these would be initialized with default configs)
         // manager.add_adapter("postgres".to_string(), Box::new(PostgresAdapter::new(ConnectionConfig::new("".to_string()))));

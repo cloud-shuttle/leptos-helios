@@ -13,10 +13,11 @@ use template_engine::TemplateEngine;
 use file_writer::FileWriter;
 
 use crate::chart::ChartSpec;
-use crate::headless_renderer::{HeadlessConfig, HeadlessError, HeadlessRenderer};
+use crate::headless_renderer::{HeadlessConfig, HeadlessRenderer};
+// use crate::headless_renderer::HeadlessError; // Currently unused
 use polars::prelude::DataFrame;
 use std::collections::HashMap;
-use std::path::Path;
+// use std::path::Path; // Currently unused
 
 /// Main export system
 pub struct ExportSystem {
@@ -115,13 +116,13 @@ impl ExportSystem {
     /// Export as PDF
     async fn export_pdf(
         &self,
-        spec: &ChartSpec,
-        data: &DataFrame,
-        config: &ExportConfig,
+        _spec: &ChartSpec,
+        _data: &DataFrame,
+        _config: &ExportConfig,
         filename: &str,
     ) -> Result<ExportResult, ExportError> {
         // For now, create a simple PDF placeholder
-        let pdf_content = self.create_basic_pdf(spec, config)?;
+        let pdf_content = self.create_basic_pdf(_spec, _config)?;
         self.file_writer.write_file(filename, &pdf_content)
     }
 
@@ -151,7 +152,7 @@ impl ExportSystem {
     }
 
     /// Generate SVG content
-    fn generate_svg(&self, spec: &ChartSpec, data: &DataFrame, config: &ExportConfig) -> Result<String, ExportError> {
+    fn generate_svg(&self, spec: &ChartSpec, _data: &DataFrame, config: &ExportConfig) -> Result<String, ExportError> {
         // Basic SVG generation
         let width = match &config.format {
             ExportFormat::SVG { width, .. } => width.unwrap_or(800),
@@ -179,7 +180,7 @@ impl ExportSystem {
     }
 
     /// Generate chart HTML
-    fn generate_chart_html(&self, spec: &ChartSpec, data: &DataFrame, config: &ExportConfig) -> Result<String, ExportError> {
+    fn generate_chart_html(&self, spec: &ChartSpec, data: &DataFrame, _config: &ExportConfig) -> Result<String, ExportError> {
         // Basic HTML generation
         let html = format!(
             r#"<div class="chart" data-spec="{:?}">
@@ -222,7 +223,7 @@ impl ExportSystem {
     }
 
     /// Create basic PNG (placeholder)
-    fn create_basic_png(&self, spec: &ChartSpec, config: &ExportConfig) -> Result<Vec<u8>, ExportError> {
+    fn create_basic_png(&self, _spec: &ChartSpec, _config: &ExportConfig) -> Result<Vec<u8>, ExportError> {
         // This is a placeholder - in a real implementation, you would generate actual PNG data
         // For now, return a minimal PNG header
         Ok(vec![
@@ -232,7 +233,7 @@ impl ExportSystem {
     }
 
     /// Create basic PDF (placeholder)
-    fn create_basic_pdf(&self, spec: &ChartSpec, config: &ExportConfig) -> Result<Vec<u8>, ExportError> {
+    fn create_basic_pdf(&self, spec: &ChartSpec, _config: &ExportConfig) -> Result<Vec<u8>, ExportError> {
         // This is a placeholder - in a real implementation, you would generate actual PDF data
         let pdf_content = format!(
             "%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n2 0 obj\n<<\n/Type /Pages\n/Kids [3 0 R]\n/Count 1\n>>\nendobj\n3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/MediaBox [0 0 612 792]\n/Contents 4 0 R\n>>\nendobj\n4 0 obj\n<<\n/Length 44\n>>\nstream\nBT\n/F1 12 Tf\n100 700 Td\n(Chart: {:?}) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000204 00000 n \ntrailer\n<<\n/Size 5\n/Root 1 0 R\n>>\nstartxref\n297\n%%EOF",

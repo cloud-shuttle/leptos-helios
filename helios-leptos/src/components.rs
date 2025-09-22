@@ -3,6 +3,7 @@
 use leptos::prelude::*;
 use leptos_helios::chart::*;
 use leptos_helios::data::*;
+use leptos_helios::DataSource;
 use leptos_helios::DataFrame;
 use std::sync::Arc;
 

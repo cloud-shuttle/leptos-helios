@@ -19,8 +19,8 @@ pub use screen_reader::*;
 pub use wcag::*;
 
 // Common types used across all accessibility features
-use crate::chart::{ChartSpec, MarkType};
-use polars::prelude::DataFrame;
+// use crate::chart::{ChartSpec, MarkType}; // Currently unused
+// use polars::prelude::DataFrame; // Currently unused
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

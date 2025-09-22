@@ -6,7 +6,8 @@
 use super::errors::{DataError, DataResult};
 use super::types::*;
 use std::collections::HashMap;
-use std::time::{Duration, SystemTime};
+use std::time::SystemTime;
+// use std::time::Duration; // Currently unused
 
 /// Strategy selector for optimal data processing
 pub struct StrategySelector {
@@ -297,7 +298,7 @@ impl StrategyRecommender {
     }
 
     /// Learn from performance feedback
-    pub fn learn(&mut self, strategy_name: &str, performance: f64, data_spec: &DataSpec) {
+    pub fn learn(&mut self, strategy_name: &str, performance: f64, _data_spec: &DataSpec) {
         // Update benchmark
         let current_benchmark = self.selector.get_benchmark(strategy_name).unwrap_or(0.0);
         let new_benchmark =
@@ -327,7 +328,7 @@ impl StrategyRecommender {
     }
 
     /// Explore a random strategy
-    fn explore_strategy(&self, data_spec: &DataSpec) -> DataResult<ProcessingStrategy> {
+    fn explore_strategy(&self, _data_spec: &DataSpec) -> DataResult<ProcessingStrategy> {
         let strategies = vec![
             ProcessingStrategy::CPU(RayonConfig::new()),
             ProcessingStrategy::GPU(ComputeConfig::new()),
@@ -343,7 +344,7 @@ impl StrategyRecommender {
     fn strategy_from_name(
         &self,
         name: &str,
-        data_spec: &DataSpec,
+        _data_spec: &DataSpec,
     ) -> DataResult<ProcessingStrategy> {
         match name {
             "CPU" => Ok(ProcessingStrategy::CPU(RayonConfig::new())),

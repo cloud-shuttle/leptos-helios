@@ -63,7 +63,7 @@ impl WebGpuRenderer {
 
     /// Render a frame
     pub fn render(&mut self) -> Result<(), WebGpuError> {
-        if let (Some(surface), Some(config)) = (&self.surface, &self.surface_config) {
+        if let (Some(surface), Some(_config)) = (&self.surface, &self.surface_config) {
             let output = surface.get_current_texture()
                 .map_err(|e| WebGpuError::RenderingFailed(format!("Failed to get current texture: {:?}", e)))?;
 

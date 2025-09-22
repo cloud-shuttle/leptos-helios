@@ -21,7 +21,7 @@ impl IntelligenceExtractor {
         let mut intelligence = None;
 
         let mut features = Vec::new();
-        let mut parameters = HashMap::new();
+        let parameters = HashMap::new();
         let mut forecast = None;
         let mut anomaly_detection = None;
         let mut trend_analysis = None;

@@ -17,7 +17,7 @@ pub use layouts::*;
 pub use visualization::*;
 
 // Common types used across all graph features
-use std::collections::{HashMap, HashSet};
+// use std::collections::{HashMap, HashSet}; // Currently unused
 
 /// Graph node with position and properties
 #[derive(Debug, Clone, PartialEq)]
