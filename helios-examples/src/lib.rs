@@ -3,3 +3,4 @@
 //! This crate contains example applications for Helios.
 
 pub mod simple_examples;
+pub mod stylish_demo;
