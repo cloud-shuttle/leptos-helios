@@ -19,7 +19,7 @@ pub use errors::*;
 pub use strategies::*;
 pub use types::*;
 
-use crate::performance::{PerformanceConfig, PerformanceManager};
+// use crate::performance::{PerformanceConfig, PerformanceManager}; // Temporarily disabled
 use polars::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -28,7 +28,7 @@ use std::time::Duration;
 /// Main data processing engine
 pub struct DataProcessingEngine {
     strategy_selector: StrategySelector,
-    performance_manager: Arc<PerformanceManager>,
+    // performance_manager: Arc<PerformanceManager>, // Temporarily disabled
     config: ProcessingConfig,
 }
 
@@ -59,7 +59,7 @@ impl DataProcessingEngine {
     pub fn new() -> Self {
         Self {
             strategy_selector: StrategySelector::new(),
-            performance_manager: Arc::new(PerformanceManager::new(PerformanceConfig::default())),
+            // performance_manager: Arc::new(PerformanceManager::new(PerformanceConfig::default())), // Temporarily disabled
             config: ProcessingConfig::default(),
         }
     }
@@ -68,7 +68,7 @@ impl DataProcessingEngine {
     pub fn with_config(config: ProcessingConfig) -> Self {
         Self {
             strategy_selector: StrategySelector::new(),
-            performance_manager: Arc::new(PerformanceManager::new(PerformanceConfig::default())),
+            // performance_manager: Arc::new(PerformanceManager::new(PerformanceConfig::default())), // Temporarily disabled
             config,
         }
     }

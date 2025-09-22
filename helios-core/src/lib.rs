@@ -46,9 +46,11 @@ pub mod chart_config;
 pub mod cross_browser;
 pub mod graph_features;
 pub mod interactivity;
+pub mod performance_advanced;
 pub mod performance_optimizations;
 pub mod smooth_animations;
 // pub mod custom_components;
+// pub mod data; // Temporarily disabled due to Polars compatibility issues
 pub mod data_pipeline;
 pub mod data_processing;
 pub mod data_sources;
@@ -63,7 +65,6 @@ pub mod helios_chart;
 pub mod interactions;
 pub mod line_chart_renderer;
 pub mod ml_intelligence;
-pub mod performance;
 pub mod plugin_system;
 pub mod production;
 pub mod profiler;
@@ -71,14 +72,14 @@ pub mod renderer;
 pub mod rendering;
 // pub mod responsive_design;
 pub mod security;
-// pub mod streaming; // Temporarily disabled due to async issues
+pub mod streaming;
 pub mod styling;
 // pub mod theme_engine;
 pub mod wasm_optimizer;
 pub mod webgpu_real;
 pub mod webgpu_renderer;
 
-pub use data_processing as data;
+// pub use data; // Temporarily disabled due to Polars compatibility issues
 pub use rendering as render;
 pub mod gpu;
 pub mod intelligence;
@@ -161,11 +162,9 @@ pub use ml_intelligence::{
     DataAnalysis as MLDataAnalysis, DataType as MLDataType, TrendType as MLTrendType,
     DataAnalyzer as MLDataAnalyzer, MLPerformanceMonitor, MLPerformanceStats,
 };
-pub use performance::{
-    SimdDataProcessor, WebWorkerProcessor, ProcessingTask, ProcessingResult, LodSystem, LodLevel,
-    AdvancedMemoryPool as PerformanceAdvancedMemoryPool, BufferPool,
-    PerformanceMetrics as PerformanceModuleMetrics, RenderingPipelineOptimizer, PerformanceConfig,
-    PerformanceProfiler as PerformanceModuleProfiler, PerformanceManager, HighPerformanceEngine,
+pub use performance_advanced::{
+    PerformanceOptimizer, PerformanceOptimizerStats, PerformanceBenchmark, BenchmarkSummary,
+    RuntimePoolStats, MemoryPoolStats,
 };
 pub use plugin_system::{
     ChartPlugin, DataSourcePlugin, ExportPlugin, MLPlugin, PluginError, PluginManager,
