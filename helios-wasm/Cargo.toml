@@ -11,7 +11,7 @@ categories.workspace = true
 
 [dependencies]
 # Core dependencies - minimal for WASM
-leptos-helios = { version = "0.8.0", path = "../helios-core", default-features = false, features = ["webgpu", "async"] }
+leptos-helios = { version = "0.8.1", path = "../helios-core", default-features = false, features = ["webgpu", "async"] }
 
 # Web and WASM
 wasm-bindgen = { workspace = true }

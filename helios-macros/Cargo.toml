@@ -14,7 +14,7 @@ proc-macro = true
 
 [dependencies]
 # Core dependencies
-leptos-helios = { version = "0.8.0", path = "../helios-core" }
+leptos-helios = { version = "0.8.1", path = "../helios-core" }
 
 # Macro dependencies
 proc-macro2 = "1.0"
